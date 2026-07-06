@@ -1,1 +1,150 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=./unit1-dungeon.html"><title>English Quest</title></head><body>Loading English Quest... <a href="./unit1-dungeon.html">Tap here if nothing happens</a></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Quest — Outlook Common Core</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="English Quest">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color: #f0e9ff;
+    min-height: 100dvh;
+    display: flex; justify-content: center;
+  }
+  #app { width: 100%; max-width: 520px; padding: 0 16px 40px; }
+
+  /* ===== SHARED QUEST HEADER ===== */
+  .eq-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 2px 14px;
+  }
+  .eq-logo { width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 0 14px rgba(251,191,36,.35); }
+  .eq-title {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+    font-size: 24px; font-weight: 800; line-height: 1;
+    background: linear-gradient(90deg, #fbbf24, #f87171);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .eq-sub { font-size: 12px; color: #c4b5fd; font-weight: 600; margin-top: 3px; }
+
+  .hero-line { font-size: 14.5px; color: #d8cffc; font-weight: 600; margin: 2px 2px 18px; line-height: 1.6; }
+
+  /* ===== UNIT CARDS ===== */
+  .unit-card {
+    background: rgba(255,255,255,.07);
+    border: 2px solid rgba(255,255,255,.14);
+    border-radius: 20px; padding: 18px; margin-bottom: 14px;
+  }
+  .unit-card.active {
+    border-color: #fbbf24;
+    box-shadow: 0 0 22px rgba(251,191,36,.25);
+    background: linear-gradient(160deg, rgba(251,191,36,.10), rgba(255,255,255,.06));
+  }
+  .uc-top { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .uc-num {
+    min-width: 46px; height: 46px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+    font-size: 20px; font-weight: 800;
+  }
+  .unit-card.active .uc-num { background: radial-gradient(circle at 35% 30%, #fbbf24, #d97706); color: #451a03; box-shadow: 0 0 14px rgba(251,191,36,.5); }
+  .unit-card.locked .uc-num { background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.18); color: #6b7280; font-size: 17px; }
+  .uc-name { font-family: 'Bricolage Grotesque', 'Segoe UI', sans-serif; font-size: 18px; font-weight: 700; }
+  .uc-theme { font-size: 12.5px; color: #a78bfa; font-weight: 600; }
+  .uc-buttons { display: flex; gap: 10px; margin-top: 14px; }
+  .btn {
+    flex: 1; text-align: center; text-decoration: none;
+    font-size: 16.5px; font-weight: 800; padding: 14px 8px; border-radius: 14px;
+    color: #fff; transition: transform .1s;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  .btn:active { transform: scale(.96); }
+  .btn-learn { background: linear-gradient(90deg, #0ea5e9, #6366f1); box-shadow: 0 5px 16px rgba(14,165,233,.35); }
+  .btn-play  { background: linear-gradient(90deg, #7c3aed, #db2777); box-shadow: 0 5px 16px rgba(124,58,237,.4); }
+
+  .unit-card.locked { opacity: .5; }
+  .uc-soon { font-size: 12px; font-weight: 800; color: #fbbf24; letter-spacing: 1px; text-transform: uppercase; }
+
+  .roadmap-label {
+    font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+    color: #a78bfa; margin: 22px 2px 10px;
+  }
+  footer { text-align: center; font-size: 12px; color: #6b7280; margin-top: 26px; line-height: 1.7; }
+
+  .star { position: fixed; z-index: -1; font-size: 10px; opacity: .4; animation: tw 3s ease-in-out infinite alternate; }
+  @keyframes tw { from { opacity: .15; } to { opacity: .5; } }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="eq-header">
+    <img class="eq-logo" src="./icon-192.png" alt="English Quest">
+    <div>
+      <div class="eq-title">ENGLISH QUEST</div>
+      <div class="eq-sub">Outlook · Common Core · Morocco</div>
+    </div>
+  </header>
+
+  <p class="hero-line">Welcome, hero! 📖 <b>Learn</b> the lesson, then ⚔️ <b>Play</b> the dungeon to prove it.</p>
+
+  <!-- ===== UNIT 1 (active) ===== -->
+  <section class="unit-card active">
+    <div class="uc-top">
+      <span class="uc-num">1</span>
+      <span>
+        <span class="uc-name">Unit 1: Myself &amp; Others</span><br>
+        <span class="uc-theme">Introductions · Verb be · Plurals · Titles &amp; Greetings · Reading · Writing</span>
+      </span>
+    </div>
+    <div class="uc-buttons">
+      <a class="btn btn-learn" href="./unit1-lesson.html">📖 Learn</a>
+      <a class="btn btn-play" href="./unit1-dungeon.html#dungeon">⚔️ Play</a>
+    </div>
+  </section>
+
+  <div class="roadmap-label">Your quest continues…</div>
+
+  <div id="locked-units"></div>
+
+  <footer>English Quest · Made by your teacher, Mr. Fakrani 🇲🇦<br>Progress is saved on this phone.</footer>
+</div>
+
+<script>
+  /* Locked roadmap: Units 2–10 (Outlook Common Core) */
+  const UNITS = ["What & How I Learn","Our Shopping Habits","Artistic Interests","Our Eating Habits",
+    "How We Keep Healthy","Our Hobbies","Keep Our Environment Clean","The World of Money","New Technologies"];
+  const wrap = document.getElementById('locked-units');
+  UNITS.forEach((name, i) => {
+    const el = document.createElement('section');
+    el.className = 'unit-card locked';
+    el.innerHTML = '<div class="uc-top"><span class="uc-num">🔒</span><span>' +
+      '<span class="uc-name">Unit ' + (i + 2) + ': ' + name + '</span><br>' +
+      '<span class="uc-soon">Coming soon</span></span></div>';
+    wrap.appendChild(el);
+  });
+  /* a few twinkling stars */
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement('span');
+    s.className = 'star';
+    s.textContent = '✦';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top = Math.random() * 100 + 'vh';
+    s.style.animationDelay = (Math.random() * 3) + 's';
+    document.body.appendChild(s);
+  }
+</script>
+</body>
+</html>

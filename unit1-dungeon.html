@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Unit 1 Dungeon — Myself &amp; Others</title>
 <meta name="theme-color" content="#1a0b2e">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Unit 1 Dungeon">
@@ -14,6 +18,10 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; }
+  /* Unified English Quest identity: one heading font across hub, lesson and dungeon */
+  .game-title, #world-title, #map-title, #unit-title, .end-title, #learn-title, .modal-title {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  }
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
@@ -1287,8 +1295,12 @@ function heroName() {
   const p = loadProgress();
   return p.name || '';
 }
+/* When opened from the hub's ⚔️ Play button (#dungeon), land on the floor map */
+function hubEntry() {
+  return window.location.hash === '#dungeon' ? showMap : showWorld;
+}
 function enterDungeon() {
-  if (heroName()) showWorld();
+  if (heroName()) hubEntry()();
   else {
     document.getElementById('name-input').value = '';
     show('name-screen');
@@ -1300,7 +1312,7 @@ function saveName() {
   const p = loadProgress();
   p.name = raw || 'Hero';
   saveProgress(p);
-  showWorld();
+  hubEntry()();
 }
 function editName() {
   document.getElementById('name-input').value = heroName();
@@ -1449,23 +1461,18 @@ function normalize(s) {
 function show(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(screenId).classList.add('active');
-  /* Home button: visible everywhere except the title and name screens */
-  document.getElementById('home-btn').className =
-    (screenId === 'title-screen' || screenId === 'name-screen') ? '' : 'show';
+  /* Home button (→ hub): visible everywhere except mid name-entry */
+  document.getElementById('home-btn').className = screenId === 'name-screen' ? '' : 'show';
 }
 function goHome() {
   stopSpeaking();
+  stopMusic();
   if (battleActive) {          // abandon the current battle safely
     battleActive = false;
     stopTimer();
     leftPage = false;
   }
-  document.getElementById('pause-modal').classList.remove('show');
-  document.getElementById('fail-modal').classList.remove('show');
-  document.getElementById('cheat-modal').classList.remove('show');
-  document.getElementById('tutorial-modal').classList.remove('show');
-  document.getElementById('dungeon-invite-modal').classList.remove('show');
-  showWorld();   // home = the world map
+  window.location.href = './index.html';   // home = the English Quest hub
 }
 
 /* ---------- DUNGEON MAP ---------- */
@@ -2155,6 +2162,9 @@ function restartAfterCheat() {
 document.getElementById('sound-toggle').textContent = soundOn ? '🔊' : '🔇';
 document.getElementById('sound-toggle').className = soundOn ? '' : 'off';
 document.getElementById('music-toggle').className = musicOn ? '' : 'off';
+document.getElementById('home-btn').className = 'show';   // the hub is always reachable
+/* Fast lane from the hub's ⚔️ Play button: returning players skip the title screen */
+if (window.location.hash === '#dungeon' && heroName()) showMap();
 </script>
 </body>
 </html>
