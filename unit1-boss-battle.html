@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Unit 1 Boss Battle — Myself &amp; Others</title>
+<style>
+  /* ============ BASE ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color: #f0e9ff;
+    display: flex;
+    justify-content: center;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+  body.golden-mode { background: linear-gradient(180deg, #1c1503 0%, #3d2e08 60%, #1c1503 100%); }
+  #app { width: 100%; max-width: 480px; padding: 14px; display: flex; flex-direction: column; min-height: 100dvh; position: relative; z-index: 1; }
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+  button { font-family: inherit; cursor: pointer; border: none; }
+
+  /* ============ EMBER PARTICLES ============ */
+  .ember {
+    position: fixed; bottom: -20px; z-index: 0; pointer-events: none;
+    font-size: 12px; opacity: 0;
+    animation: emberRise linear infinite;
+  }
+  @keyframes emberRise {
+    0%   { opacity: 0; transform: translateY(0) translateX(0) scale(.6); }
+    10%  { opacity: .7; }
+    90%  { opacity: .2; }
+    100% { opacity: 0; transform: translateY(-105vh) translateX(var(--drift, 20px)) scale(1.1); }
+  }
+
+  /* ============ SOUND / MUSIC TOGGLES ============ */
+  #sound-toggle, #music-toggle {
+    position: fixed; top: 10px; z-index: 60;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.25);
+    color: #fff; font-size: 18px; width: 40px; height: 40px; border-radius: 50%;
+  }
+  #sound-toggle { right: 10px; }
+  #music-toggle { right: 58px; }
+  #music-toggle.off, #sound-toggle.off { opacity: .35; }
+
+  /* ============ START SCREEN ============ */
+  #start-screen { justify-content: center; text-align: center; gap: 14px; }
+  .game-title { font-size: 30px; font-weight: 800; line-height: 1.2;
+    background: linear-gradient(90deg, #fbbf24, #f87171);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .unit-label { font-size: 15px; color: #c4b5fd; font-weight: 600; margin-top: 4px; }
+  .boss-preview { font-size: 82px; animation: bossFly 3s ease-in-out infinite; filter: drop-shadow(0 0 24px rgba(249,115,22,.5)); }
+  .rules {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px; padding: 13px 16px; text-align: left; font-size: 13.5px; line-height: 1.8;
+  }
+  #best-xp-line { font-size: 14px; color: #fbbf24; font-weight: 800; min-height: 18px; }
+  .btn-primary {
+    background: linear-gradient(90deg, #7c3aed, #db2777); color: #fff;
+    font-size: 19px; font-weight: 800; padding: 16px; border-radius: 14px; width: 100%;
+    box-shadow: 0 6px 18px rgba(124,58,237,.45);
+    transition: transform .1s;
+  }
+  .btn-primary:active { transform: scale(.96); }
+  .btn-gold {
+    background: linear-gradient(90deg, #d97706, #fbbf24); color: #451a03;
+    font-size: 18px; font-weight: 900; padding: 15px; border-radius: 14px; width: 100%;
+    box-shadow: 0 6px 18px rgba(251,191,36,.4);
+    transition: transform .1s;
+    animation: goldPulse 1.6s ease-in-out infinite;
+  }
+  .btn-gold:active { transform: scale(.96); }
+  @keyframes goldPulse { 0%,100% { box-shadow: 0 6px 18px rgba(251,191,36,.35); } 50% { box-shadow: 0 6px 28px rgba(251,191,36,.7); } }
+  .btn-ghost {
+    background: transparent; border: 2px solid rgba(255,255,255,.3); color: #d8cffc;
+    font-size: 15px; font-weight: 700; padding: 12px; border-radius: 12px; width: 100%;
+  }
+
+  /* ============ BATTLE SCREEN ============ */
+  #hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 15px; font-weight: 700; }
+  #lives { letter-spacing: 2px; font-size: 18px; }
+  #xp-display { color: #fbbf24; }
+
+  #boss-area { text-align: center; padding: 2px 0 8px; }
+  #boss-name { font-size: 13px; font-weight: 700; color: #fca5a5; margin-bottom: 2px; letter-spacing: 1px; text-transform: uppercase; }
+  body.golden-mode #boss-name { color: #fde047; }
+  #boss-wrap { position: relative; height: 96px; }
+  #boss-sprite {
+    font-size: 74px; display: inline-block; position: relative; z-index: 2;
+    animation: bossFly 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 18px rgba(249,115,22,.55)) drop-shadow(0 8px 16px rgba(0,0,0,.5));
+  }
+  body.golden-mode #boss-sprite { filter: drop-shadow(0 0 22px rgba(253,224,71,.75)) drop-shadow(0 8px 16px rgba(0,0,0,.5)); }
+  #boss-sprite.hit { animation: shake .45s; }
+  #boss-sprite.breathe { animation: lunge .8s; }
+  .fireball {
+    position: absolute; left: 50%; top: 60px; z-index: 3;
+    font-size: 30px; pointer-events: none;
+    animation: fireFly 0.9s ease-in forwards;
+  }
+  .hp-bar-wrap { background: rgba(0,0,0,.5); border-radius: 999px; height: 20px; overflow: hidden; border: 2px solid rgba(255,255,255,.2); margin-top: 4px; position: relative; }
+  #hp-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #ef4444, #f97316); border-radius: 999px; transition: width .5s ease; position: relative; overflow: hidden; }
+  body.golden-mode #hp-bar { background: linear-gradient(90deg, #d97706, #fde047); }
+  #hp-bar::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.35) 50%, transparent 60%);
+    animation: hpShine 2.4s linear infinite;
+  }
+  @keyframes hpShine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+  #hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
+
+  #dmg-float {
+    position: absolute; left: 50%; transform: translateX(-50%); top: 0; z-index: 4;
+    font-size: 26px; font-weight: 900; color: #fbbf24; opacity: 0; pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,.6);
+  }
+  #dmg-float.show { animation: floatUp 0.9s ease-out; }
+
+  /* ============ TIMER ============ */
+  #timer-wrap { background: rgba(0,0,0,.45); border-radius: 999px; height: 10px; overflow: hidden; margin-bottom: 8px; border: 1px solid rgba(255,255,255,.15); }
+  #timer-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #22d3ee, #3b82f6); border-radius: 999px; transition: width .1s linear, background .3s; }
+  #timer-bar.danger { background: linear-gradient(90deg, #ef4444, #f97316); }
+  #timer-label { text-align: center; font-size: 12px; font-weight: 800; color: #7dd3fc; margin-bottom: 4px; }
+  #timer-label.danger { color: #f87171; animation: pulseText .5s ease infinite alternate; }
+  @keyframes pulseText { from { opacity: 1; } to { opacity: .45; } }
+
+  #category-chip {
+    display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    background: rgba(124,58,237,.35); border: 1px solid #7c3aed; color: #d8b4fe;
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 8px;
+  }
+  body.golden-mode #category-chip { background: rgba(217,119,6,.3); border-color: #d97706; color: #fde047; }
+  #question-box {
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+    border-radius: 16px; padding: 14px 16px; margin-bottom: 10px;
+  }
+  #question-box.slide-in { animation: slideIn .35s ease; }
+  @keyframes slideIn { 0% { transform: translateX(60px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+  #question-text { font-size: 17.5px; font-weight: 700; line-height: 1.45; }
+  #progress-text { font-size: 12px; color: #a78bfa; margin-top: 6px; font-weight: 600; }
+
+  #answers { display: flex; flex-direction: column; gap: 9px; }
+  .answer-btn {
+    background: rgba(255,255,255,.09); border: 2px solid rgba(255,255,255,.18); color: #f0e9ff;
+    font-size: 16px; font-weight: 600; padding: 13px 16px; border-radius: 14px; text-align: left;
+    transition: transform .08s, background .15s, border-color .15s;
+  }
+  .answer-btn:active { transform: scale(.97); }
+  .answer-btn.correct { background: rgba(34,197,94,.3); border-color: #22c55e; }
+  .answer-btn.wrong { background: rgba(239,68,68,.3); border-color: #ef4444; }
+  .answer-btn:disabled { pointer-events: none; }
+
+  /* ============ TYPED-ANSWER AREA (Golden Challenge) ============ */
+  #typed-area { display: none; flex-direction: column; gap: 10px; }
+  #typed-area.show { display: flex; }
+  #typed-input {
+    font-family: inherit; font-size: 18px; font-weight: 700; color: #1c1503;
+    padding: 14px 16px; border-radius: 14px; border: 3px solid #fbbf24; background: #fffbeb;
+    width: 100%; text-align: center;
+  }
+  #typed-input:focus { outline: none; border-color: #d97706; }
+  #typed-input.correct-flash { border-color: #22c55e; background: #dcfce7; }
+  #typed-input.wrong-flash { border-color: #ef4444; background: #fee2e2; animation: shake .4s; }
+  #typed-submit {
+    background: linear-gradient(90deg, #d97706, #fbbf24); color: #451a03;
+    font-size: 17px; font-weight: 900; padding: 14px; border-radius: 14px;
+  }
+
+  /* ============ FEEDBACK / LESSON PANEL ============ */
+  #feedback-panel {
+    display: none; margin-top: 10px; border-radius: 16px; padding: 14px 16px;
+    animation: popIn .35s ease; line-height: 1.6;
+  }
+  #feedback-panel.show { display: block; }
+  #feedback-panel.good { background: rgba(22,163,74,.18); border: 2px solid #22c55e; }
+  #feedback-panel.bad  { background: rgba(220,38,38,.16); border: 2px solid #ef4444; }
+  #feedback-title { font-size: 16px; font-weight: 900; margin-bottom: 4px; }
+  #feedback-panel.good #feedback-title { color: #4ade80; }
+  #feedback-panel.bad  #feedback-title { color: #f87171; }
+  #feedback-answer { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  #feedback-tip { font-size: 14.5px; color: #ddd6fe; }
+  #next-btn {
+    display: none; margin-top: 12px; width: 100%;
+    background: linear-gradient(90deg, #0ea5e9, #6366f1); color: #fff;
+    font-size: 17px; font-weight: 800; padding: 13px; border-radius: 12px;
+    box-shadow: 0 5px 14px rgba(14,165,233,.4);
+    position: relative; overflow: hidden;
+  }
+  #next-btn.show { display: block; animation: popIn .4s ease; }
+  #next-btn .auto-fill {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+    background: rgba(255,255,255,.22); pointer-events: none;
+  }
+  #streak-badge { text-align: center; font-size: 13px; font-weight: 800; color: #fbbf24; min-height: 18px; margin-top: 6px; }
+
+  /* ============ PET POP (cat / dog) ============ */
+  #pet-pop {
+    position: fixed; inset: 0; display: none; z-index: 50;
+    align-items: center; justify-content: center; flex-direction: column;
+    pointer-events: none;
+  }
+  #pet-pop.show { display: flex; }
+  #pet-emoji { font-size: 110px; animation: petBounce .8s ease; filter: drop-shadow(0 10px 25px rgba(0,0,0,.6)); }
+  #pet-text {
+    font-size: 22px; font-weight: 900; margin-top: 6px; padding: 8px 22px; border-radius: 999px;
+    animation: petBounce .8s ease;
+  }
+  #pet-pop.good #pet-text { background: #16a34a; color: #fff; }
+  #pet-pop.bad  #pet-text { background: #dc2626; color: #fff; }
+  #pet-pop.fading #pet-emoji, #pet-pop.fading #pet-text { animation: petFade .5s ease forwards; }
+  @keyframes petFade { to { opacity: 0; transform: scale(.8); } }
+
+  /* ============ MODALS ============ */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 100;
+    display: none; align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-card {
+    background: linear-gradient(180deg, #2d1b4e, #1a0b2e);
+    border: 2px solid rgba(255,255,255,.2); border-radius: 22px;
+    padding: 28px 22px; text-align: center; width: 100%; max-width: 360px;
+    animation: popIn .45s cubic-bezier(.18,1.25,.4,1);
+  }
+  .modal-emoji { font-size: 72px; }
+  .modal-title { font-size: 30px; font-weight: 900; margin: 8px 0; }
+  .modal-text { font-size: 15px; color: #d8cffc; line-height: 1.6; margin-bottom: 18px; }
+  #fail-modal .modal-title { color: #f87171; }
+  #cheat-modal .modal-title { color: #fbbf24; }
+
+  /* ============ END SCREENS ============ */
+  #victory-screen, #defeat-screen, #legend-screen { justify-content: center; text-align: center; gap: 13px; }
+  .end-emoji { font-size: 84px; }
+  .end-title { font-size: 30px; font-weight: 900; }
+  #victory-screen .end-title { color: #fbbf24; }
+  #defeat-screen .end-title { color: #f87171; }
+  #legend-screen .end-title {
+    background: linear-gradient(90deg, #fde047, #f59e0b, #fde047);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-size: 34px;
+  }
+  #rank-line { font-size: 17px; font-weight: 900; color: #a5f3fc; }
+  .stats-card {
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15);
+    border-radius: 16px; padding: 15px; font-size: 16px; line-height: 2; font-weight: 600;
+  }
+  .stars { font-size: 32px; letter-spacing: 6px; }
+  .screenshot-hint { font-size: 14px; color: #c4b5fd; line-height: 1.6; }
+  #challenge-offer { display: none; flex-direction: column; gap: 8px; }
+  #challenge-offer.show { display: flex; animation: popIn .5s ease; }
+  #challenge-note { font-size: 13.5px; color: #fde047; font-weight: 700; }
+  #legend-crown { font-size: 100px; animation: crownFloat 2.4s ease-in-out infinite; filter: drop-shadow(0 0 30px rgba(253,224,71,.8)); }
+  @keyframes crownFloat { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-14px) rotate(3deg); } }
+
+  /* ============ EFFECTS ============ */
+  body.flash-red { animation: redFlash .5s; }
+  @keyframes bossFly {
+    0%,100% { transform: translateY(0) translateX(0) rotate(0deg); }
+    25% { transform: translateY(-12px) translateX(-14px) rotate(-4deg); }
+    50% { transform: translateY(-4px) translateX(0) rotate(0deg); }
+    75% { transform: translateY(-14px) translateX(14px) rotate(4deg); }
+  }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-14px) rotate(-7deg); } 40% { transform: translateX(12px) rotate(6deg); } 60% { transform: translateX(-9px); } 80% { transform: translateX(7px); } }
+  @keyframes lunge { 0%,100% { transform: scale(1); } 35% { transform: scale(1.4) translateY(16px); } 70% { transform: scale(1.15) translateY(8px); } }
+  @keyframes fireFly {
+    0%   { opacity: 1; transform: translate(-50%, 0) scale(.6); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--fx, 0px)), 55vh) scale(1.8); }
+  }
+  @keyframes floatUp { 0% { opacity: 1; top: 24px; } 100% { opacity: 0; top: -34px; } }
+  @keyframes redFlash { 0%,100% { background-color: transparent; } 30% { background-color: rgba(239,68,68,.28); } }
+  @keyframes petBounce {
+    0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+    55% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  @keyframes popIn { 0% { transform: scale(.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+<body>
+<button id="sound-toggle" onclick="toggleSound()">🔊</button>
+<button id="music-toggle" onclick="toggleMusic()">🎵</button>
+<div id="app">
+
+  <!-- ================= START ================= -->
+  <div id="start-screen" class="screen active">
+    <div class="boss-preview">🐉</div>
+    <div>
+      <div class="game-title">BOSS BATTLE</div>
+      <div class="unit-label" id="unit-label"></div>
+    </div>
+    <div id="best-xp-line"></div>
+    <div class="rules">
+      🐉 The Fire Dragon guards Unit 1!<br>
+      ⚔️ Answer questions to attack it. ⏱️ <b>20 seconds</b> per question!<br>
+      ✅ Correct = the dragon loses HP 😺 · ❌ Wrong = you lose 1 heart 🐶<br>
+      💡 After every answer, read the tip — it teaches you the rule!<br>
+      💀 Lose all 3 hearts = you fail.<br>
+      🚪 Leave this page = restart with NEW questions!<br>
+      👑 Finish fast or perfect to unlock the <b>GOLDEN DRAGON</b>!
+    </div>
+    <button class="btn-primary" onclick="startGame()">▶ START BATTLE</button>
+  </div>
+
+  <!-- ================= BATTLE ================= -->
+  <div id="battle-screen" class="screen">
+    <div id="hud">
+      <span id="lives"></span>
+      <span id="xp-display"></span>
+    </div>
+    <div id="boss-area">
+      <div id="boss-name"></div>
+      <div id="boss-wrap">
+        <span id="boss-sprite">🐉</span>
+        <span id="dmg-float"></span>
+      </div>
+      <div class="hp-bar-wrap">
+        <div id="hp-bar"></div>
+        <div id="hp-text"></div>
+      </div>
+    </div>
+    <div id="timer-label">⏱️ 20s</div>
+    <div id="timer-wrap"><div id="timer-bar"></div></div>
+    <div style="text-align:center"><span id="category-chip"></span></div>
+    <div id="question-box">
+      <div id="question-text"></div>
+      <div id="progress-text"></div>
+    </div>
+    <div id="answers"></div>
+    <div id="typed-area">
+      <input id="typed-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer...">
+      <button id="typed-submit" onclick="submitTyped()">⚔️ ATTACK</button>
+    </div>
+    <div id="feedback-panel">
+      <div id="feedback-title"></div>
+      <div id="feedback-answer"></div>
+      <div id="feedback-tip"></div>
+      <button id="next-btn" onclick="continueAfterFeedback()"><span class="auto-fill" id="auto-fill"></span>NEXT ▶</button>
+    </div>
+    <div id="streak-badge"></div>
+  </div>
+
+  <!-- ================= VICTORY ================= -->
+  <div id="victory-screen" class="screen">
+    <div class="end-emoji">🏆</div>
+    <div class="end-title">DRAGON DEFEATED!</div>
+    <div id="rank-line"></div>
+    <div class="stars" id="victory-stars"></div>
+    <div class="stats-card">
+      ⭐ XP earned: <span id="final-xp"></span><br>
+      ✅ Correct answers: <span id="final-correct"></span><br>
+      ❤️ Hearts left: <span id="final-lives"></span>
+    </div>
+    <div id="challenge-offer">
+      <div id="challenge-note">👑 You earned a challenge from the GOLDEN DRAGON!<br>Type the answers yourself — double XP!</div>
+      <button class="btn-gold" onclick="startGolden()">🐲 FIGHT THE GOLDEN DRAGON</button>
+      <button class="btn-ghost" onclick="skipChallenge()">No thanks, keep my victory</button>
+    </div>
+    <div class="screenshot-hint" id="victory-hint">📸 Take a screenshot of this screen<br>and show it to your teacher!</div>
+    <button class="btn-primary" id="victory-replay" onclick="resetGame()">🔄 PLAY AGAIN (new questions)</button>
+  </div>
+
+  <!-- ================= LEGEND (golden victory) ================= -->
+  <div id="legend-screen" class="screen">
+    <div id="legend-crown">👑</div>
+    <div class="end-title">LEGEND OF UNIT 1!</div>
+    <div id="legend-rank" style="font-size:16px;font-weight:900;color:#fde047;">You defeated the GOLDEN DRAGON!</div>
+    <div class="stats-card">
+      ⭐ Total XP: <span id="legend-xp"></span><br>
+      🐉 Fire Dragon: <span id="legend-base"></span> XP<br>
+      🐲 Golden Dragon: <span id="legend-bonus"></span> XP
+    </div>
+    <div class="screenshot-hint">📸 Screenshot this — very few students<br>will ever see this screen! 🌟</div>
+    <button class="btn-primary" onclick="resetGame()">🔄 PLAY AGAIN</button>
+  </div>
+
+  <!-- ================= DEFEAT ================= -->
+  <div id="defeat-screen" class="screen">
+    <div class="end-emoji">💀</div>
+    <div class="end-title">GAME OVER</div>
+    <div class="stats-card">
+      The dragon was too strong this time.<br>
+      ⭐ XP earned: <span id="defeat-xp"></span><br>
+      ✅ Correct answers: <span id="defeat-correct"></span>
+    </div>
+    <div class="screenshot-hint">Don't give up — try again with new questions! 💪</div>
+    <button class="btn-primary" onclick="resetGame()">🔄 TRY AGAIN</button>
+  </div>
+
+  <!-- ================= PET POP ================= -->
+  <div id="pet-pop">
+    <div id="pet-emoji"></div>
+    <div id="pet-text"></div>
+  </div>
+
+  <!-- ================= FAIL MODAL ================= -->
+  <div id="fail-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-emoji">🐉🔥</div>
+      <div class="modal-title">YOU FAILED!</div>
+      <div class="modal-text" id="fail-text">The Fire Dragon wins this time...<br>But heroes never give up!</div>
+      <button class="btn-primary" onclick="closeFailModal()">CONTINUE</button>
+    </div>
+  </div>
+
+  <!-- ================= LEFT-PAGE MODAL ================= -->
+  <div id="cheat-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-emoji">🚪🐉</div>
+      <div class="modal-title">YOU LEFT THE BATTLE!</div>
+      <div class="modal-text">The dragon saw you leave the page.<br>The battle restarts — with <b>different questions</b>!</div>
+      <button class="btn-primary" onclick="restartAfterCheat()">⚔️ FIGHT AGAIN</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =====================================================================
+   ⚙️ GAME CONTENT — Outlook (Common Core) · UNIT 1: MYSELF & OTHERS
+   ---------------------------------------------------------------------
+   Source: Outlook Student's Book, Unit 1 (pages 8–17) ONLY:
+   verb "be" (all forms), plural nouns, names & titles, ways of
+   greeting, introducing oneself/others, reading "The Pygmies",
+   and the Unit 1 Fun Page quiz.
+   ===================================================================== */
+const CONFIG = {
+  unitTitle: "Outlook · Common Core · Unit 1: Myself & Others",
+  bossName: "The Fire Dragon",
+  bossEmoji: "🐉",
+  goldenName: "The Golden Dragon",
+  goldenEmoji: "🐲",
+  lives: 3,
+  xpPerCorrect: 10,
+  streakBonus: 5,
+  goldenXpPerCorrect: 20,     // double XP in the golden challenge
+  goldenStreakBonus: 10,
+  secondsPerQuestion: 20,
+  secondsPerTyped: 35,        // more time when typing
+  readTimeCorrect: 7,         // seconds before auto-advance after a correct answer
+  fastAvgSeconds: 8           // avg seconds/question to count as a "fast" finish
+};
+
+/* How many multiple-choice questions to draw per category each game */
+const PICK_PER_CATEGORY = { "Grammar": 4, "Vocabulary": 2, "Functions": 2, "Reading": 2, "Fun Page": 1 };
+const GOLDEN_PICK = 8;        // typed questions per golden challenge
+
+const QUESTION_BANK = [
+  /* ---------- GRAMMAR: verb "be" ---------- */
+  { category: "Grammar", q: "She ____ a student.", options: ["am", "are", "is", "be"], answer: 2,
+    tip: "Use IS with he, she and it. → She is / He is / It is." },
+  { category: "Grammar", q: "They ____ from the United States.", options: ["is", "are", "am", "be"], answer: 1,
+    tip: "Use ARE with you, we and they. → They are from the USA." },
+  { category: "Grammar", q: "I ____ Moroccan.", options: ["am", "is", "are", "be"], answer: 0,
+    tip: "Use AM only with I. → I am Moroccan. (Short form: I'm)" },
+  { category: "Grammar", q: "____ you Tunisian?", options: ["Is", "Am", "Be", "Are"], answer: 3,
+    tip: "Questions with 'you' start with ARE. → Are you Tunisian?" },
+  { category: "Grammar", q: "He ____ Tunisian. He's Moroccan.", options: ["isn't", "aren't", "am not", "not is"], answer: 0,
+    tip: "Negative of 'is' = isn't (is not). → He isn't Tunisian." },
+  { category: "Grammar", q: "____ Nora a student in this school?", options: ["Are", "Is", "Am", "Do"], answer: 1,
+    tip: "Nora = she, so the question starts with IS. → Is Nora a student?" },
+  { category: "Grammar", q: "What is the full form of \"I'm\"?", options: ["I is", "I be", "I am", "I are"], answer: 2,
+    tip: "I'm is the short form of I AM. The ' replaces the letter a." },
+  { category: "Grammar", q: "What is the short form of \"they are not\"?", options: ["they arn't", "they aren't", "they isn't", "they're"], answer: 1,
+    tip: "are not → aren't. Careful with the spelling: a-r-e-n-'t." },
+  { category: "Grammar", q: "Mum and Dad ____ impatient to learn Arabic.", options: ["is", "am", "be", "are"], answer: 3,
+    tip: "Mum and Dad = two people = they → use ARE." },
+  { category: "Grammar", q: "We ____ here for long, but we're happy to meet you.", options: ["isn't", "am not", "aren't", "not"], answer: 2,
+    tip: "We → are → negative: aren't (are not)." },
+  /* ---------- GRAMMAR: plural nouns ---------- */
+  { category: "Grammar", q: "What is the plural of \"child\"?", options: ["childs", "children", "childes", "childern"], answer: 1,
+    tip: "Child is IRREGULAR: child → children. (Like man → men.)" },
+  { category: "Grammar", q: "What is the plural of \"box\"?", options: ["boxes", "boxs", "boxies", "box"], answer: 0,
+    tip: "Nouns ending in x, sh, ch, ss take -ES: box → boxes." },
+  { category: "Grammar", q: "What is the plural of \"family\"?", options: ["familys", "familyes", "families", "family"], answer: 2,
+    tip: "Consonant + y → change y to -IES: family → families." },
+  { category: "Grammar", q: "What is the plural of \"wife\"?", options: ["wifes", "wives", "wifies", "wife"], answer: 1,
+    tip: "Nouns ending in f / fe → -VES: wife → wives, knife → knives." },
+  { category: "Grammar", q: "What is the plural of \"watch\"?", options: ["watchs", "watchies", "watch", "watches"], answer: 3,
+    tip: "Nouns ending in ch take -ES: watch → watches." },
+  { category: "Grammar", q: "What is the plural of \"man\"?", options: ["men", "mans", "manes", "mens"], answer: 0,
+    tip: "Man is IRREGULAR: man → men. (Like woman → women.)" },
+  { category: "Grammar", q: "What is the plural of \"tomato\"?", options: ["tomatos", "tomaties", "tomatoes", "tomato"], answer: 2,
+    tip: "Nouns ending in o take -ES: tomato → tomatoes." },
+  /* ---------- VOCABULARY: names & titles / greetings ---------- */
+  { category: "Vocabulary", q: "Which title is for a MARRIED woman?", options: ["Mr", "Miss", "Mrs", "Sir"], answer: 2,
+    tip: "Mrs = married woman · Miss = single woman · Ms = any woman · Mr = any man." },
+  { category: "Vocabulary", q: "Which title is for a SINGLE woman?", options: ["Miss", "Mrs", "Mr", "Madam"], answer: 0,
+    tip: "Miss = single woman · Mrs = married woman · Ms = any woman." },
+  { category: "Vocabulary", q: "\"Ms\" is a title for ____.", options: ["men only", "a woman, married or single", "married women only", "children"], answer: 1,
+    tip: "Ms works for ANY woman — married or single. Useful when you don't know!" },
+  { category: "Vocabulary", q: "\"Mr\" is a title for ____.", options: ["single men only", "married men only", "women", "men, single or married"], answer: 3,
+    tip: "Mr is for ALL men — single or married. Easy!" },
+  { category: "Vocabulary", q: "In many countries, people greet each other by shaking ____.", options: ["heads", "hands", "arms", "feet"], answer: 1,
+    tip: "Ways of greeting: shaking hands, hugging, bowing, kissing on the cheeks." },
+  { category: "Vocabulary", q: "Which of these is a way of greeting?", options: ["hugging", "sleeping", "writing", "cooking"], answer: 0,
+    tip: "Greetings: hugging, bowing, shaking hands, kissing on the cheeks, patting on the back." },
+  /* ---------- FUNCTIONS: hello/goodbye, introducing ---------- */
+  { category: "Functions", q: "Which expression means \"Goodbye\"?", options: ["How are you?", "How's everything?", "See you later", "Good morning"], answer: 2,
+    tip: "Goodbye words: See you later, So long, Take care, Good night." },
+  { category: "Functions", q: "Which expression means \"Hello\"?", options: ["So long", "How's everything?", "Take care", "Good night"], answer: 1,
+    tip: "Hello words: How are you?, How's everything?, Good morning." },
+  { category: "Functions", q: "\"So long\" means ____.", options: ["Goodbye", "Hello", "Thank you", "Sorry"], answer: 0,
+    tip: "So long = Goodbye. (Like 'See you later' and 'Take care'.)" },
+  { category: "Functions", q: "You meet someone new. You say: \"____\"", options: ["You're welcome", "Never mind", "Good luck", "Nice to meet you"], answer: 3,
+    tip: "First meeting → 'Nice to meet you.' Answer: 'Nice to meet you, too!'" },
+  { category: "Functions", q: "How do you introduce someone?", options: ["This is my brother, Robert.", "See you later, Robert.", "Take care, Robert.", "So long, Robert."], answer: 0,
+    tip: "To introduce a person, use: 'This is...' → This is my friend Nora." },
+  { category: "Functions", q: "How do you introduce yourself?", options: ["Take care!", "Hello! I'm Nora.", "Good night!", "You're welcome."], answer: 1,
+    tip: "Introduce yourself with: 'Hello! I'm...' or 'Hi! My name's...'" },
+  /* ---------- READING: "The Pygmies" ---------- */
+  { category: "Reading", q: "The Pygmies live in the forest in the centre of ____.", options: ["Asia", "Europe", "Africa", "America"], answer: 2,
+    tip: "From the text: 'The forest in the centre of Africa is a dangerous place.'" },
+  { category: "Reading", q: "Why do the Pygmies move easily in the forest?", options: ["Because they are very small", "Because they have cars", "Because they are very tall", "Because they are rich"], answer: 0,
+    tip: "The text says: 'They move easily in the forest because they are very small.'" },
+  { category: "Reading", q: "A big Pygmy is only ____ tall.", options: ["2 metres", "1 metre 80", "1 metre 40", "1 metre"], answer: 2,
+    tip: "From the text: 'A big Pygmy is only 1 metre 40 centimetres tall.'" },
+  { category: "Reading", q: "How do the Pygmies get their food?", options: ["From supermarkets", "From plants and animals in the forest", "From farms", "From restaurants"], answer: 1,
+    tip: "They are not farmers — they get food from the plants and animals in the forest." },
+  { category: "Reading", q: "The Pygmies are not rich, but they are ____.", options: ["sad", "afraid", "angry", "happy"], answer: 3,
+    tip: "From the text: 'They are not rich, but they are happy.'" },
+  { category: "Reading", q: "What is very important for the Pygmies?", options: ["Songs, dances and stories", "Cars and money", "Television", "Big houses"], answer: 0,
+    tip: "'Songs, dances and stories are very important for the Pygmies.'" },
+  /* ---------- FUN PAGE (Unit 1 General Knowledge Quiz) ---------- */
+  { category: "Fun Page", q: "What's the capital of Scotland?", options: ["London", "Dublin", "Edinburgh", "Cardiff"], answer: 2,
+    tip: "Edinburgh is the capital of Scotland. London is the capital of England." },
+  { category: "Fun Page", q: "Who is the founder of Fez?", options: ["Moulay Idriss II", "Moulay Ismail", "Moulay El Hassan I", "Moulay Hicham"], answer: 0,
+    tip: "Moulay Idriss II founded the city of Fez." },
+  { category: "Fun Page", q: "Where is the Portuguese Cistern?", options: ["In Madrid, Spain", "In Lisbon, Portugal", "In Brazilia, Brazil", "In El Jadida, Morocco"], answer: 3,
+    tip: "The Portuguese Cistern is in El Jadida, Morocco — right here at home! 🇲🇦" }
+];
+
+/* ---------- GOLDEN DRAGON: typed-answer questions (Unit 1 only) ----------
+   "accept" = list of allowed answers (normalized: lowercase, no apostrophes) */
+const GOLDEN_BANK = [
+  { q: "Write the plural of \"child\":", accept: ["children"], display: "children",
+    tip: "Child is IRREGULAR: child → children." },
+  { q: "Write the plural of \"wife\":", accept: ["wives"], display: "wives",
+    tip: "f / fe → -VES: wife → wives." },
+  { q: "Write the plural of \"family\":", accept: ["families"], display: "families",
+    tip: "Consonant + y → -IES: family → families." },
+  { q: "Write the plural of \"watch\":", accept: ["watches"], display: "watches",
+    tip: "Nouns ending in ch take -ES: watch → watches." },
+  { q: "Write the plural of \"man\":", accept: ["men"], display: "men",
+    tip: "Man is IRREGULAR: man → men." },
+  { q: "Write the plural of \"box\":", accept: ["boxes"], display: "boxes",
+    tip: "Nouns ending in x take -ES: box → boxes." },
+  { q: "Write the plural of \"tomato\":", accept: ["tomatoes"], display: "tomatoes",
+    tip: "Nouns ending in o take -ES: tomato → tomatoes." },
+  { q: "Complete with the verb be: \"She ____ a student.\"", accept: ["is"], display: "is",
+    tip: "Use IS with he, she and it." },
+  { q: "Complete with the verb be: \"I ____ Moroccan.\"", accept: ["am"], display: "am",
+    tip: "Use AM only with I." },
+  { q: "Complete with the verb be: \"They ____ from the United States.\"", accept: ["are"], display: "are",
+    tip: "Use ARE with you, we and they." },
+  { q: "Complete the question: \"____ you Tunisian?\"", accept: ["are"], display: "Are",
+    tip: "Questions with 'you' start with ARE." },
+  { q: "Write the SHORT form of \"is not\":", accept: ["isnt"], display: "isn't",
+    tip: "is not → isn't." },
+  { q: "Write the SHORT form of \"are not\":", accept: ["arent"], display: "aren't",
+    tip: "are not → aren't." },
+  { q: "Complete: \"Nice to ____ you.\"", accept: ["meet"], display: "meet",
+    tip: "First meeting → 'Nice to meet you.'" },
+  { q: "Write the title for a MARRIED woman:", accept: ["mrs", "mrs."], display: "Mrs",
+    tip: "Mrs = married woman · Miss = single · Ms = any woman." },
+  { q: "Write the title for a SINGLE woman:", accept: ["miss"], display: "Miss",
+    tip: "Miss = single woman." }
+];
+/* ================== END OF CONTENT BLOCK ================== */
+
+
+/* =====================================================================
+   🎮 GAME ENGINE — no need to touch anything below this line
+   ===================================================================== */
+let queue, lives, xp, correctCount, streak, bossHP, maxHP, dmgPerHit, locked;
+let battleActive = false;
+let leftPage = false;
+let totalPicked = 0;
+let timerId = null, timeLeft = 0;
+let pendingAction = null;
+let autoAdvanceId = null;
+let mode = 'boss';            // 'boss' | 'golden'
+let baseXP = 0;               // XP from the boss fight (kept if golden fails)
+let battleStart = 0;
+let challengeEarned = false;
+
+const CATS = ["😺", "😸", "😻", "🐱"];
+const CAT_MSGS = ["Purr-fect!", "Meow! Great hit!", "The cat is proud of you!", "Paw-some!"];
+const DOGS = ["🐶", "🐕", "🐩"];
+const DOG_MSGS = ["Woof... that's wrong!", "The dog is sad now...", "Ruff luck! Read the tip!", "Oh no! Learn and retry!"];
+
+/* ---------- SOUND (WebAudio, no files needed) ---------- */
+let soundOn = true;
+try { soundOn = localStorage.getItem('u1_sound') !== 'off'; } catch(e) {}
+let audioCtx = null;
+function beep(freq, dur, type, vol, delay) {
+  if (!soundOn) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const t = audioCtx.currentTime + (delay || 0);
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol || .15, t);
+    g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t + dur);
+  } catch(e) {}
+}
+function sfx(kind) {
+  if (kind === 'correct') { beep(660, .12, 'sine', .18); beep(880, .18, 'sine', .18, .1); }
+  else if (kind === 'wrong') { beep(200, .25, 'sawtooth', .12); beep(140, .3, 'sawtooth', .12, .12); }
+  else if (kind === 'victory') { [523,659,784,1047].forEach((f,i)=>beep(f,.22,'triangle',.18,i*.14)); }
+  else if (kind === 'fail') { [400,300,220,150].forEach((f,i)=>beep(f,.3,'sawtooth',.12,i*.18)); }
+  else if (kind === 'tick') { beep(1000, .05, 'square', .05); }
+  else if (kind === 'golden') { [784,988,1175,1568].forEach((f,i)=>beep(f,.2,'triangle',.18,i*.12)); }
+}
+function toggleSound() {
+  soundOn = !soundOn;
+  const b = document.getElementById('sound-toggle');
+  b.textContent = soundOn ? '🔊' : '🔇';
+  b.className = soundOn ? '' : 'off';
+  try { localStorage.setItem('u1_sound', soundOn ? 'on' : 'off'); } catch(e) {}
+}
+function buzz(pattern) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {} }
+
+/* ---------- MUSIC (WebAudio chiptune loop, no files needed) ----------
+   A minor dungeon theme: triangle-wave bass + square-wave lead.
+   The Golden Dragon fight plays it faster and 3 semitones higher. */
+let musicOn = true;
+try { musicOn = localStorage.getItem('u1_music') !== 'off'; } catch(e) {}
+let musicTimer = null, musicStep = 0, musicNextTime = 0, musicGain = null;
+let musicTempo = 116, musicTranspose = 0;
+/* MIDI note numbers; -1 = rest. 32 eighth-note steps = 4 bars, then loops. */
+const BASS_PAT = [45,-1,45,-1,48,-1,45,-1, 43,-1,43,-1,40,-1,43,-1,
+                  45,-1,45,-1,48,-1,50,-1, 43,-1,40,-1,43,-1,47,-1];
+const LEAD_PAT = [69,-1,72,74,76,-1,74,72, 69,-1,67,69,64,-1,-1,-1,
+                  69,-1,72,74,76,-1,79,76, 74,-1,72,74,69,-1,-1,-1];
+function midiF(n) { return 440 * Math.pow(2, (n - 69) / 12); }
+function ensureCtx() {
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playNote(midi, t, dur, type, vol) {
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = midiF(midi + musicTranspose);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g); g.connect(musicGain);
+  o.start(t); o.stop(t + dur);
+}
+function musicSchedule() {
+  try {
+    const stepDur = 60 / musicTempo / 2;   // eighth notes
+    while (musicNextTime < audioCtx.currentTime + .15) {
+      const b = BASS_PAT[musicStep % BASS_PAT.length];
+      const l = LEAD_PAT[musicStep % LEAD_PAT.length];
+      if (b >= 0) playNote(b, musicNextTime, stepDur * .9, 'triangle', .11);
+      if (l >= 0) playNote(l, musicNextTime, stepDur * .85, 'square', .04);
+      musicNextTime += stepDur;
+      musicStep++;
+    }
+  } catch(e) {}
+}
+function startMusic(golden) {
+  stopMusic();
+  if (!musicOn) return;
+  try {
+    ensureCtx();
+    if (!musicGain) { musicGain = audioCtx.createGain(); musicGain.connect(audioCtx.destination); }
+    musicTranspose = golden ? 3 : 0;
+    musicTempo = golden ? 138 : 116;
+    musicStep = 0;
+    musicNextTime = audioCtx.currentTime + .05;
+    musicTimer = setInterval(musicSchedule, 50);
+  } catch(e) {}
+}
+function stopMusic() { if (musicTimer) { clearInterval(musicTimer); musicTimer = null; } }
+function toggleMusic() {
+  musicOn = !musicOn;
+  const b = document.getElementById('music-toggle');
+  b.className = musicOn ? '' : 'off';
+  try { localStorage.setItem('u1_music', musicOn ? 'on' : 'off'); } catch(e) {}
+  if (!musicOn) stopMusic();
+  else if (battleActive) startMusic(mode === 'golden');
+}
+
+/* ---------- HELPERS ---------- */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function drawQuestions() {
+  let picked = [];
+  for (const [cat, n] of Object.entries(PICK_PER_CATEGORY)) {
+    const pool = shuffle(QUESTION_BANK.filter(q => q.category === cat));
+    picked = picked.concat(pool.slice(0, n));
+  }
+  return shuffle(picked);
+}
+function normalize(s) {
+  return s.toLowerCase().trim().replace(/['’`´]/g, '').replace(/\.$/, '').replace(/\s+/g, ' ');
+}
+function show(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+/* ---------- GAME START ---------- */
+function startGame() {
+  mode = 'boss';
+  document.body.classList.remove('golden-mode');
+  queue = drawQuestions();
+  totalPicked = queue.length;
+  lives = CONFIG.lives;
+  xp = 0; correctCount = 0; streak = 0; locked = false;
+  dmgPerHit = Math.ceil(100 / totalPicked);
+  maxHP = dmgPerHit * totalPicked;
+  bossHP = maxHP;
+  battleActive = true;
+  pendingAction = null;
+  battleStart = Date.now();
+  document.getElementById('boss-name').textContent = CONFIG.bossName;
+  document.getElementById('boss-sprite').textContent = CONFIG.bossEmoji;
+  startMusic(false);
+  updateHUD();
+  show('battle-screen');
+  nextQuestion();
+}
+
+function startGolden() {
+  mode = 'golden';
+  document.body.classList.add('golden-mode');
+  baseXP = xp;
+  queue = shuffle(GOLDEN_BANK).slice(0, GOLDEN_PICK);
+  totalPicked = queue.length;
+  lives = CONFIG.lives;
+  correctCount = 0; streak = 0; locked = false;
+  dmgPerHit = Math.ceil(100 / totalPicked);
+  maxHP = dmgPerHit * totalPicked;
+  bossHP = maxHP;
+  battleActive = true;
+  pendingAction = null;
+  sfx('golden');
+  document.getElementById('boss-name').textContent = CONFIG.goldenName;
+  document.getElementById('boss-sprite').textContent = CONFIG.goldenEmoji;
+  startMusic(true);
+  updateHUD();
+  show('battle-screen');
+  nextQuestion();
+}
+
+function updateHUD() {
+  document.getElementById('lives').textContent = '❤️'.repeat(lives) + '🖤'.repeat(CONFIG.lives - lives);
+  document.getElementById('xp-display').textContent = '⭐ ' + xp + ' XP';
+  const pct = Math.max(0, (bossHP / maxHP) * 100);
+  document.getElementById('hp-bar').style.width = pct + '%';
+  document.getElementById('hp-text').textContent = Math.max(0, bossHP) + ' / ' + maxHP + ' HP';
+  document.getElementById('streak-badge').textContent = streak >= 3 ? '🔥 Streak x' + streak + ' — bonus XP!' : '';
+}
+
+/* ---------- TIMER ---------- */
+function startTimer() {
+  stopTimer();
+  const secs = mode === 'golden' ? CONFIG.secondsPerTyped : CONFIG.secondsPerQuestion;
+  timeLeft = secs * 10;
+  const total = timeLeft;
+  const bar = document.getElementById('timer-bar');
+  const label = document.getElementById('timer-label');
+  bar.classList.remove('danger'); label.classList.remove('danger');
+  bar.style.width = '100%';
+  label.textContent = '⏱️ ' + secs + 's';
+  timerId = setInterval(() => {
+    timeLeft--;
+    bar.style.width = (timeLeft / total * 100) + '%';
+    label.textContent = '⏱️ ' + Math.ceil(timeLeft / 10) + 's';
+    if (timeLeft <= 50 && !bar.classList.contains('danger')) {
+      bar.classList.add('danger'); label.classList.add('danger');
+    }
+    if (timeLeft <= 50 && timeLeft % 10 === 0) sfx('tick');
+    if (timeLeft <= 0) { stopTimer(); timeOut(); }
+  }, 100);
+}
+function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+/* ---------- QUESTION FLOW ---------- */
+function nextQuestion() {
+  if (autoAdvanceId) { clearTimeout(autoAdvanceId); autoAdvanceId = null; }
+  locked = false;
+  pendingAction = null;
+  const item = queue[0];
+  document.getElementById('category-chip').textContent = mode === 'golden' ? '👑 Golden Challenge — TYPE it!' : item.category;
+  document.getElementById('question-text').textContent = item.q;
+  document.getElementById('progress-text').textContent = correctCount + ' / ' + totalPicked + ' hits landed';
+  hideFeedback();
+
+  const qbox = document.getElementById('question-box');
+  qbox.classList.remove('slide-in'); void qbox.offsetWidth; qbox.classList.add('slide-in');
+
+  const answersDiv = document.getElementById('answers');
+  const typedArea = document.getElementById('typed-area');
+
+  if (mode === 'golden') {
+    answersDiv.innerHTML = '';
+    typedArea.classList.add('show');
+    const input = document.getElementById('typed-input');
+    input.value = '';
+    input.className = '';
+    input.disabled = false;
+    document.getElementById('typed-submit').disabled = false;
+    setTimeout(() => input.focus(), 150);
+  } else {
+    typedArea.classList.remove('show');
+    answersDiv.innerHTML = '';
+    const order = shuffle([0, 1, 2, 3]);
+    order.forEach(optIdx => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = item.options[optIdx];
+      btn.onclick = () => answer(btn, optIdx === item.answer, item);
+      answersDiv.appendChild(btn);
+    });
+  }
+  startTimer();
+}
+
+/* ---------- FEEDBACK PANEL ---------- */
+function showFeedback(good, title, answerLine, tip, withNextBtn, autoSecs) {
+  const panel = document.getElementById('feedback-panel');
+  document.getElementById('feedback-title').textContent = title;
+  document.getElementById('feedback-answer').textContent = answerLine;
+  document.getElementById('feedback-tip').textContent = tip ? '💡 ' + tip : '';
+  panel.className = 'show ' + (good ? 'good' : 'bad');
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.className = withNextBtn ? 'show' : '';
+  const fill = document.getElementById('auto-fill');
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  if (withNextBtn && autoSecs) {
+    /* NEXT button slowly fills to show auto-advance is coming */
+    requestAnimationFrame(() => {
+      fill.style.transition = 'width ' + autoSecs + 's linear';
+      fill.style.width = '100%';
+    });
+  }
+}
+function hideFeedback() {
+  document.getElementById('feedback-panel').className = '';
+  document.getElementById('next-btn').className = '';
+  document.getElementById('auto-fill').style.width = '0%';
+}
+function continueAfterFeedback() {
+  if (autoAdvanceId) { clearTimeout(autoAdvanceId); autoAdvanceId = null; }
+  if (pendingAction) { const fn = pendingAction; pendingAction = null; fn(); }
+}
+
+/* ---------- PET POPS ---------- */
+function petPop(good, durationMs) {
+  const pop = document.getElementById('pet-pop');
+  const emo = document.getElementById('pet-emoji');
+  const txt = document.getElementById('pet-text');
+  if (good) {
+    emo.textContent = CATS[Math.floor(Math.random() * CATS.length)];
+    txt.textContent = CAT_MSGS[Math.floor(Math.random() * CAT_MSGS.length)];
+    pop.className = 'show good';
+  } else {
+    emo.textContent = DOGS[Math.floor(Math.random() * DOGS.length)];
+    txt.textContent = DOG_MSGS[Math.floor(Math.random() * DOG_MSGS.length)];
+    pop.className = 'show bad';
+  }
+  setTimeout(() => { pop.classList.add('fading'); }, durationMs - 500);
+  setTimeout(() => { pop.className = ''; }, durationMs);
+}
+
+function breatheFire() {
+  const boss = document.getElementById('boss-sprite');
+  boss.classList.remove('breathe'); void boss.offsetWidth; boss.classList.add('breathe');
+  const wrap = document.getElementById('boss-wrap');
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const f = document.createElement('span');
+      f.className = 'fireball';
+      f.textContent = '🔥';
+      f.style.setProperty('--fx', (Math.random() * 160 - 80) + 'px');
+      wrap.appendChild(f);
+      setTimeout(() => f.remove(), 1000);
+    }, i * 120);
+  }
+  document.body.classList.remove('flash-red'); void document.body.offsetWidth;
+  document.body.classList.add('flash-red');
+}
+
+/* ---------- ANSWER HANDLING (multiple choice) ---------- */
+function answer(btn, isCorrect, item) {
+  if (locked) return;
+  locked = true;
+  stopTimer();
+  document.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    handleCorrect(item);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.answer-btn').forEach(b => {
+      if (b.textContent === item.options[item.answer]) b.classList.add('correct');
+    });
+    handleWrong(item, '❌ Wrong answer!');
+  }
+}
+
+/* ---------- ANSWER HANDLING (typed / golden) ---------- */
+function submitTyped() {
+  if (locked) return;
+  const input = document.getElementById('typed-input');
+  const val = normalize(input.value);
+  if (!val) { input.focus(); return; }
+  locked = true;
+  stopTimer();
+  input.disabled = true;
+  document.getElementById('typed-submit').disabled = true;
+  const item = queue[0];
+  const ok = item.accept.map(normalize).includes(val);
+  input.className = ok ? 'correct-flash' : 'wrong-flash';
+  if (ok) handleCorrect(item);
+  else handleWrong(item, '❌ Not quite!');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && mode === 'golden' && battleActive && !locked
+      && document.getElementById('typed-area').classList.contains('show')) {
+    submitTyped();
+  }
+});
+
+function timeOut() {
+  if (locked) return;
+  locked = true;
+  const item = queue[0];
+  document.querySelectorAll('.answer-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === item.options[item.answer]) b.classList.add('correct');
+  });
+  if (mode === 'golden') {
+    document.getElementById('typed-input').disabled = true;
+    document.getElementById('typed-submit').disabled = true;
+  }
+  handleWrong(item, '⏱️ Time is up!');
+}
+
+function correctAnswerText(item) {
+  return mode === 'golden' ? item.display : item.options[item.answer];
+}
+
+function handleCorrect(item) {
+  queue.shift();
+  correctCount++;
+  streak++;
+  const perHit = mode === 'golden' ? CONFIG.goldenXpPerCorrect : CONFIG.xpPerCorrect;
+  const bonusVal = mode === 'golden' ? CONFIG.goldenStreakBonus : CONFIG.streakBonus;
+  const bonus = streak >= 3 ? bonusVal : 0;
+  xp += perHit + bonus;
+  bossHP -= dmgPerHit;
+
+  sfx('correct');
+  buzz(60);
+  const boss = document.getElementById('boss-sprite');
+  boss.classList.remove('hit'); void boss.offsetWidth; boss.classList.add('hit');
+  const dmg = document.getElementById('dmg-float');
+  dmg.textContent = '-' + dmgPerHit;
+  dmg.classList.remove('show'); void dmg.offsetWidth; dmg.classList.add('show');
+  petPop(true, 1600);
+  updateHUD();
+
+  if (bossHP <= 0) {
+    setTimeout(mode === 'golden' ? legendVictory : victory, 1800);
+    return;
+  }
+  /* Correct: show the tip with a NEXT button AND a slow auto-advance,
+     so fast readers tap through and slow readers are never rushed. */
+  showFeedback(true,
+    '⚔️ Great hit! +' + (perHit + bonus) + ' XP' + (bonus ? ' (streak bonus!)' : ''),
+    '✅ "' + correctAnswerText(item) + '"', item.tip, true, CONFIG.readTimeCorrect);
+  pendingAction = nextQuestion;
+  autoAdvanceId = setTimeout(() => {
+    autoAdvanceId = null;
+    if (battleActive) continueAfterFeedback();
+  }, CONFIG.readTimeCorrect * 1000);
+}
+
+function handleWrong(item, titleText) {
+  queue.push(queue.shift());
+  lives--;
+  streak = 0;
+
+  sfx('wrong');
+  buzz([80, 60, 120]);
+  breatheFire();
+  petPop(false, 2200);
+  updateHUD();
+
+  if (lives <= 0) {
+    showFeedback(false, titleText, '✅ Correct answer: "' + correctAnswerText(item) + '"', item.tip, false);
+    setTimeout(showFailModal, 2400);
+    return;
+  }
+  /* Wrong: NO auto-advance — student taps NEXT when ready. */
+  showFeedback(false, titleText, '✅ Correct answer: "' + correctAnswerText(item) + '"', item.tip, true);
+  pendingAction = nextQuestion;
+}
+
+/* ---------- FAIL / VICTORY ---------- */
+function showFailModal() {
+  battleActive = false;
+  stopMusic();
+  sfx('fail');
+  buzz([150, 80, 150, 80, 300]);
+  document.getElementById('fail-text').innerHTML = mode === 'golden'
+    ? 'The Golden Dragon was too strong...<br>But your first victory still counts!'
+    : 'The Fire Dragon wins this time...<br>But heroes never give up!';
+  document.getElementById('fail-modal').classList.add('show');
+}
+function closeFailModal() {
+  document.getElementById('fail-modal').classList.remove('show');
+  if (mode === 'golden') {
+    /* Golden failed → back to the victory screen; base victory is kept */
+    xp = baseXP;
+    document.body.classList.remove('golden-mode');
+    showVictoryScreen(false);
+  } else {
+    document.getElementById('defeat-xp').textContent = xp;
+    document.getElementById('defeat-correct').textContent = correctCount + ' / ' + totalPicked;
+    show('defeat-screen');
+  }
+}
+
+function saveBest() {
+  try {
+    const best = parseInt(localStorage.getItem('u1_best_xp') || '0');
+    if (xp > best) localStorage.setItem('u1_best_xp', xp);
+  } catch(e) {}
+}
+function showBest() {
+  try {
+    const best = parseInt(localStorage.getItem('u1_best_xp') || '0');
+    document.getElementById('best-xp-line').textContent = best > 0 ? '🏅 Your best: ' + best + ' XP' : '';
+  } catch(e) {}
+}
+
+function victory() {
+  battleActive = false;
+  stopTimer();
+  stopMusic();
+  sfx('victory');
+  buzz([60, 40, 60, 40, 200]);
+  const elapsed = (Date.now() - battleStart) / 1000;
+  const fast = elapsed <= totalPicked * CONFIG.fastAvgSeconds;
+  const perfect = lives === CONFIG.lives;
+  challengeEarned = fast || perfect;
+  showVictoryScreen(challengeEarned);
+}
+
+function showVictoryScreen(offerChallenge) {
+  saveBest();
+  document.getElementById('final-xp').textContent = xp;
+  document.getElementById('final-correct').textContent = correctCount + ' / ' + totalPicked;
+  document.getElementById('final-lives').textContent = lives + ' / ' + CONFIG.lives;
+  document.getElementById('victory-stars').textContent = '⭐'.repeat(Math.max(lives,1)) + '☆'.repeat(CONFIG.lives - Math.max(lives,1));
+  document.getElementById('rank-line').textContent =
+    lives === CONFIG.lives ? '🎖️ Rank: DRAGON MASTER — perfect battle!' : '🎖️ Rank: BOSS SLAYER';
+  document.getElementById('challenge-offer').className = offerChallenge ? 'show' : '';
+  show('victory-screen');
+}
+
+function skipChallenge() {
+  document.getElementById('challenge-offer').className = '';
+}
+
+function legendVictory() {
+  battleActive = false;
+  stopTimer();
+  stopMusic();
+  sfx('golden');
+  buzz([60, 40, 60, 40, 60, 40, 300]);
+  document.body.classList.remove('golden-mode');
+  saveBest();
+  document.getElementById('legend-xp').textContent = xp;
+  document.getElementById('legend-base').textContent = baseXP;
+  document.getElementById('legend-bonus').textContent = xp - baseXP;
+  show('legend-screen');
+}
+
+function resetGame() {
+  document.body.classList.remove('golden-mode');
+  stopMusic();
+  showBest();
+  show('start-screen');
+}
+
+/* ---------- ANTI-CHEAT: leaving the page restarts the battle ---------- */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && battleActive) {
+    leftPage = true;
+    battleActive = false;
+    stopTimer();
+    stopMusic();
+  } else if (!document.hidden && leftPage) {
+    leftPage = false;
+    document.getElementById('fail-modal').classList.remove('show');
+    document.getElementById('cheat-modal').classList.add('show');
+  }
+});
+function restartAfterCheat() {
+  document.getElementById('cheat-modal').classList.remove('show');
+  document.body.classList.remove('golden-mode');
+  startGame();   // always restarts from the boss fight with a fresh set
+}
+
+/* ---------- BACKGROUND EMBERS ---------- */
+(function spawnEmbers() {
+  for (let i = 0; i < 12; i++) {
+    const e = document.createElement('span');
+    e.className = 'ember';
+    e.textContent = Math.random() < 0.5 ? '🔥' : '✨';
+    e.style.left = Math.random() * 100 + 'vw';
+    e.style.fontSize = (8 + Math.random() * 10) + 'px';
+    e.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+    e.style.animationDuration = (7 + Math.random() * 8) + 's';
+    e.style.animationDelay = (Math.random() * 8) + 's';
+    document.body.appendChild(e);
+  }
+})();
+
+document.getElementById('unit-label').textContent = CONFIG.unitTitle;
+document.getElementById('sound-toggle').textContent = soundOn ? '🔊' : '🔇';
+document.getElementById('sound-toggle').className = soundOn ? '' : 'off';
+document.getElementById('music-toggle').className = musicOn ? '' : 'off';
+showBest();
+</script>
+</body>
+</html>
