@@ -1047,16 +1047,24 @@ const LESSONS = [
 let lessonIdx = 0, learnStep = 0, lessonPhase = 'steps', exIdx = 0, exAnswered = false;
 
 /* ---------- GUIDE VOICE (text + speech) ---------- */
+function bestVoice() {
+  const vs = (speechSynthesis.getVoices() || []).filter(v => v.lang && v.lang.indexOf('en') === 0);
+  const sc = v => {
+    const n = v.name + ' ' + v.lang;
+    return (/natural|neural/i.test(n) ? 8 : 0) + (/google/i.test(n) ? 4 : 0)
+         + (/online/i.test(n) ? 2 : 0) + (/female|GB|UK/i.test(n) ? 1 : 0);
+  };
+  return vs.sort((a, b) => sc(b) - sc(a))[0];
+}
 function speakText(text) {
   try {
     if (!soundOn || !window.speechSynthesis) return;
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'en-GB';
-    u.rate = 0.92;
-    const voices = speechSynthesis.getVoices();
-    const en = voices.find(v => v.lang && v.lang.startsWith('en'));
-    if (en) u.voice = en;
+    u.rate = 0.95;
+    const v = bestVoice();
+    if (v) u.voice = v;
     speechSynthesis.speak(u);
   } catch(e) {}
 }
@@ -1295,9 +1303,11 @@ function heroName() {
   const p = loadProgress();
   return p.name || '';
 }
-/* When opened from the hub's ⚔️ Play button (#dungeon), land on the floor map */
+/* Hub deep links: ⚔️ Play → #dungeon (floor map) · ✏️ Practice → #practice (lesson quests) */
 function hubEntry() {
-  return window.location.hash === '#dungeon' ? showMap : showWorld;
+  if (window.location.hash === '#dungeon') return showMap;
+  if (window.location.hash === '#practice') return showUnit;
+  return showWorld;
 }
 function enterDungeon() {
   if (heroName()) hubEntry()();
@@ -2163,8 +2173,9 @@ document.getElementById('sound-toggle').textContent = soundOn ? '🔊' : '🔇';
 document.getElementById('sound-toggle').className = soundOn ? '' : 'off';
 document.getElementById('music-toggle').className = musicOn ? '' : 'off';
 document.getElementById('home-btn').className = 'show';   // the hub is always reachable
-/* Fast lane from the hub's ⚔️ Play button: returning players skip the title screen */
+/* Fast lane from the hub: returning players skip the title screen */
 if (window.location.hash === '#dungeon' && heroName()) showMap();
+else if (window.location.hash === '#practice' && heroName()) showUnit();
 </script>
 </body>
 </html>
