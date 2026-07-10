@@ -74,9 +74,10 @@
       if (kState === 'loading') { kState = 'failed'; status(null); }
     }, LOAD_TIMEOUT);
     import(KOKORO_CDN).then(mod => {
-      const dtype = (navigator.gpu ? 'q8' : 'q4');            // smaller download on weaker devices
-      const device = (navigator.gpu ? 'webgpu' : 'wasm');
-      return mod.KokoroTTS.from_pretrained(MODEL, { dtype: dtype, device: device });
+      /* WASM is slower than WebGPU but far more reliable across devices —
+         and a voice that always works beats a faster one that hangs. */
+      const dtype = (navigator.deviceMemory && navigator.deviceMemory >= 6 ? 'q8' : 'q4');
+      return mod.KokoroTTS.from_pretrained(MODEL, { dtype: dtype, device: 'wasm' });
     }).then(tts => {
       clearTimeout(timeout);
       if (kState === 'loading') {
@@ -127,23 +128,47 @@
     if (buf.trim()) out.push(buf.trim());
     return out;
   }
+  function generateGuarded(text, ms) {
+    /* watchdog: if the model hangs or errors, we must never leave silence */
+    return Promise.race([
+      kokoro.generate(text, { voice: VOICE }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('gen-timeout')), ms))
+    ]);
+  }
+  function audioBlob(audio) {
+    try { return audio.toBlob(); }
+    catch (e) { return new Blob([audio.toWav()], { type: 'audio/wav' }); }
+  }
   async function speakKokoro(t) {
     const token = ++genToken;
     const parts = splitSentences(t);
     for (let i = 0; i < parts.length; i++) {
       if (token !== genToken) return;
       let audio;
-      try { audio = await kokoro.generate(parts[i], { voice: VOICE }); }
-      catch (e) { if (token === genToken) speakSys(parts.slice(i).join(' ')); return; }
+      try { audio = await generateGuarded(parts[i], 15000); }
+      catch (e) {
+        /* model misbehaved → demote to the system voice for this session
+           and speak the rest immediately so the student hears something */
+        kState = 'failed'; kokoro = null;
+        if (token === genToken) speakSys(parts.slice(i).join(' '));
+        return;
+      }
       if (token !== genToken) return;
+      let played = false;
       await new Promise(res => {
         try {
-          const url = URL.createObjectURL(audio.toBlob());
+          const url = URL.createObjectURL(audioBlob(audio));
           curAudio = new Audio(url);
-          curAudio.onended = curAudio.onerror = () => { URL.revokeObjectURL(url); res(); };
-          curAudio.play().catch(() => res());
+          curAudio.onended = () => { played = true; URL.revokeObjectURL(url); res(); };
+          curAudio.onerror = () => { URL.revokeObjectURL(url); res(); };
+          curAudio.play().then(() => { played = true; }).catch(() => res());
         } catch (e) { res(); }
       });
+      if (!played && token === genToken) {          // playback itself failed → system voice
+        kState = 'failed'; kokoro = null;
+        speakSys(parts.slice(i).join(' '));
+        return;
+      }
     }
   }
 
