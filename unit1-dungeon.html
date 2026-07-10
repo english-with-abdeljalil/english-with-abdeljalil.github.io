@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="./eq-voice.js" defer></script>
+<script src="./eq-calm.js" defer></script>
+<script data-goatcounter="https://englishquest.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Unit 1 Dungeon">
@@ -1047,28 +1050,12 @@ const LESSONS = [
 let lessonIdx = 0, learnStep = 0, lessonPhase = 'steps', exIdx = 0, exAnswered = false;
 
 /* ---------- GUIDE VOICE (text + speech) ---------- */
-function bestVoice() {
-  const vs = (speechSynthesis.getVoices() || []).filter(v => v.lang && v.lang.indexOf('en') === 0);
-  const sc = v => {
-    const n = v.name + ' ' + v.lang;
-    return (/natural|neural/i.test(n) ? 8 : 0) + (/google/i.test(n) ? 4 : 0)
-         + (/online/i.test(n) ? 2 : 0) + (/female|GB|UK/i.test(n) ? 1 : 0);
-  };
-  return vs.sort((a, b) => sc(b) - sc(a))[0];
-}
+/* Shared EQVoice engine: cleaned text (no emojis), slower rate, Kokoro + fallback */
 function speakText(text) {
-  try {
-    if (!soundOn || !window.speechSynthesis) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-GB';
-    u.rate = 0.95;
-    const v = bestVoice();
-    if (v) u.voice = v;
-    speechSynthesis.speak(u);
-  } catch(e) {}
+  if (!soundOn) return;
+  if (window.EQVoice) EQVoice.speak(text);
 }
-function stopSpeaking() { try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch(e) {} }
+function stopSpeaking() { if (window.EQVoice) EQVoice.stop(); else { try { speechSynthesis.cancel(); } catch(e) {} } }
 
 /* ---------- WORLD MAP (home) ---------- */
 const UNIT_NAMES = ["Myself & Others", "What & How I Learn", "Our Shopping Habits", "Artistic Interests",
@@ -1343,6 +1330,7 @@ try { soundOn = localStorage.getItem('u1_sound') !== 'off'; } catch(e) {}
 let audioCtx = null;
 function beep(freq, dur, type, vol, delay) {
   if (!soundOn) return;
+  if (window.EQCalm && EQCalm.on) return;
   try {
     audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
     const t = audioCtx.currentTime + (delay || 0);
@@ -1370,7 +1358,7 @@ function toggleSound() {
   b.className = soundOn ? '' : 'off';
   try { localStorage.setItem('u1_sound', soundOn ? 'on' : 'off'); } catch(e) {}
 }
-function buzz(pattern) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {} }
+function buzz(pattern) { if (window.EQCalm && EQCalm.on) return; try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {} }
 
 /* ---------- MUSIC (WebAudio chiptune loop) ---------- */
 let musicOn = true;
@@ -1435,6 +1423,7 @@ function startMusic(kind) {
   stopMusic();
   lastMusicKind = kind;
   if (!musicOn) return;
+  if (window.EQCalm && EQCalm.on) return;
   try {
     ensureCtx();
     if (!musicGain) { musicGain = audioCtx.createGain(); musicGain.connect(audioCtx.destination); }

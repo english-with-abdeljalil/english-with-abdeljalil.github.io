@@ -11,6 +11,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="./eq-voice.js" defer></script>
+<script src="./eq-calm.js" defer></script>
+<script src="./eq-avatar.js" defer></script>
+<script data-goatcounter="https://englishquest.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'Segoe UI', system-ui, sans-serif;
@@ -99,6 +103,7 @@
   .r2 { background: rgba(0,0,0,.35); box-shadow: 0 4px 0 rgba(0,0,0,.4); }
   .confetti { position: fixed; top: -12px; font-size: 16px; z-index: 999; pointer-events: none; animation: fall linear forwards; }
   @keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: .2; } }
+  @keyframes floatUpStar { 0% { opacity: 0; margin-top: 0; } 25% { opacity: 1; } 100% { opacity: 0; margin-top: -70px; } }
 </style>
 </head>
 <body>
@@ -114,6 +119,25 @@
 <div id="wrap">
   <div id="library">
     <div class="page-title">✏️ The Exercise Library</div>
+
+    <!-- teacher guide + student avatar -->
+    <div id="guide-row" style="display:flex;align-items:flex-start;gap:10px;margin:6px 0 12px">
+      <button id="teacher-avatar" style="min-width:52px;height:52px;border-radius:50%;font-size:28px;cursor:pointer;
+        background:radial-gradient(circle at 35% 30%,#0ea5e9,#1e3a5f);border:2.5px solid #7dd3fc;
+        box-shadow:0 0 12px rgba(125,211,252,.4);display:flex;align-items:center;justify-content:center">🧑‍🏫</button>
+      <div id="guide-bubble" style="flex:1;background:#fff;color:#1a0b2e;border-radius:14px;border-top-left-radius:4px;
+        padding:11px 13px;font-size:14px;font-weight:600;line-height:1.55;min-height:48px">
+        <span id="guide-text"></span>
+        <div id="guide-btns" style="display:none;gap:8px;margin-top:9px">
+          <button id="guide-next" class="eq-btn" style="background:linear-gradient(90deg,#0ea5e9,#6366f1);box-shadow:0 3px 0 #075985;font-size:13px;padding:8px 16px">Next ▶</button>
+          <button id="guide-skip" class="eq-btn" style="background:rgba(0,0,0,.15);color:#1a0b2e;font-size:13px;padding:8px 14px">Skip</button>
+        </div>
+      </div>
+      <button id="my-avatar" title="Design your hero face!" style="min-width:52px;height:52px;border-radius:50%;cursor:pointer;
+        background:rgba(255,255,255,.08);border:2.5px solid #fbbf24;display:flex;align-items:center;justify-content:center;
+        box-shadow:0 0 12px rgba(251,191,36,.3);overflow:hidden;font-size:24px">✨</button>
+    </div>
+
     <div class="page-sub">Exercises from your textbook, our classroom worksheets, and more. Tap a set — answers are checked instantly, and your best score is saved. 💡 Tip: tap any question to hear it!</div>
 
     <a class="quick wizzy" href="./unit1-dungeon.html#practice">
@@ -126,6 +150,17 @@
     </a>
 
     <div id="sections"></div>
+  </div>
+
+  <!-- ===== FACE BUILDER (preset parts only) ===== -->
+  <div id="face-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9000;align-items:center;justify-content:center;padding:18px">
+    <div style="background:linear-gradient(180deg,#2d1b4e,#1a0b2e);border:2px solid rgba(255,255,255,.2);border-radius:22px;padding:20px;width:100%;max-width:380px;max-height:92vh;overflow:auto">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;text-align:center;margin-bottom:8px">✨ Design your hero face!</div>
+      <div id="face-preview" style="display:flex;justify-content:center;margin-bottom:10px"></div>
+      <div id="face-rows"></div>
+      <button id="face-save" class="eq-btn" style="width:100%;background:linear-gradient(160deg,#22c55e,#059669);box-shadow:0 5px 0 #14532d;font-size:16px;padding:13px;border-radius:14px;margin-top:10px">✅ Save my face!</button>
+      <button id="face-close" class="eq-btn" style="width:100%;background:rgba(0,0,0,.35);font-size:13px;padding:10px;border-radius:12px;margin-top:8px">Close</button>
+    </div>
   </div>
 
   <div id="runner">
@@ -427,6 +462,16 @@ function finish(ok, it, right) {
     fb.innerHTML = '🎉 <b>Correct!</b> 💡 ' + it.tip;
     fb.className = 'show good';
     pop(700); buzz(40);
+    /* quick, non-blocking celebration: a star floats up (hidden in calm mode) */
+    try {
+      const st = document.createElement('span');
+      st.className = 'confetti';
+      st.textContent = '+1 ⭐';
+      st.style.cssText = 'position:fixed;left:50%;top:55%;transform:translateX(-50%);font:900 22px "Segoe UI";color:#fbbf24;' +
+        'z-index:998;pointer-events:none;animation:floatUpStar .9s ease-out forwards';
+      document.body.appendChild(st);
+      setTimeout(() => st.remove(), 950);
+    } catch(e) {}
   } else {
     fb.innerHTML = '❌ <b>Not quite.</b> The answer is: “<b>' + correct + '</b>”<br>💡 ' + it.tip;
     fb.className = 'show bad';
@@ -466,24 +511,15 @@ function backToLib() {
   window.scrollTo(0, 0);
 }
 
-/* question voice: tap to hear */
+/* question voice: tap to hear (shared EQVoice: cleaned text, Kokoro + fallback) */
 document.getElementById('q-text').addEventListener('click', function() {
-  try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(this.textContent);
-    u.lang = 'en-GB'; u.rate = 0.95;
-    const vs = (speechSynthesis.getVoices() || []).filter(v => v.lang && v.lang.indexOf('en') === 0);
-    const sc = v => { const n = v.name + ' ' + v.lang;
-      return (/natural|neural/i.test(n) ? 8 : 0) + (/google/i.test(n) ? 4 : 0) + (/online/i.test(n) ? 2 : 0) + (/GB|UK|female/i.test(n) ? 1 : 0); };
-    const v = vs.sort((a, b) => sc(b) - sc(a))[0];
-    if (v) u.voice = v;
-    speechSynthesis.speak(u);
-  } catch(e) {}
+  if (window.EQVoice) EQVoice.speak(this.textContent);
 });
 
 /* juice */
 let actx = null;
 function pop(f) {
+  if (window.EQCalm && EQCalm.on) return;
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     const o = actx.createOscillator(), g = actx.createGain();
@@ -495,7 +531,7 @@ function pop(f) {
     o.start(); o.stop(actx.currentTime + .15);
   } catch(e) {}
 }
-function buzz(p) { try { navigator.vibrate && navigator.vibrate(p); } catch(e) {} }
+function buzz(p) { if (window.EQCalm && EQCalm.on) return; try { navigator.vibrate && navigator.vibrate(p); } catch(e) {} }
 function chime() { pop(523); setTimeout(() => pop(659), 120); setTimeout(() => pop(784), 240); }
 function confetti(n) {
   const E = ['🎉','⭐','✨','🎊'];
@@ -509,6 +545,94 @@ function confetti(n) {
   }
 }
 renderLibrary();
+
+/* =====================================================================
+   TEACHER GUIDE — walks students through Practice & the Dungeon
+   ===================================================================== */
+const GUIDE_STEPS = [
+  "Hello! I'm your teacher's helper. 🧑‍🏫 Let me show you how Practice works — tap Next!",
+  "This page is your Exercise Library. Every lesson has two sets: Set A is the essentials, Set B is a challenge. Tap any set to start!",
+  "Every answer is checked instantly, and you get a tip that teaches the rule. Your best score is saved — can you reach 100%?",
+  "Up here you also have Practice with Wizzy — he speaks! — and the full Interactive Worksheet.",
+  "When you feel ready, go to the DUNGEON! 🏰 Each floor is one lesson. Beat the guardian of every floor, and the Fire Dragon at the end is the Unit 1 test. Lose 3 hearts and you retry — no stress!",
+  "One last thing: tap the golden circle up here to design YOUR hero face. Good luck, hero! 🎉"
+];
+let gStep = -1;
+function guideSay(txt, withBtns) {
+  document.getElementById('guide-text').textContent = txt;
+  document.getElementById('guide-btns').style.display = withBtns ? 'flex' : 'none';
+  if (window.EQVoice) EQVoice.speak(txt);
+}
+function guideStart() { gStep = 0; guideSay(GUIDE_STEPS[0], true); }
+function guideEnd() {
+  gStep = -1;
+  try { localStorage.setItem('eq_guide_seen', '1'); } catch(e) {}
+  if (window.EQVoice) EQVoice.stop();
+  guideSay("Tap me 🧑‍🏫 any time to hear how everything works again!", false);
+}
+document.getElementById('guide-next').onclick = () => {
+  if (gStep < GUIDE_STEPS.length - 1) { gStep++; guideSay(GUIDE_STEPS[gStep], true); }
+  else guideEnd();
+};
+document.getElementById('guide-skip').onclick = guideEnd;
+document.getElementById('teacher-avatar').onclick = guideStart;
+if (!localStorage.getItem('eq_guide_seen')) setTimeout(guideStart, 600);
+else guideSay("Welcome back! Pick a set — or tap me to hear the tour again. 🧑‍🏫", false);
+
+/* =====================================================================
+   FACE BUILDER — preset parts only, saved on this device
+   ===================================================================== */
+let faceCfg = null;
+function refreshMyAvatar() {
+  const btn = document.getElementById('my-avatar');
+  const cfg = window.EQAvatar && EQAvatar.get();
+  btn.innerHTML = cfg ? EQAvatar.svg(cfg, 44) : '✨';
+}
+function openFace() {
+  faceCfg = (window.EQAvatar && EQAvatar.get()) || { s: 1, e: 0, h: 1, a: 0 };
+  buildRows();
+  refreshPreview();
+  document.getElementById('face-modal').style.display = 'flex';
+}
+function refreshPreview() {
+  document.getElementById('face-preview').innerHTML = EQAvatar.svg(faceCfg, 130);
+}
+function buildRows() {
+  const rows = [
+    { key: 's', label: '🎨 Skin', n: EQAvatar.SKINS.length, swatch: i => '<span style="display:block;width:26px;height:26px;border-radius:50%;background:' + EQAvatar.SKINS[i] + '"></span>' },
+    { key: 'e', label: '👀 Eyes', n: EQAvatar.PARTS.eyes, swatch: i => EQAvatar.svg({ s: faceCfg.s, e: i, h: 0, a: 0 }, 34) },
+    { key: 'h', label: '💇 Hair', n: EQAvatar.PARTS.hair, swatch: i => EQAvatar.svg({ s: faceCfg.s, e: faceCfg.e, h: i, a: 0 }, 34) },
+    { key: 'a', label: '🕶️ Extra', n: EQAvatar.PARTS.acc, swatch: i => EQAvatar.svg({ s: faceCfg.s, e: faceCfg.e, h: faceCfg.h, a: i }, 34) }
+  ];
+  const wrap = document.getElementById('face-rows');
+  wrap.innerHTML = '';
+  rows.forEach(r => {
+    const lab = document.createElement('div');
+    lab.style.cssText = 'font-size:13px;font-weight:800;color:#c4b5fd;margin:8px 0 5px';
+    lab.textContent = r.label;
+    wrap.appendChild(lab);
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:7px;flex-wrap:wrap';
+    for (let i = 0; i < r.n; i++) {
+      const b = document.createElement('button');
+      b.style.cssText = 'width:44px;height:44px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;' +
+        'background:rgba(255,255,255,.08);border:2.5px solid ' + (faceCfg[r.key] === i ? '#fbbf24' : 'rgba(255,255,255,.18)');
+      b.innerHTML = r.swatch(i);
+      b.onclick = () => { faceCfg[r.key] = i; buildRows(); refreshPreview(); pop(600); };
+      row.appendChild(b);
+    }
+    wrap.appendChild(row);
+  });
+}
+document.getElementById('my-avatar').onclick = openFace;
+document.getElementById('face-close').onclick = () => { document.getElementById('face-modal').style.display = 'none'; };
+document.getElementById('face-save').onclick = () => {
+  EQAvatar.set(faceCfg);
+  document.getElementById('face-modal').style.display = 'none';
+  refreshMyAvatar();
+  chime(); confetti(14);
+};
+setTimeout(refreshMyAvatar, 300);
 </script>
 </body>
 </html>

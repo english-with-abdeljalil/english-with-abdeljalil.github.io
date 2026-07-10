@@ -11,6 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="./eq-voice.js" defer></script>
+<script src="./eq-calm.js" defer></script>
+<script data-goatcounter="https://englishquest.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'Segoe UI', system-ui, sans-serif;
@@ -100,6 +103,12 @@
   <div id="picker">
     <div class="page-title">📖 The lessons — like your copybook</div>
     <div class="page-sub">These are the lessons we wrote in class, with all the details. Read each one (or turn on 🔊 and tap any line to hear it). When you finish a lesson, press ✅.</div>
+    <div style="display:flex;align-items:center;gap:10px;margin:0 2px 12px">
+      <div style="flex:1;background:rgba(0,0,0,.4);border-radius:999px;height:12px;overflow:hidden">
+        <div id="learn-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:999px;transition:width .4s"></div>
+      </div>
+      <span id="learn-count" style="font-size:12.5px;font-weight:800;color:#fbbf24"></span>
+    </div>
     <div id="lesson-list"></div>
     <a class="eq-btn btn-next-step" id="next-step" href="./unit1-practice.html">🎉 All lessons done! Next: ✏️ Practice →</a>
   </div>
@@ -270,6 +279,9 @@ function renderList() {
   });
   document.getElementById('next-step').className =
     'eq-btn btn-next-step' + (LESSONS.every(l => d[l.id]) ? ' show' : '');
+  const nDone = LESSONS.filter(l => d[l.id]).length;
+  document.getElementById('learn-bar').style.width = (nDone / LESSONS.length * 100) + '%';
+  document.getElementById('learn-count').textContent = nDone + '/' + LESSONS.length;
 }
 
 function openLesson(i) {
@@ -306,15 +318,13 @@ document.getElementById('btn-done').onclick = () => {
   backToList();
 };
 
-/* ---------- read to me ---------- */
-let voiceOn = false, curEl = null;
-function bestVoice() {
-  const vs = (speechSynthesis.getVoices() || []).filter(v => v.lang && v.lang.indexOf('en') === 0);
-  const sc = v => { const n = v.name + ' ' + v.lang;
-    return (/natural|neural/i.test(n) ? 8 : 0) + (/google/i.test(n) ? 4 : 0) + (/online/i.test(n) ? 2 : 0) + (/female|GB|UK/i.test(n) ? 1 : 0); };
-  return vs.sort((a, b) => sc(b) - sc(a))[0];
+/* ---------- read to me (shared EQVoice engine: cleaned text, Kokoro + fallback) ---------- */
+let voiceOn = false, curEl = null, hlTimer = null;
+function stopSpeak() {
+  if (window.EQVoice) EQVoice.stop();
+  clearTimeout(hlTimer);
+  if (curEl) { curEl.classList.remove('speaking'); curEl = null; }
 }
-function stopSpeak() { try { speechSynthesis.cancel(); } catch(e) {} if (curEl) { curEl.classList.remove('speaking'); curEl = null; } }
 document.getElementById('voice-btn').onclick = function() {
   voiceOn = !voiceOn;
   this.textContent = voiceOn ? '🔊 Read to me: ON' : '🔊 Read to me: OFF';
@@ -322,25 +332,22 @@ document.getElementById('voice-btn').onclick = function() {
   if (!voiceOn) stopSpeak();
 };
 document.getElementById('paper').addEventListener('click', e => {
-  if (!voiceOn) return;
+  if (!voiceOn || !window.EQVoice) return;
   let el = e.target.closest('td,th,div,p,li');
   while (el && (el.innerText || '').trim().length < 2 && el.parentElement) el = el.parentElement;
   if (!el) return;
-  const t = (el.innerText || '').replace(/\s+/g, ' ').trim();
+  const t = EQVoice.clean(el.innerText || '');
   if (t.length < 2 || t.length > 900) return;
   stopSpeak();
-  try {
-    const u = new SpeechSynthesisUtterance(t);
-    u.lang = 'en-GB'; u.rate = 0.95;
-    const v = bestVoice(); if (v) u.voice = v;
-    curEl = el; el.classList.add('speaking');
-    u.onend = u.onerror = () => { el.classList.remove('speaking'); if (curEl === el) curEl = null; };
-    speechSynthesis.speak(u);
-  } catch(e) {}
+  EQVoice.speak(t);
+  curEl = el; el.classList.add('speaking');
+  hlTimer = setTimeout(() => { if (curEl === el) { el.classList.remove('speaking'); curEl = null; } },
+    Math.min(2000 + t.length * 75, 25000));
 });
 
 /* ---------- juice ---------- */
 function chime() {
+  if (window.EQCalm && EQCalm.on) return;
   try {
     const C = window.AudioContext || window.webkitAudioContext, c = new C();
     [523, 659, 784].forEach((f, i) => {

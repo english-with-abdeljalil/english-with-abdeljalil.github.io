@@ -14,6 +14,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="./eq-calm.js" defer></script>
+<script src="./eq-avatar.js"></script>
+<script data-goatcounter="https://englishquest.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
@@ -163,7 +166,9 @@
   /* HUD */
   const hud = document.getElementById('hud');
   const chips = [];
-  if (p.name) chips.push('⚔️ ' + p.name);
+  const face = (window.EQAvatar && EQAvatar.get())
+    ? '<span style="display:inline-block;vertical-align:-6px;margin-right:4px">' + EQAvatar.svg(EQAvatar.get(), 22) + '</span>' : '⚔️ ';
+  if (p.name) chips.push(face + p.name);
   chips.push('⭐ ' + (p.totalXP || 0) + ' XP');
   const doneCount = [lessonDone, practiceDone, dragonDone].filter(Boolean).length;
   chips.push('🏁 ' + doneCount + '/3 steps');
@@ -204,6 +209,7 @@
   /* ---------- juice: tap pops + confetti ---------- */
   let ctx = null;
   function pop(freq) {
+    if (window.EQCalm && EQCalm.on) return;
     try {
       ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
       const o = ctx.createOscillator(), g = ctx.createGain();
@@ -215,6 +221,7 @@
     } catch(e) {}
   }
   document.querySelectorAll('.step').forEach(s => s.addEventListener('click', () => {
+    if (window.EQCalm && EQCalm.on) return;
     pop(560); try { navigator.vibrate && navigator.vibrate(30); } catch(e) {}
   }));
 
