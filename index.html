@@ -106,24 +106,24 @@
   <div class="unit-banner">📍 Unit 1: Myself &amp; Others</div>
   <div class="unit-topic">Introductions · Verb be · Plurals · Titles &amp; Greetings · Reading · Writing</div>
 
-  <a class="step step-learn" id="step-learn" href="./unit1-lesson.html">
+  <a class="step step-learn" id="step-learn" href="./unit1-learn.html">
     <div class="step-inner">
       <span class="step-badge">📖</span>
       <span>
         <span class="step-name">1 · Learn the Lesson</span><br>
-        <span class="step-desc">Read it — or tap 🔊 and listen. Clear examples, step by step.</span>
+        <span class="step-desc">The 7 lessons from your copybook — in detail. Read or tap 🔊 and listen.</span>
       </span>
       <span class="step-state"></span>
     </div>
   </a>
   <div class="connector" id="conn1"></div>
 
-  <a class="step step-practice" id="step-practice" href="./unit1-dungeon.html#practice">
+  <a class="step step-practice" id="step-practice" href="./unit1-practice.html">
     <div class="step-inner">
       <span class="step-badge">✏️</span>
       <span>
         <span class="step-name">2 · Practice</span><br>
-        <span class="step-desc">Wizzy checks you understood — 7 mini-quests with exercises.</span>
+        <span class="step-desc">The exercise library: textbook sets, worksheets, Wizzy &amp; more.</span>
       </span>
       <span class="step-state"></span>
     </div>
@@ -156,7 +156,7 @@
   function dungeonData() { try { return JSON.parse(localStorage.getItem('u1_dungeon') || '{}'); } catch(e) { return {}; } }
   const LESSON_IDS = ["functions","verbbe","plurals","vocab","listening","reading","writing"];
   const p = dungeonData();
-  const lessonDone = localStorage.getItem('eq_lesson1_done') === 'true';
+  const lessonDone = localStorage.getItem('eq_learn1_done') === 'true';
   const practiceDone = LESSON_IDS.every(id => p.lessons && p.lessons[id]);
   const dragonDone = !!p.finalBeaten;
 
