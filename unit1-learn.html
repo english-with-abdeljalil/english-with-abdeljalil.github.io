@@ -71,6 +71,17 @@
   .speakable { cursor: pointer; }
   .speaking { outline: 3px solid #f59e0b; border-radius: 6px; background: rgba(251,191,36,.25); }
 
+  /* L1 help (Arabic + French) — on demand, never replaces the English */
+  .l1-btn { display: block; width: 100%; margin: 14px 0 0; cursor: pointer; font-family: inherit;
+    background: rgba(37,101,176,.12); border: 2px dashed #2565b0; color: #215d9c;
+    font-size: 14px; font-weight: 800; padding: 11px; border-radius: 12px; }
+  .l1-block { display: none; margin-top: 10px; background: #fff; border: 2px solid #2565b0;
+    border-radius: 12px; padding: 12px 14px; font-size: 14.5px; line-height: 1.9; }
+  .l1-block.show { display: block; }
+  .l1-ar { direction: rtl; text-align: right; font-size: 15.5px; border-bottom: 1.5px dashed #c9c2b2;
+    padding-bottom: 10px; margin-bottom: 10px; }
+  .l1-tag { display: inline-block; font-size: 11px; font-weight: 900; background: #2565b0; color: #fff;
+    border-radius: 999px; padding: 2px 10px; margin-bottom: 5px; }
   .paper-actions { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
   .btn-done { background: linear-gradient(160deg, #22c55e, #059669); box-shadow: 0 5px 0 #14532d;
     font-size: 16px; padding: 14px; border-radius: 16px; width: 100%; text-align: center; }
@@ -255,6 +266,31 @@ Take care,<br>Youssef Benali</div>
 <div class="cb-imp"><b>Remember!</b> End the body with QUESTIONS so your friend writes back — then close politely above your signature.</div>` }
 ];
 
+/* ---------- L1 help: rule summaries in Arabic & French (on demand) ---------- */
+const L1 = {
+functions: {
+ ar: "درس التقديم: لتقدّم نفسك قل Hello! I am Sara (مرحباً، أنا سارة). لتقدّم شخصاً آخر قل This is my friend, Ahmed (هذا صديقي أحمد). للسؤال عن شخص: ?What's your name (ما اسمك؟) أو ?Who is this (من هذا؟). عندما تقابل شخصاً جديداً قل Nice to meet you (تشرفت بلقائك) والجواب: !Nice to meet you, too",
+ fr: "La leçon des présentations : pour te présenter, dis « Hello! I am Sara » (Bonjour, je suis Sara). Pour présenter quelqu'un : « This is my friend, Ahmed » (Voici mon ami Ahmed). Pour demander : « What's your name? » (Comment tu t'appelles ?) ou « Who is this? » (Qui est-ce ?). Quand tu rencontres quelqu'un : « Nice to meet you » (Enchanté) — réponse : « Nice to meet you, too! »" },
+verbbe: {
+ ar: "فعل الكينونة be في المضارع: نستعمل am مع I، و is مع he/she/it، و are مع you/we/they. النفي: أضف not بعد الفعل: isn't / aren't / I'm not. السؤال: ضع الفعل في البداية: ?Are you ready (هل أنت مستعد؟). الجواب القصير: Yes, I am أو No, he isn't.",
+ fr: "Le verbe « be » au présent : am avec I, is avec he/she/it, are avec you/we/they. Négation : ajoute « not » après le verbe : isn't / aren't / I'm not. Question : mets le verbe en premier : « Are you ready? » (Es-tu prêt ?). Réponse courte : « Yes, I am » ou « No, he isn't »." },
+plurals: {
+ ar: "جمع الأسماء: عادةً نضيف s (books). الأسماء المنتهية بـ s, ch, sh, ss, x نضيف لها es (boxes, watches). حرف ساكن + y تصبح ies (family تصبح families)، أما حرف متحرك + y فنضيف s فقط (boys). النهاية f أو fe تصبح ves (wife تصبح wives). ساكن + o نضيف es (tomatoes). أسماء شاذة يجب حفظها: man/men، child/children، foot/feet، mouse/mice، person/people. وأسماء لا تتغير: sheep، fish.",
+ fr: "Le pluriel : on ajoute -s (books). Les mots finissant par s, ch, sh, ss, x prennent -es (boxes, watches). Consonne + y → -ies (family → families) ; voyelle + y → -s (boys). f/fe → -ves (wife → wives). Consonne + o → -es (tomatoes). Pluriels irréguliers à mémoriser : man→men, child→children, foot→feet, mouse→mice, person→people. Sans changement : sheep, fish." },
+vocab: {
+ ar: "الألقاب: Mr لكل الرجال، Mrs للمرأة المتزوجة، Miss للمرأة غير المتزوجة، Ms لأي امرأة. كلمات التحية (مرحباً): Good morning، ?How are you، ?How's everything. كلمات الوداع: See you later، So long، Take care، Good night. طرق التحية حول العالم: المصافحة، العناق، الانحناء (في اليابان)، القُبَل على الخدين.",
+ fr: "Les titres : Mr. pour tous les hommes, Mrs. pour une femme mariée, Miss pour une femme célibataire, Ms pour toute femme. Pour dire bonjour : Good morning, How are you?, How's everything?. Pour dire au revoir : See you later, So long, Take care, Good night. Façons de saluer : serrer la main, l'accolade, s'incliner (Japon), la bise." },
+listening: {
+ ar: "صوتان مهمان: الصوت الطويل /iː/ كما في speak, sleep, meat, he's — والصوت القصير /ɪ/ كما في in, this, sick, his. لاحظ الفرق: He's Moroccan (هو مغربي) صوت طويل، أما His car (سيارته) فصوت قصير. في جدول الاستماع: ليزا تحب الوثائقيات وتويوتا، جميل يحب الأفلام ومرسيدس، فريد يحب أخبار الرياضة وفولكسفاغن.",
+ fr: "Deux sons importants : le son long /iː/ comme dans speak, sleep, meat, he's — et le son court /ɪ/ comme dans in, this, sick, his. Compare : « He's Moroccan » (long) et « His car » (court). Dans le tableau d'écoute : Lisa aime les documentaires et Toyota, Jamil les films et Mercedes, Fred les infos sportives et Volkswagen." },
+reading: {
+ ar: "نص البيغمي (الأقزام): يعيشون في غابة وسط إفريقيا. يتحركون بسهولة لأنهم صغار القامة (طول الكبير منهم ١٫٤٠ متر فقط). ليسوا مزارعين بل صيادون ماهرون، يحصلون على طعامهم من نباتات الغابة وحيواناتها. ليسوا أغنياء لكنهم سعداء، والأغاني والرقصات والحكايات مهمة جداً في حياتهم. كلمات: hut كوخ، hunters صيادون، afraid خائف، rich غني عكسها poor فقير.",
+ fr: "Le texte « The Pygmies » : ils vivent dans la forêt au centre de l'Afrique. Ils se déplacent facilement car ils sont très petits (1 m 40 pour un grand Pygmée). Ce ne sont pas des fermiers mais de grands chasseurs : leur nourriture vient des plantes et des animaux de la forêt. Ils ne sont pas riches mais heureux ; les chants, les danses et les histoires sont très importants. Mots : hut = hutte, hunters = chasseurs, afraid = effrayé, rich = riche ≠ poor = pauvre." },
+writing: {
+ ar: "كتابة رسالة ودية: أولاً عنوانك أعلى اليمين، ثم التاريخ تحته، ثم التحية ,Dear Sara. بعدها المقدمة (اسمك وعمرك ومدرستك)، ثم تفاصيل شخصية (هواياتك)، ثم أسئلة لصديقك. في الأخير الخاتمة ,Take care ثم توقيعك (اسمك). أنهِ رسالتك دائماً بأسئلة حتى يرد عليك صديقك!",
+ fr: "Écrire une lettre amicale : d'abord ton adresse en haut à droite, la date dessous, puis la salutation « Dear Sara, ». Ensuite l'introduction (ton nom, ton âge, ton école), les détails personnels (tes loisirs), puis des questions pour ton ami. À la fin : la formule « Take care, » et ta signature. Termine toujours par des questions pour que ton ami réponde !" }
+};
+
 /* ---------- state ---------- */
 function learnDone() { try { return JSON.parse(localStorage.getItem('eq_learn') || '{}'); } catch(e) { return {}; } }
 function saveLearn(d) {
@@ -287,7 +323,15 @@ function renderList() {
 function openLesson(i) {
   current = i;
   const l = LESSONS[i];
-  document.getElementById('paper').innerHTML = l.html;
+  let extra = '';
+  if (L1[l.id]) {
+    extra = '<button class="l1-btn" onclick="const b=this.nextElementSibling;b.classList.toggle(\'show\');' +
+      'this.textContent=b.classList.contains(\'show\')?\'🇲🇦 Hide the help / إخفاء الشرح\':\'🇲🇦 شرح بالعربية · Explication en français\'">' +
+      '🇲🇦 شرح بالعربية · Explication en français</button>' +
+      '<div class="l1-block"><div class="l1-ar"><span class="l1-tag">العربية</span><br>' + L1[l.id].ar + '</div>' +
+      '<div><span class="l1-tag">Français</span><br>' + L1[l.id].fr + '</div></div>';
+  }
+  document.getElementById('paper').innerHTML = l.html + extra;
   document.getElementById('picker').style.display = 'none';
   document.getElementById('paper').className = 'show';
   document.getElementById('paper-actions').style.display = 'flex';

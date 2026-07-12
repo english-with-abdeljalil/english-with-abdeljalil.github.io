@@ -107,7 +107,12 @@
     <div class="hdr-title">ENGLISH QUEST</div>
     <div class="hdr-sub">Side Quest · Train with the Teacher</div>
   </div>
-  <a class="eq-btn home-btn" href="./index.html">← Back to English Quest</a>
+  <span id="langs" style="display:flex;gap:5px">
+    <button class="eq-btn lang-b" data-l="en" style="background:rgba(255,255,255,.14);font-size:12px;padding:8px 10px">EN</button>
+    <button class="eq-btn lang-b" data-l="fr" style="background:rgba(255,255,255,.14);font-size:12px;padding:8px 10px">FR</button>
+    <button class="eq-btn lang-b" data-l="ar" style="background:rgba(255,255,255,.14);font-size:13px;padding:8px 10px">ع</button>
+  </span>
+  <a class="eq-btn home-btn" href="./index.html" id="t-back">← Back</a>
 </header>
 
 <div id="wrap">
@@ -225,13 +230,96 @@ const OPTS = {
   time: ['Weekday evenings','Saturday','Sunday','Flexible']
 };
 
-/* chip pickers: 'who' and 'format' are single-choice, 'goal' and 'time' multi-choice */
+/* ===== translations: whatever the family reads, the form submits ENGLISH values ===== */
+const OPTS_L = {
+  en: OPTS,
+  fr: {
+    who: ['Collégien(ne)','Lycée — Tronc Commun','Lycée — 1re année Bac','Lycée — 2e année Bac','Adulte','Autre'],
+    goal: ['Grammaire','Expression orale & confiance','Écriture','Compréhension écrite','Préparation aux examens (Bac / régional)',"L'anglais pour le travail ou les études à l'étranger",'Amélioration générale','Autre'],
+    format: ['Cours individuel','Petit groupe (2–4)','En ligne','En présentiel','Flexible'],
+    time: ['Soirs de semaine','Samedi','Dimanche','Flexible']
+  },
+  ar: {
+    who: ['تلميذ(ة) إعدادي','ثانوي — جذع مشترك','ثانوي — أولى باك','ثانوي — ثانية باك','شخص بالغ','آخر'],
+    goal: ['القواعد','التحدث والثقة بالنفس','الكتابة','فهم المقروء','الاستعداد للامتحانات (الباك / الجهوي)','الإنجليزية للعمل أو الدراسة بالخارج','تحسين عام','آخر'],
+    format: ['حصص فردية','مجموعة صغيرة (2–4)','عن بُعد','حضورياً','مرن'],
+    time: ['أمسيات أيام الأسبوع','السبت','الأحد','مرن']
+  }
+};
+const I18N = {
+en: { back:'← Back', tag:'⚔️ Side Quest Unlocked',
+  h1:'The dungeon builds your skills.<br><span class="gold">A real teacher builds your confidence.</span>',
+  sub:'Level up with Mr. Fakrani himself — one-to-one or in a small party. Real sessions, real progress, real XP for life.',
+  b:[['🗣️','Speak without freezing','Train your speaking until the words come out on their own.'],
+     ['✍️','Writing that actually scores','Letters, paragraphs, exam answers — built the way graders want them.'],
+     ['🎯','Fix your weak spots','We work on what you get wrong — not what you already know.'],
+     ['🛡️','Walk into exams calm','Bac & regional prep with a plan, not panic.']],
+  cta:'📜 Accept the Quest — Book a Session',
+  ph2:'For parents and adult learners',
+  p1:"I'm <b>Abdeljalil Fakrani</b>, a certified teacher of English working in the public and private sectors in Casablanca. I teach the Moroccan national curriculum every day, from middle school through Baccalaureate.",
+  p2:'Sessions are <b>one-to-one or in small groups</b>, and focus on what the learner actually needs: grammar, speaking, writing, reading, exam preparation — or English for work, study abroad, or travel. Adults and teenagers with a specific goal are welcome, not only my own students.',
+  p3:'After you send the form below, <b>I contact you personally</b> to discuss the learner\'s level, goals, schedule and fees.',
+  safe:'<b>A clear rule for learners under 18:</b> a parent or guardian completes this form, and I communicate with the parent — never directly with the student. Adults may of course book for themselves.',
+  bh2:'📜 Book a session', bsub:'Takes one minute. I reply within 24 hours — no payment now, no obligation.',
+  l:['Learner\'s first name','Who is the learner?','Your name — parent/guardian, or the learner if an adult','Phone number','Email (optional)','What\'s the goal? (choose any)','Preferred format','Preferred time (choose any)','Anything else I should know?'],
+  e:['Please write the learner\'s first name.','Please choose one.','Please write your name.','Please write a valid phone number (at least 9 digits).','That email doesn\'t look right — check it or leave it empty.','Something needs fixing above — check the highlighted fields.'],
+  send:'📨 Send my request', sending:'⏳ Sending…',
+  note:'Your request goes straight to Mr. Fakrani. No account needed, nothing is public.',
+  dh2:'Request sent!', dp:'Thank you — your booking request is on its way to Mr. Fakrani.<br>He will contact you <b>within 24 hours</b> to talk about level, goals, schedule and fees.',
+  dback:'🏰 Back to English Quest' },
+fr: { back:'← Retour', tag:'⚔️ Quête annexe débloquée',
+  h1:'Le donjon construit tes compétences.<br><span class="gold">Un vrai professeur construit ta confiance.</span>',
+  sub:'Progresse avec M. Fakrani lui-même — en cours individuel ou en petit groupe. De vraies séances, de vrais progrès.',
+  b:[['🗣️','Parler sans se bloquer','Entraîne ton oral jusqu\'à ce que les mots sortent tout seuls.'],
+     ['✍️','Une écriture qui rapporte des points','Lettres, paragraphes, réponses d\'examen — comme les correcteurs les attendent.'],
+     ['🎯','Corriger tes points faibles','On travaille ce que tu rates — pas ce que tu sais déjà.'],
+     ['🛡️','Aborder les examens sereinement','Préparation Bac & régional avec un plan, pas de panique.']],
+  cta:'📜 Accepter la quête — Réserver une séance',
+  ph2:'Pour les parents et les apprenants adultes',
+  p1:'Je suis <b>Abdeljalil Fakrani</b>, professeur d\'anglais certifié, exerçant dans le public et le privé à Casablanca. J\'enseigne chaque jour le programme national marocain, du collège au Baccalauréat.',
+  p2:'Les séances sont <b>individuelles ou en petit groupe</b>, centrées sur les besoins réels de l\'apprenant : grammaire, oral, écrit, lecture, préparation aux examens — ou l\'anglais pour le travail, les études à l\'étranger ou les voyages. Les adultes et les adolescents avec un objectif précis sont les bienvenus, pas seulement mes propres élèves.',
+  p3:'Après l\'envoi du formulaire, <b>je vous contacte personnellement</b> pour discuter du niveau, des objectifs, de l\'horaire et des tarifs.',
+  safe:'<b>Une règle claire pour les moins de 18 ans :</b> c\'est un parent ou tuteur qui remplit ce formulaire, et je communique avec le parent — jamais directement avec l\'élève. Les adultes réservent bien sûr pour eux-mêmes.',
+  bh2:'📜 Réserver une séance', bsub:'Une minute suffit. Je réponds sous 24 h — aucun paiement maintenant, aucun engagement.',
+  l:['Prénom de l\'apprenant','Qui est l\'apprenant ?','Votre nom — parent/tuteur, ou l\'apprenant s\'il est adulte','Numéro de téléphone','Email (facultatif)','Quel est l\'objectif ? (plusieurs choix possibles)','Format préféré','Moment préféré (plusieurs choix possibles)','Autre chose à savoir ?'],
+  e:['Merci d\'écrire le prénom de l\'apprenant.','Merci de choisir une réponse.','Merci d\'écrire votre nom.','Merci d\'écrire un numéro valide (au moins 9 chiffres).','Cet email semble incorrect — vérifiez-le ou laissez vide.','Quelque chose à corriger ci-dessus — vérifiez les champs en rouge.'],
+  send:'📨 Envoyer ma demande', sending:'⏳ Envoi…',
+  note:'Votre demande arrive directement à M. Fakrani. Aucun compte requis, rien n\'est public.',
+  dh2:'Demande envoyée !', dp:'Merci — votre demande de réservation est en route vers M. Fakrani.<br>Il vous contactera <b>sous 24 heures</b> pour parler du niveau, des objectifs, de l\'horaire et des tarifs.',
+  dback:'🏰 Retour à English Quest' },
+ar: { back:'← رجوع', tag:'⚔️ مهمة جانبية جديدة',
+  h1:'القلعة تبني مهاراتك.<br><span class="gold">أما الأستاذ الحقيقي فيبني ثقتك بنفسك.</span>',
+  sub:'تقدَّم مع الأستاذ فقراني نفسه — حصص فردية أو في مجموعة صغيرة. حصص حقيقية وتقدّم حقيقي.',
+  b:[['🗣️','تحدث دون تلعثم','درّب نفسك على الكلام حتى تخرج الكلمات وحدها.'],
+     ['✍️','كتابة تجلب النقاط','رسائل وفقرات وأجوبة امتحانات — كما يريدها المصححون.'],
+     ['🎯','عالج نقاط ضعفك','نشتغل على ما تخطئ فيه — لا على ما تعرفه أصلاً.'],
+     ['🛡️','ادخل الامتحان مطمئناً','استعداد للباك والجهوي بخطة واضحة، بلا هلع.']],
+  cta:'📜 اقبل المهمة — احجز حصة',
+  ph2:'لأولياء الأمور والمتعلمين البالغين',
+  p1:'أنا <b>عبد الجليل فقراني</b>، أستاذ لغة إنجليزية معتمد أعمل في القطاعين العمومي والخاص بالدار البيضاء، وأدرّس المنهاج الوطني المغربي يومياً من الإعدادي إلى الباكالوريا.',
+  p2:'الحصص <b>فردية أو في مجموعات صغيرة</b>، وتركز على حاجات المتعلم الحقيقية: القواعد، التحدث، الكتابة، القراءة، الاستعداد للامتحانات — أو الإنجليزية للعمل والدراسة بالخارج والسفر. مرحباً بالبالغين والمراهقين أصحاب الأهداف المحددة، وليس تلاميذي فقط.',
+  p3:'بعد إرسال الاستمارة أسفله، <b>أتواصل معكم شخصياً</b> لمناقشة المستوى والأهداف والتوقيت والأتعاب.',
+  safe:'<b>قاعدة واضحة للمتعلمين دون 18 سنة:</b> وليّ الأمر هو من يملأ هذه الاستمارة، وأتواصل مع الوليّ — وليس مع التلميذ مباشرة أبداً. أما البالغون فيحجزون لأنفسهم طبعاً.',
+  bh2:'📜 احجز حصة', bsub:'دقيقة واحدة تكفي. أجيب خلال 24 ساعة — لا دفع الآن ولا أي التزام.',
+  l:['الاسم الشخصي للمتعلم','من هو المتعلم؟','اسمكم — وليّ الأمر، أو المتعلم إن كان بالغاً','رقم الهاتف','البريد الإلكتروني (اختياري)','ما الهدف؟ (اختر ما تشاء)','الصيغة المفضلة','الوقت المفضل (اختر ما تشاء)','هل من شيء آخر يجب أن أعرفه؟'],
+  e:['المرجو كتابة الاسم الشخصي للمتعلم.','المرجو اختيار جواب واحد.','المرجو كتابة اسمكم.','المرجو كتابة رقم هاتف صحيح (9 أرقام على الأقل).','هذا البريد يبدو غير صحيح — تحققوا منه أو اتركوه فارغاً.','هناك ما يجب إصلاحه أعلاه — راجعوا الحقول المحددة.'],
+  send:'📨 أرسل طلبي', sending:'⏳ جارٍ الإرسال…',
+  note:'طلبكم يصل مباشرة إلى الأستاذ فقراني. لا حاجة لأي حساب، ولا شيء يُنشر علناً.',
+  dh2:'تم إرسال الطلب!', dp:'شكراً — طلب الحجز في طريقه إلى الأستاذ فقراني.<br>سيتواصل معكم <b>خلال 24 ساعة</b> للحديث عن المستوى والأهداف والتوقيت والأتعاب.',
+  dback:'🏰 العودة إلى English Quest' }
+};
+let LANG = localStorage.getItem('eq_tut_lang') || 'en';
+
+/* chip pickers: display in the chosen language, submit the ENGLISH value */
 function buildChips(id, key, single) {
   const box = document.getElementById(id);
-  OPTS[key].forEach(o => {
+  const keep = [...box.querySelectorAll('.on')].map(c => c.dataset.value);
+  box.innerHTML = '';
+  OPTS_L[LANG][key].forEach((label, i) => {
     const c = document.createElement('span');
-    c.className = 'chip-opt';
-    c.textContent = o;
+    c.className = 'chip-opt' + (keep.includes(OPTS[key][i]) ? ' on' : '');
+    c.textContent = label;
+    c.dataset.value = OPTS[key][i];
     c.onclick = () => {
       if (single) { [...box.children].forEach(x => x.classList.remove('on')); c.classList.add('on'); }
       else c.classList.toggle('on');
@@ -241,11 +329,55 @@ function buildChips(id, key, single) {
     box.appendChild(c);
   });
 }
-buildChips('c-who', 'who', true);
-buildChips('c-goal', 'goal', false);
-buildChips('c-format', 'format', true);
-buildChips('c-time', 'time', false);
-function picked(id) { return [...document.querySelectorAll('#' + id + ' .on')].map(c => c.textContent); }
+function buildAllChips() {
+  buildChips('c-who', 'who', true);
+  buildChips('c-goal', 'goal', false);
+  buildChips('c-format', 'format', true);
+  buildChips('c-time', 'time', false);
+}
+function picked(id) { return [...document.querySelectorAll('#' + id + ' .on')].map(c => c.dataset.value); }
+
+/* apply a language to the whole page (RTL for Arabic) */
+function applyLang(l) {
+  LANG = l;
+  try { localStorage.setItem('eq_tut_lang', l); } catch(e) {}
+  const T = I18N[l];
+  document.documentElement.dir = (l === 'ar') ? 'rtl' : 'ltr';
+  document.documentElement.lang = l;
+  document.getElementById('t-back').textContent = T.back;
+  document.querySelector('.sq-tag').textContent = T.tag;
+  document.querySelector('h1').innerHTML = T.h1;
+  document.querySelector('.sq-sub').textContent = T.sub;
+  document.querySelectorAll('.ben').forEach((el, i) => {
+    el.querySelector('.bi').textContent = T.b[i][0];
+    el.querySelector('.bt').textContent = T.b[i][1];
+    el.querySelector('.bd').textContent = T.b[i][2];
+  });
+  document.querySelector('.cta-jump').textContent = T.cta;
+  document.querySelector('#parents h2').textContent = T.ph2;
+  const ps = document.querySelectorAll('#parents p');
+  ps[0].innerHTML = T.p1; ps[1].innerHTML = T.p2; ps[2].innerHTML = T.p3;
+  document.querySelector('#parents .safe').innerHTML = T.safe;
+  document.querySelector('#book h2').textContent = T.bh2;
+  document.querySelector('#book .fsub').textContent = T.bsub;
+  document.querySelectorAll('#book .flabel').forEach((el, i) => {
+    el.innerHTML = T.l[i] + (i < 4 && i !== 4 ? ' <span class="req">*</span>' : '');
+  });
+  const errIds = ['e-learner','e-who','e-contact','e-phone','e-email','e-send'];
+  errIds.forEach((id, i) => { document.getElementById(id).textContent = T.e[i]; });
+  document.getElementById('send-btn').textContent = T.send;
+  document.getElementById('form-note').textContent = T.note;
+  document.querySelector('#done h2').textContent = T.dh2;
+  document.querySelector('#done p').innerHTML = T.dp;
+  document.querySelector('#done .cta-jump').textContent = T.dback;
+  document.querySelectorAll('.lang-b').forEach(b => {
+    b.style.background = b.dataset.l === l ? 'linear-gradient(90deg,#f59e0b,#fbbf24)' : 'rgba(255,255,255,.14)';
+    b.style.color = b.dataset.l === l ? '#451a03' : '#fff';
+  });
+  buildAllChips();
+}
+document.querySelectorAll('.lang-b').forEach(b => b.onclick = () => applyLang(b.dataset.l));
+applyLang(LANG);
 
 /* validation */
 function err(g, e, bad) {
@@ -270,7 +402,7 @@ document.getElementById('send-btn').onclick = async function () {
   document.getElementById('e-send').classList.remove('show');
   if (!validate()) { document.getElementById('e-send').classList.add('show'); return; }
   this.disabled = true;
-  this.textContent = '⏳ Sending…';
+  this.textContent = I18N[LANG].sending;
   const fd = new FormData();
   fd.append(ENTRY.learner, document.getElementById('f-learner').value.trim());
   fd.append(ENTRY.who, picked('c-who')[0]);
