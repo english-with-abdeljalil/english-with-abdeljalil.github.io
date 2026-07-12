@@ -287,8 +287,7 @@ function renderList() {
 function openLesson(i) {
   current = i;
   const l = LESSONS[i];
-  const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('paper').innerHTML = '<div class="cb-date">' + today + '</div>' + l.html;
+  document.getElementById('paper').innerHTML = l.html;
   document.getElementById('picker').style.display = 'none';
   document.getElementById('paper').className = 'show';
   document.getElementById('paper-actions').style.display = 'flex';
