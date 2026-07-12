@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-appv="20">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -242,6 +242,22 @@
   const seen = parseInt(localStorage.getItem('eq_hub_seen') || '0');
   if (doneCount > seen) { confetti(34); setTimeout(() => pop(700), 300); setTimeout(() => pop(900), 500); }
   localStorage.setItem('eq_hub_seen', doneCount);
+
+  /* ---------- auto-update: if a newer version is online, refresh once ----------
+     GitHub's cache can serve an old copy for a few minutes after an update;
+     this quietly fetches the live version and reloads if it is newer. */
+  (async () => {
+    try {
+      if (sessionStorage.getItem('eq_reloaded')) return;
+      const html = await fetch(location.pathname + '?u=' + Date.now(), { cache: 'no-store' }).then(r => r.text());
+      const m = html.match(/data-appv="(\d+)"/);
+      const cur = document.documentElement.getAttribute('data-appv');
+      if (m && cur && m[1] !== cur) {
+        sessionStorage.setItem('eq_reloaded', '1');
+        location.replace(location.pathname + '?v=' + m[1]);   // fresh URL beats every cache
+      }
+    } catch(e) {}
+  })();
 
   /* stars */
   for (let i = 0; i < 14; i++) {

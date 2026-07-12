@@ -102,41 +102,71 @@
     }
   }
 
-  /* ================= KOKORO (opt-in only) ================= */
+  /* ================= KOKORO in a WEB WORKER (opt-in only) =================
+     The model runs on a background thread so the app NEVER lags or
+     freezes. If this device is still too slow (a sentence takes more
+     than 12s) the option switches itself off and the instant voice
+     takes over. */
+  let worker = null, reqId = 0;
+  const pending = {};                                  // reqId → {resolve, reject, timer}
+  function demote(msg) {
+    kState = 'failed';
+    try { if (worker) worker.terminate(); } catch (e) {}
+    worker = null;
+    try { localStorage.setItem(SETTING, 'off'); } catch (e) {}
+    if (msg) { setProgress(msg); setTimeout(() => setProgress(null), 4500); }
+    syncPanel();
+  }
   function loadKokoro() {
     if (kState === 'loading' || kState === 'ready') return;
+    if (!window.Worker) { demote('⚠️ Not supported here — using the normal voice.'); return; }
     kState = 'loading';
     setProgress('Starting download…');
-    import(KOKORO_CDN).then(mod => {
-      const dtype = (navigator.deviceMemory && navigator.deviceMemory >= 6 ? 'q8' : 'q4');
-      return mod.KokoroTTS.from_pretrained(MODEL, {
-        dtype: dtype, device: 'wasm',
-        progress_callback: p => {
-          if (p && p.status === 'progress' && p.total) {
-            setProgress('Downloading better voice… ' + Math.round(p.loaded / p.total * 100) + '%');
-          }
+    syncPanel();
+    const src =
+      "let tts=null;" +
+      "self.onmessage=async e=>{const m=e.data;try{" +
+      "if(m.type==='load'){const mod=await import('" + KOKORO_CDN + "');" +
+      "tts=await mod.KokoroTTS.from_pretrained('" + MODEL + "',{dtype:'q4',device:'wasm'," +
+      "progress_callback:p=>{if(p&&p.status==='progress'&&p.total)self.postMessage({type:'prog',pct:Math.round(p.loaded/p.total*100)})}});" +
+      "self.postMessage({type:'ready'});}" +
+      "else if(m.type==='gen'){const a=await tts.generate(m.text,{voice:'" + VOICE + "'});" +
+      "const w=a.toWav();self.postMessage({type:'audio',id:m.id,wav:w},[w]);}" +
+      "}catch(err){self.postMessage({type:'err',id:m.id,msg:String(err)});}};";
+    let loadTimer = setTimeout(() => demote('⚠️ Download took too long — using the normal voice.'), 180000);
+    try {
+      worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })), { type: 'module' });
+      worker.onerror = () => { clearTimeout(loadTimer); demote('⚠️ Better voice failed — using the normal voice.'); };
+      worker.onmessage = e => {
+        const m = e.data;
+        if (m.type === 'prog') setProgress('Downloading better voice… ' + m.pct + '%');
+        else if (m.type === 'ready') {
+          clearTimeout(loadTimer);
+          kState = 'ready';
+          setProgress('✅ Better voice is ready!');
+          setTimeout(() => setProgress(null), 3500);
+          syncPanel();
+        } else if (m.type === 'audio' && pending[m.id]) {
+          clearTimeout(pending[m.id].timer);
+          pending[m.id].resolve(m.wav);
+          delete pending[m.id];
+        } else if (m.type === 'err' && m.id != null && pending[m.id]) {
+          clearTimeout(pending[m.id].timer);
+          pending[m.id].reject(new Error(m.msg));
+          delete pending[m.id];
         }
-      });
-    }).then(tts => {
-      kokoro = tts; kState = 'ready';
-      setProgress('✅ Better voice is ready!');
-      setTimeout(() => setProgress(null), 3500);
-      syncPanel();
-    }).catch(() => {
-      kState = 'failed';
-      setProgress('⚠️ Download failed — using the normal voice.');
-      setTimeout(() => setProgress(null), 4000);
-      syncPanel();
+      };
+      worker.postMessage({ type: 'load' });
+    } catch (e) { clearTimeout(loadTimer); demote('⚠️ Better voice failed — using the normal voice.'); }
+  }
+  function generateInWorker(text, ms) {
+    return new Promise((resolve, reject) => {
+      const id = ++reqId;
+      pending[id] = { resolve: resolve, reject: reject, timer: setTimeout(() => {
+        if (pending[id]) { delete pending[id]; reject(new Error('too-slow')); }
+      }, ms) };
+      worker.postMessage({ type: 'gen', text: text, id: id });
     });
-  }
-  function generateGuarded(text, ms) {
-    return Promise.race([
-      kokoro.generate(text, { voice: VOICE }),
-      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))
-    ]);
-  }
-  function audioBlob(a) {
-    try { return a.toBlob(); } catch (e) { return new Blob([a.toWav()], { type: 'audio/wav' }); }
   }
   function splitSentences(t) {
     const parts = t.match(/[^.!?]+[.!?]?/g) || [t];
@@ -152,21 +182,29 @@
     const parts = splitSentences(t);
     for (let i = 0; i < parts.length; i++) {
       if (token !== genToken) return;
-      let audio;
-      try { audio = await generateGuarded(parts[i], 15000); }
-      catch (e) { kState = 'failed'; kokoro = null; if (token === genToken) speakSys(parts.slice(i).join(' ')); return; }
+      let wav;
+      try { wav = await generateInWorker(parts[i], 12000); }
+      catch (e) {
+        demote('⚠️ Better voice is too slow on this device — switched to the normal voice.');
+        if (token === genToken) speakSys(parts.slice(i).join(' '));
+        return;
+      }
       if (token !== genToken) return;
       let played = false;
       await new Promise(res => {
         try {
-          const url = URL.createObjectURL(audioBlob(audio));
+          const url = URL.createObjectURL(new Blob([wav], { type: 'audio/wav' }));
           curAudio = new Audio(url);
           curAudio.onended = () => { played = true; URL.revokeObjectURL(url); res(); };
           curAudio.onerror = () => { URL.revokeObjectURL(url); res(); };
           curAudio.play().then(() => { played = true; }).catch(() => res());
         } catch (e) { res(); }
       });
-      if (!played && token === genToken) { kState = 'failed'; kokoro = null; speakSys(parts.slice(i).join(' ')); return; }
+      if (!played && token === genToken) {
+        demote(null);
+        speakSys(parts.slice(i).join(' '));
+        return;
+      }
     }
   }
 
@@ -181,7 +219,7 @@
     const t = clean(text);
     if (t.length < 2 || t.length > 1200) return;
     stop();
-    if (optedIn() && kState === 'ready' && kokoro) speakKokoro(t);
+    if (optedIn() && kState === 'ready' && worker) speakKokoro(t);
     else speakSys(t);                       // the instant default — no downloads
   }
 
@@ -229,7 +267,8 @@
     const p = document.createElement('div');
     p.id = 'eq-settings';
     p.innerHTML = '<h4>⚙️ Settings</h4><button id="eq-voice-toggle"></button>' +
-      '<div id="eq-voice-note">Better voice = a more human voice. One-time download (40–90MB) — use wifi! ' +
+      '<div id="eq-voice-note">Better voice = a more human voice. One-time download (~40MB) — use wifi! ' +
+      'It runs in the background so the app stays smooth, and it switches itself off if your device is too slow. ' +
       'The normal voice always works and downloads nothing.</div><div id="eq-voice-prog"></div>';
     document.body.appendChild(p);
     progEl = p.querySelector('#eq-voice-prog');
@@ -238,8 +277,18 @@
     p.querySelector('#eq-voice-toggle').onclick = () => {
       const on = !optedIn();
       try { localStorage.setItem(SETTING, on ? 'on' : 'off'); } catch (e) {}
-      if (on) loadKokoro();
-      else { kState = 'off'; kokoro = null; stop(); setProgress(null); }
+      if (on) {
+        if (navigator.deviceMemory && navigator.deviceMemory < 4) {
+          demote('⚠️ This device is not strong enough — the normal voice will be used.');
+          return;
+        }
+        loadKokoro();
+      } else {
+        kState = 'off';
+        try { if (worker) worker.terminate(); } catch (e) {}
+        worker = null;
+        stop(); setProgress(null);
+      }
       syncPanel();
     };
     syncPanel();
