@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Train with the Teacher — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="./eq-calm.js" defer></script>
+<script data-goatcounter="https://jalil.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif;
+    background:
+      radial-gradient(60% 40% at 20% 0%, rgba(124,58,237,.35), transparent 60%),
+      radial-gradient(50% 35% at 90% 15%, rgba(219,39,119,.22), transparent 60%),
+      linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color: #f0e9ff; min-height: 100dvh; }
+  #eq-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+    background: linear-gradient(180deg, #1a0b2e, #2d1b4e); position: sticky; top: 0; z-index: 50; }
+  #eq-header img { width: 36px; height: 36px; border-radius: 10px; box-shadow: 0 0 10px rgba(251,191,36,.35); }
+  .hdr-title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 16px;
+    background: linear-gradient(90deg, #fbbf24, #f87171); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hdr-sub { font-size: 10.5px; color: #c4b5fd; font-weight: 700; }
+  .eq-btn { cursor: pointer; border: none; text-decoration: none; display: inline-block; color: #fff; font-weight: 800;
+    font-family: inherit; border-radius: 999px; transition: transform .08s; text-align: center; }
+  .eq-btn:active { transform: translateY(3px); }
+  .home-btn { background: linear-gradient(90deg, #7c3aed, #db2777); box-shadow: 0 3px 0 #4a044e; font-size: 12.5px; padding: 9px 13px; }
+
+  #wrap { max-width: 560px; margin: 0 auto; padding: 16px 16px 50px; }
+
+  /* ===== SIDE QUEST BOARD (students) ===== */
+  .sq-tag { display: inline-block; background: #fbbf24; color: #451a03; font-size: 11px; font-weight: 900;
+    letter-spacing: 1.5px; padding: 5px 14px; border-radius: 999px; box-shadow: 0 3px 0 #b45309;
+    text-transform: uppercase; animation: wiggle 2.4s ease-in-out infinite; }
+  @keyframes wiggle { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg) translateY(-2px); } }
+  h1 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 800; line-height: 1.25; margin: 12px 0 6px; }
+  h1 .gold { background: linear-gradient(90deg, #fbbf24, #f87171); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sq-sub { font-size: 14.5px; color: #d8cffc; font-weight: 600; line-height: 1.6; margin-bottom: 16px; }
+  .benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .ben { border-radius: 18px; padding: 13px 13px 12px; color: #fff; }
+  .ben .bi { font-size: 26px; }
+  .ben .bt { font-family: 'Bricolage Grotesque', sans-serif; font-size: 14.5px; font-weight: 800; margin: 5px 0 3px; }
+  .ben .bd { font-size: 12px; font-weight: 600; opacity: .92; line-height: 1.45; }
+  .b1 { background: linear-gradient(160deg, #0ea5e9, #2563eb); box-shadow: 0 5px 0 #075985; }
+  .b2 { background: linear-gradient(160deg, #22c55e, #059669); box-shadow: 0 5px 0 #14532d; }
+  .b3 { background: linear-gradient(160deg, #a855f7, #db2777); box-shadow: 0 5px 0 #4a044e; }
+  .b4 { background: linear-gradient(160deg, #f59e0b, #d97706); box-shadow: 0 5px 0 #92400e; }
+  .cta-jump { width: 100%; font-size: 17px; padding: 15px; border-radius: 18px;
+    background: linear-gradient(90deg, #7c3aed, #db2777); box-shadow: 0 6px 0 #4a044e; margin-bottom: 26px; }
+
+  /* ===== PARENT PANEL (deliberately calm) ===== */
+  #parents { background: #f7f1e3; color: #2c2a26; border-radius: 20px; padding: 22px 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.45); line-height: 1.75; font-size: 15px; }
+  #parents h2 { font-family: Georgia, 'Times New Roman', serif; font-weight: 700; font-size: 20px;
+    color: #1f2937; margin-bottom: 10px; border-bottom: 2px solid #d9cfb5; padding-bottom: 8px; }
+  #parents p { margin-bottom: 12px; }
+  #parents .safe { background: #eee5cd; border-left: 4px solid #b45309; border-radius: 8px;
+    padding: 10px 14px; font-size: 14px; }
+  #parents .safe b { color: #92400e; }
+
+  /* ===== FORM ===== */
+  #book { margin-top: 26px; }
+  #book h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+  #book .fsub { font-size: 13px; color: #c4b5fd; font-weight: 600; margin-bottom: 14px; }
+  .fgroup { margin-bottom: 15px; }
+  .flabel { display: block; font-size: 13.5px; font-weight: 800; margin-bottom: 6px; color: #e9e2ff; }
+  .flabel .req { color: #fbbf24; }
+  input[type=text], input[type=tel], input[type=email], textarea, select {
+    width: 100%; font-family: inherit; font-size: 16px; font-weight: 600; color: #1a0b2e;
+    background: #fdfaf3; border: 2.5px solid rgba(255,255,255,.35); border-radius: 14px; padding: 13px 14px; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: #fbbf24; }
+  textarea { min-height: 90px; resize: vertical; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip-opt { cursor: pointer; user-select: none; background: rgba(255,255,255,.08);
+    border: 2px solid rgba(255,255,255,.22); border-radius: 999px; padding: 9px 14px;
+    font-size: 13.5px; font-weight: 700; color: #e9e2ff; transition: transform .08s; }
+  .chip-opt:active { transform: scale(.95); }
+  .chip-opt.on { background: rgba(251,191,36,.2); border-color: #fbbf24; color: #fde68a; }
+  .ferr { display: none; font-size: 12.5px; font-weight: 800; color: #fca5a5; margin-top: 5px; }
+  .ferr.show { display: block; }
+  .invalid input, .invalid select { border-color: #ef4444 !important; }
+  #send-btn { width: 100%; font-size: 18px; padding: 16px; border-radius: 18px;
+    background: linear-gradient(160deg, #22c55e, #059669); box-shadow: 0 6px 0 #14532d; margin-top: 6px; }
+  #send-btn:disabled { opacity: .6; }
+  #form-note { font-size: 12px; color: #a78bfa; font-weight: 600; margin-top: 10px; line-height: 1.6; text-align: center; }
+
+  /* ===== CONFIRMATION ===== */
+  #done { display: none; text-align: center; padding: 40px 0 20px; }
+  #done.show { display: block; }
+  #done .big { font-size: 78px; }
+  #done h2 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 800; color: #4ade80; margin: 10px 0; }
+  #done p { font-size: 15px; color: #d8cffc; font-weight: 600; line-height: 1.7; margin-bottom: 20px; }
+  .confetti { position: fixed; top: -12px; font-size: 16px; z-index: 999; pointer-events: none; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: .2; } }
+</style>
+</head>
+<body>
+<header id="eq-header">
+  <img src="./icon-192.png" alt="">
+  <div style="flex:1;min-width:0">
+    <div class="hdr-title">ENGLISH QUEST</div>
+    <div class="hdr-sub">Side Quest · Train with the Teacher</div>
+  </div>
+  <a class="eq-btn home-btn" href="./index.html">← Back to English Quest</a>
+</header>
+
+<div id="wrap">
+  <div id="main">
+    <!-- ===== STUDENTS: the side quest board ===== -->
+    <span class="sq-tag">⚔️ Side Quest Unlocked</span>
+    <h1>The dungeon builds your skills.<br><span class="gold">A real teacher builds your confidence.</span></h1>
+    <p class="sq-sub">Level up with Mr. Fakrani himself — one-to-one or in a small party. Real sessions, real progress, real XP for life.</p>
+
+    <div class="benefits">
+      <div class="ben b1"><span class="bi">🗣️</span><div class="bt">Speak without freezing</div><div class="bd">Train your speaking until the words come out on their own.</div></div>
+      <div class="ben b2"><span class="bi">✍️</span><div class="bt">Writing that actually scores</div><div class="bd">Letters, paragraphs, exam answers — built the way graders want them.</div></div>
+      <div class="ben b3"><span class="bi">🎯</span><div class="bt">Fix your weak spots</div><div class="bd">We work on what you get wrong — not what you already know.</div></div>
+      <div class="ben b4"><span class="bi">🛡️</span><div class="bt">Walk into exams calm</div><div class="bd">Bac &amp; regional prep with a plan, not panic.</div></div>
+    </div>
+    <button class="eq-btn cta-jump" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">📜 Accept the Quest — Book a Session</button>
+
+    <!-- ===== PARENTS & ADULTS: the calm panel ===== -->
+    <section id="parents">
+      <h2>For parents and adult learners</h2>
+      <p>I'm <b>Abdeljalil Fakrani</b>, a certified teacher of English working in the public and private sectors in Casablanca. I teach the Moroccan national curriculum every day, from middle school through Baccalaureate.</p>
+      <p>Sessions are <b>one-to-one or in small groups</b>, and focus on what the learner actually needs: grammar, speaking, writing, reading, exam preparation — or English for work, study abroad, or travel. Adults and teenagers with a specific goal are welcome, not only my own students.</p>
+      <p>After you send the form below, <b>I contact you personally</b> to discuss the learner's level, goals, schedule and fees.</p>
+      <div class="safe"><b>A clear rule for learners under 18:</b> a parent or guardian completes this form, and I communicate with the parent — never directly with the student. Adults may of course book for themselves.</div>
+    </section>
+
+    <!-- ===== THE FORM ===== -->
+    <section id="book">
+      <h2>📜 Book a session</h2>
+      <div class="fsub">Takes one minute. I reply within 24 hours — no payment now, no obligation.</div>
+
+      <div class="fgroup" id="g-learner">
+        <label class="flabel">Learner's first name <span class="req">*</span></label>
+        <input type="text" id="f-learner" maxlength="60" autocomplete="off">
+        <div class="ferr" id="e-learner">Please write the learner's first name.</div>
+      </div>
+
+      <div class="fgroup" id="g-who">
+        <label class="flabel">Who is the learner? <span class="req">*</span></label>
+        <div class="chips" id="c-who"></div>
+        <div class="ferr" id="e-who">Please choose one.</div>
+      </div>
+
+      <div class="fgroup" id="g-contact">
+        <label class="flabel">Your name — parent/guardian, or the learner if an adult <span class="req">*</span></label>
+        <input type="text" id="f-contact" maxlength="80" autocomplete="off">
+        <div class="ferr" id="e-contact">Please write your name.</div>
+      </div>
+
+      <div class="fgroup" id="g-phone">
+        <label class="flabel">Phone number <span class="req">*</span></label>
+        <input type="tel" id="f-phone" maxlength="20" placeholder="06 XX XX XX XX" autocomplete="off">
+        <div class="ferr" id="e-phone">Please write a valid phone number (at least 9 digits).</div>
+      </div>
+
+      <div class="fgroup" id="g-email">
+        <label class="flabel">Email (optional)</label>
+        <input type="email" id="f-email" maxlength="80" autocomplete="off">
+        <div class="ferr" id="e-email">That email doesn't look right — check it or leave it empty.</div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">What's the goal? (choose any)</label>
+        <div class="chips" id="c-goal"></div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Preferred format</label>
+        <div class="chips" id="c-format"></div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Preferred time (choose any)</label>
+        <div class="chips" id="c-time"></div>
+      </div>
+
+      <div class="fgroup">
+        <label class="flabel">Anything else I should know?</label>
+        <textarea id="f-notes" maxlength="1000"></textarea>
+      </div>
+
+      <button class="eq-btn" id="send-btn">📨 Send my request</button>
+      <div class="ferr" id="e-send" style="text-align:center">Something needs fixing above — check the highlighted fields.</div>
+      <div id="form-note">Your request goes straight to Mr. Fakrani. No account needed, nothing is public.</div>
+    </section>
+  </div>
+
+  <!-- ===== CONFIRMATION ===== -->
+  <div id="done">
+    <div class="big">🎉</div>
+    <h2>Request sent!</h2>
+    <p>Thank you — your booking request is on its way to Mr. Fakrani.<br>He will contact you <b>within 24 hours</b> to talk about level, goals, schedule and fees.</p>
+    <a class="eq-btn cta-jump" href="./index.html" style="margin-bottom:0">🏰 Back to English Quest</a>
+  </div>
+</div>
+
+<script>
+/* ===== Google Form wiring (built in Stage 1, IDs extracted in Stage 2) ===== */
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSd8lJ8RiXUAEnNL5ORBtxPSnlhku6whAfjU4u8wYt9FOG6AwA/formResponse';
+const ENTRY = {
+  learner: 'entry.91937629',
+  who: 'entry.1448212677',
+  contact: 'entry.552319457',
+  phone: 'entry.1443328440',
+  email: 'entry.829902464',
+  goal: 'entry.2077325717',
+  format: 'entry.1022753300',
+  time: 'entry.31431169',
+  notes: 'entry.1379581531'
+};
+const OPTS = {
+  who: ['Middle school student','High school — Common Core','High school — 1st Year Bac','High school — 2nd Year Bac','Adult learner','Other'],
+  goal: ['Grammar','Speaking & confidence','Writing','Reading comprehension','Exam preparation (Bac / regional)','English for work or study abroad','General improvement','Other'],
+  format: ['One-to-one','Small group (2–4)','Online','In person','Flexible'],
+  time: ['Weekday evenings','Saturday','Sunday','Flexible']
+};
+
+/* chip pickers: 'who' and 'format' are single-choice, 'goal' and 'time' multi-choice */
+function buildChips(id, key, single) {
+  const box = document.getElementById(id);
+  OPTS[key].forEach(o => {
+    const c = document.createElement('span');
+    c.className = 'chip-opt';
+    c.textContent = o;
+    c.onclick = () => {
+      if (single) { [...box.children].forEach(x => x.classList.remove('on')); c.classList.add('on'); }
+      else c.classList.toggle('on');
+      document.getElementById('g-who').classList.remove('invalid');
+      document.getElementById('e-who').classList.remove('show');
+    };
+    box.appendChild(c);
+  });
+}
+buildChips('c-who', 'who', true);
+buildChips('c-goal', 'goal', false);
+buildChips('c-format', 'format', true);
+buildChips('c-time', 'time', false);
+function picked(id) { return [...document.querySelectorAll('#' + id + ' .on')].map(c => c.textContent); }
+
+/* validation */
+function err(g, e, bad) {
+  document.getElementById(g).classList.toggle('invalid', bad);
+  document.getElementById(e).classList.toggle('show', bad);
+  return bad;
+}
+function validate() {
+  let bad = false;
+  bad = err('g-learner', 'e-learner', document.getElementById('f-learner').value.trim().length < 2) || bad;
+  bad = err('g-who', 'e-who', picked('c-who').length === 0) || bad;
+  bad = err('g-contact', 'e-contact', document.getElementById('f-contact').value.trim().length < 2) || bad;
+  const digits = (document.getElementById('f-phone').value.match(/\d/g) || []).length;
+  bad = err('g-phone', 'e-phone', digits < 9) || bad;
+  const em = document.getElementById('f-email').value.trim();
+  bad = err('g-email', 'e-email', em !== '' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) || bad;
+  return !bad;
+}
+
+/* background submit — the user never leaves the app */
+document.getElementById('send-btn').onclick = async function () {
+  document.getElementById('e-send').classList.remove('show');
+  if (!validate()) { document.getElementById('e-send').classList.add('show'); return; }
+  this.disabled = true;
+  this.textContent = '⏳ Sending…';
+  const fd = new FormData();
+  fd.append(ENTRY.learner, document.getElementById('f-learner').value.trim());
+  fd.append(ENTRY.who, picked('c-who')[0]);
+  fd.append(ENTRY.contact, document.getElementById('f-contact').value.trim());
+  fd.append(ENTRY.phone, document.getElementById('f-phone').value.trim());
+  const em = document.getElementById('f-email').value.trim();
+  if (em) fd.append(ENTRY.email, em);
+  picked('c-goal').forEach(v => fd.append(ENTRY.goal, v));
+  const fmt = picked('c-format')[0];
+  if (fmt) fd.append(ENTRY.format, fmt);
+  picked('c-time').forEach(v => fd.append(ENTRY.time, v));
+  const notes = document.getElementById('f-notes').value.trim();
+  if (notes) fd.append(ENTRY.notes, notes);
+  try { await fetch(FORM_URL, { method: 'POST', mode: 'no-cors', body: fd }); } catch (e) {}
+  /* count the submission in analytics (views vs submits comparison) */
+  try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: 'tutoring-submit', title: 'Tutoring form submitted', event: true }); } catch (e) {}
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('done').className = 'show';
+  window.scrollTo(0, 0);
+  try {
+    const E = ['🎉','⭐','✨','🎊'];
+    for (let i = 0; i < 24; i++) {
+      const s = document.createElement('span');
+      s.className = 'confetti'; s.textContent = E[i % 4];
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.animationDuration = (1.6 + Math.random() * 1.8) + 's';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 4200);
+    }
+  } catch (e) {}
+};
+</script>
+</body>
+</html>
