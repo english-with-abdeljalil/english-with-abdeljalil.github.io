@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Community">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<script src="./eq-music.js"></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script><script src="./eq-avatar.js"></script>
+<script data-goatcounter="https://jalil.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(60% 40% at 20% 0%, rgba(124,58,237,.35), transparent 60%),
+      radial-gradient(50% 35% at 90% 15%, rgba(219,39,119,.22), transparent 60%),
+      linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color:#f0e9ff; min-height:100dvh; display:flex; justify-content:center;
+  }
+  #app { width:100%; max-width:520px; padding:0 16px 60px; }
+  .back { display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:#c4b5fd; font-weight:700; font-size:13px; padding:14px 2px 4px; }
+  .eq-title { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:24px; font-weight:800; margin:4px 2px 2px; }
+
+  .safe-banner { display:flex; gap:11px; align-items:flex-start; border-radius:16px; padding:13px 14px; margin:12px 0 16px;
+    background:linear-gradient(160deg, rgba(34,197,94,.15), rgba(255,255,255,.04)); border:1.5px solid rgba(34,197,94,.4); }
+  .safe-banner .si { font-size:22px; }
+  .safe-banner .st { font-size:12.5px; line-height:1.55; font-weight:600; color:#dbeadf; }
+  .safe-banner .st b { color:#86efac; }
+
+  .tabs { display:flex; gap:8px; margin:0 0 14px; }
+  .tab { flex:1; text-align:center; padding:10px; border-radius:12px; border:1.5px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.05); color:#c4b5fd; font-weight:800; font-size:13px; cursor:pointer; font-family:inherit; }
+  .tab.active { border-color:#fbbf24; background:rgba(251,191,36,.16); color:#fbbf24; }
+
+  .post { display:flex; gap:12px; align-items:center; border-radius:16px; padding:13px; margin-bottom:10px;
+    background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.13); }
+  .post.mine { border-color:rgba(251,191,36,.45); background:linear-gradient(160deg, rgba(251,191,36,.12), rgba(255,255,255,.03)); }
+  .post .pf { width:42px; height:42px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.08); border-radius:12px; }
+  .post .pb { flex:1; min-width:0; }
+  .post .pn { font-size:13.5px; font-weight:800; }
+  .post .pn .you { font-size:10.5px; color:#fbbf24; font-weight:800; margin-left:5px; }
+  .post .pm { font-size:13px; color:#e2d8ff; font-weight:600; margin-top:2px; line-height:1.4; }
+  .post .pt { font-size:10.5px; color:#9d8fc4; font-weight:700; margin-top:3px; }
+  .cheer { display:flex; flex-direction:column; align-items:center; gap:2px; border:none; cursor:pointer;
+    background:transparent; color:#c4b5fd; font-family:inherit; padding:4px 2px; }
+  .cheer .ch-emo { font-size:20px; transition:transform .12s; }
+  .cheer.cheered .ch-emo { transform:scale(1.25); }
+  .cheer .ch-n { font-size:11px; font-weight:800; }
+  .cheer.cheered .ch-n { color:#fbbf24; }
+
+  .empty { text-align:center; color:#9d8fc4; font-size:13px; font-weight:600; padding:26px 10px; line-height:1.6; }
+  footer { text-align:center; font-size:12px; color:#6b7280; margin-top:22px; line-height:1.7; }
+  .note { font-size:11.5px; color:#9d8fc4; line-height:1.55; margin:14px 4px 0; text-align:center; }
+  /* stars handled by eq-theme.css */
+</style>
+</head>
+<body>
+<div id="app">
+  <a class="back" href="./home.html">‹ Home</a>
+  <div class="eq-title">🎉 Community</div>
+
+  <div class="safe-banner">
+    <span class="si">🛡️</span>
+    <span class="st"><b>A safe, teacher-watched space.</b> This wall shows <b>achievements only</b> — no messages, no photos, no real names. Just cheer your classmates on!</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="class">🏫 My Class</button>
+    <button class="tab" data-tab="me">⭐ My Wins</button>
+  </div>
+
+  <div id="feed"></div>
+
+  <div class="note">Free posting is off by design for younger students — the safest way to share the fun is celebrating real achievements. Your teacher can open more when a class is ready.</div>
+  <footer>English Quest · Made by your teacher, Mr. Fakrani 🇲🇦</footer>
+</div>
+
+<nav class="eq-nav" aria-label="Main navigation">
+  <div class="eq-nav-inner">
+    <a class="eq-nav-item" href="./home.html"><span class="ni-icon">🏠</span>Home</a>
+    <a class="eq-nav-item" href="./index.html"><span class="ni-icon">🏫</span>Class</a>
+    <a class="eq-nav-item" href="./speaking.html"><span class="ni-icon">🎙️</span>Speak</a>
+    <a class="eq-nav-item" href="./profile.html"><span class="ni-icon">🧑‍🚀</span>Profile</a>
+  </div>
+</nav>
+
+<script>
+  function dungeonData(){ try { return JSON.parse(localStorage.getItem('u1_dungeon')||'{}'); } catch(e){ return {}; } }
+  const p = dungeonData();
+  const xp = p.totalXP || 0;
+  const myName = p.name || 'You';
+  const myAv = (window.EQAvatar && EQAvatar.get()) || {s:1,e:0,h:1,a:0};
+
+  const LESSON_IDS = ["functions","verbbe","plurals","vocab","listening","reading","writing"];
+  const lessonDone = localStorage.getItem('eq_learn1_done') === 'true';
+  const practiceDone = LESSON_IDS.every(id => p.lessons && p.lessons[id]);
+  const dragonDone = !!p.finalBeaten;
+
+  /* my achievements (auto-generated from real progress) */
+  const mine = [];
+  if (lessonDone)  mine.push({ m:'finished Learn the Lesson in Unit 1! 📖', t:'today' });
+  if (practiceDone)mine.push({ m:'completed all the practice in Unit 1! ✏️', t:'today' });
+  if (dragonDone)  mine.push({ m:'beat the Fire Dragon and cleared Unit 1! 🐉🏆', t:'today' });
+  if (xp>=100)     mine.push({ m:'reached '+xp+' XP! ⭐', t:'today' });
+  if (mine.length===0) mine.push({ m:'joined the quest — the adventure begins! 🚀', t:'today' });
+  mine.forEach(o=>{ o.n=myName; o.av=myAv; o.me=true; });
+
+  /* seeded class achievements (codenames + avatars only) */
+  const CLASS = [
+    { n:'DragonHeart', av:{s:2,e:1,h:4,a:3}, m:'beat the Fire Dragon and cleared Unit 1! 🐉🏆', t:'2h ago',  cheers:12 },
+    { n:'StarWizard',  av:{s:0,e:2,h:2,a:1}, m:'reached 360 XP — on fire this week! ⭐',        t:'5h ago',  cheers:9 },
+    { n:'QuestKnight', av:{s:3,e:0,h:1,a:2}, m:'completed all the practice in Unit 1! ✏️',       t:'today',   cheers:6 },
+    { n:'BraveFox',    av:{s:1,e:3,h:3,a:0}, m:'earned the “First Lesson” badge! 📖',             t:'today',   cheers:4 },
+    { n:'SwiftOwl',    av:{s:4,e:1,h:0,a:3}, m:'started Unit 1 — welcome to the quest! 🚀',       t:'1d ago',  cheers:3 },
+  ];
+
+  function faceSvg(av){ return EQAvatar.svg(av, 40); }
+  function cheerKey(id){ return 'eq_cheer_'+id; }
+
+  function postHTML(o, id){
+    const cheered = localStorage.getItem(cheerKey(id))==='1';
+    const base = o.cheers||0;
+    const n = base + (cheered?1:0);
+    return '<div class="post'+(o.me?' mine':'')+'">'+
+      '<span class="pf">'+faceSvg(o.av)+'</span>'+
+      '<span class="pb"><span class="pn">'+o.n+(o.me?'<span class="you">YOU</span>':'')+'</span>'+
+      '<span class="pm">'+o.m+'</span><span class="pt">'+o.t+'</span></span>'+
+      '<button class="cheer'+(cheered?' cheered':'')+'" data-id="'+id+'" data-base="'+base+'">'+
+        '<span class="ch-emo">👏</span><span class="ch-n">'+n+'</span></button></div>';
+  }
+
+  const feed = document.getElementById('feed');
+  function render(tab){
+    let items = [];
+    if (tab==='me') items = mine.map((o,i)=>({o:o, id:'me'+i}));
+    else {
+      // class feed = my newest win on top, then classmates
+      const top = mine.filter(o=>o.me).slice(-1).map((o,i)=>({o:o, id:'mefeat'+i}));
+      items = top.concat(CLASS.map((o,i)=>({o:o, id:'cl'+i})));
+    }
+    if (items.length===0){ feed.innerHTML='<div class="empty">No wins yet — go earn one and it will appear here! 🌟</div>'; return; }
+    feed.innerHTML = items.map(x=>postHTML(x.o, x.id)).join('');
+    feed.querySelectorAll('.cheer').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const id=b.dataset.id, base=parseInt(b.dataset.base,10);
+        const nowCheered = !(localStorage.getItem(cheerKey(id))==='1');
+        localStorage.setItem(cheerKey(id), nowCheered?'1':'0');
+        b.classList.toggle('cheered', nowCheered);
+        b.querySelector('.ch-n').textContent = base + (nowCheered?1:0);
+        if (nowCheered && !(window.EQCalm && EQCalm.on)) { try{ navigator.vibrate && navigator.vibrate(20); }catch(e){} }
+      });
+    });
+  }
+
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active'); render(t.dataset.tab);
+    });
+  });
+  render('class');
+
+  /* stars */
+  for (let i=0;i<14;i++){ const s=document.createElement('span'); s.className='eq-star'; s.textContent='✦';
+    s.style.left=Math.random()*100+'vw'; s.style.top=Math.random()*100+'vh'; s.style.animationDelay=(Math.random()*3)+'s';
+    document.body.appendChild(s); }
+</script>
+</body>
+</html>

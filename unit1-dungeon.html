@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Unit 1 Dungeon — Myself &amp; Others</title>
+<meta name="theme-color" content="#1a0b2e">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="./eq-voice.js" defer></script>
+<script src="./eq-calm.js" defer></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+<script data-goatcounter="https://jalil.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Unit 1 Dungeon">
+<link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADcElEQVR42u3cvYoTURyG8ZxopYUoFmKhxRLBxtJSWws/7yGXtd6BoEQvQLQQ70DYlbCNlahsYaVgYZQ4k8k6s5kzZ875PWyx2R2W8fDw/j/GJFw9f2sCbGLqCEAOkAPkADkwJGcnk+AUIDlADpADvfccOg5IDnSYVoLsgOQAOUAOkANDNqTW55AcaJ0ccgOSA+QAORBlWrE+h+QAOUAOkAPkSILl4vhwfne5OHYUq2kleLbyLz8XDw7nq+9n+2/KHmXRzMH8zvrL0lwhR0dXShCFHEKFHEKlixzW5zti9vTt6rtcjlRy7M4JZQXZO0EOQvyHHDqOE7nxx4nSzkpynOxEsXhrQpUzD1/uPbpYZFJU8eCtaoZDIAfIAXKgD8K1C7ez/0d+fPGl8pO9x5fWXx59e//j9WzLBfW/UL9GckBZAWxIT1WSJQeUFaBWViyJFRbJAXKAHLulsgHD356jRDZuPFtdIDlQdnIEb03oPKsE0wqUFSBeQ3rw/HPlJ7Mnl9dfLr++q4wJlQvqf6F+zbgY15lIDmxLjtF1VcGdxLkTyQFygBwgB6I0pNpRd9I8rYxuB5zODed+J0OWFQ/KEz+TqI/sN273Wl3QB9fvn2v61dGr72WeiYYU5AA50EfPYZh1Jwk0pOm0gWmS2plYgrkTPQfIgZ32HNbn7kRygBwgB8gBciDNaaX49fkplo+5r89tSN2JsgJygByI0pAOtAPu3gbmu7RO7UwkB8gBcoAciNKQjm4J9uHZJ3dS7Uf7mlZ8MH4OmFag5wA5QA6QAxmOshMfjJ/DsGJagbKCVMqKojJpeHv7iN7s39+GlBbbflXs50H8Liuht68Rm9HqmjSyY/dfU5mRix8a0uhmlOzHlBn8IAfI0WcAlBYe1udZELxXFs2DrLICPQfIAXJgvNOKtyZoSSUHyAFygBwYsiEN1ucZtKP+9zmUFZAD5AA5kOO0Yn2ex7wiOaCsIJGyoqgoKpIDHRpS6/McokNDCg0pyAFygBzIcVqxPs9iXJEciJscckNuSA6QA+RAlGnFs5Ucmg7TCpQVkAPJF6ubV+45BWxuSIP1OZQVkAPkADlADiQ5rVifQ3KAHCAHYvQcOg5IDnSYVjxbgeQAOUAOkAODNqTW55AcaJ0ccgOSA+QAORBlWrE+h+QAOUAOkAMD8gsqtXyq8UkhRwAAAABJRU5ErkJggg==">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADcElEQVR42u3cvYoTURyG8ZxopYUoFmKhxRLBxtJSWws/7yGXtd6BoEQvQLQQ70DYlbCNlahsYaVgYZQ4k8k6s5kzZ875PWyx2R2W8fDw/j/GJFw9f2sCbGLqCEAOkAPkADkwJGcnk+AUIDlADpADvfccOg5IDnSYVoLsgOQAOUAOkANDNqTW55AcaJ0ccgOSA+QAORBlWrE+h+QAOUAOkAPkSILl4vhwfne5OHYUq2kleLbyLz8XDw7nq+9n+2/KHmXRzMH8zvrL0lwhR0dXShCFHEKFHEKlixzW5zti9vTt6rtcjlRy7M4JZQXZO0EOQvyHHDqOE7nxx4nSzkpynOxEsXhrQpUzD1/uPbpYZFJU8eCtaoZDIAfIAXKgD8K1C7ez/0d+fPGl8pO9x5fWXx59e//j9WzLBfW/UL9GckBZAWxIT1WSJQeUFaBWViyJFRbJAXKAHLulsgHD356jRDZuPFtdIDlQdnIEb03oPKsE0wqUFSBeQ3rw/HPlJ7Mnl9dfLr++q4wJlQvqf6F+zbgY15lIDmxLjtF1VcGdxLkTyQFygBwgB6I0pNpRd9I8rYxuB5zODed+J0OWFQ/KEz+TqI/sN273Wl3QB9fvn2v61dGr72WeiYYU5AA50EfPYZh1Jwk0pOm0gWmS2plYgrkTPQfIgZ32HNbn7kRygBwgB8gBciDNaaX49fkplo+5r89tSN2JsgJygByI0pAOtAPu3gbmu7RO7UwkB8gBcoAciNKQjm4J9uHZJ3dS7Uf7mlZ8MH4OmFag5wA5QA6QAxmOshMfjJ/DsGJagbKCVMqKojJpeHv7iN7s39+GlBbbflXs50H8Liuht68Rm9HqmjSyY/dfU5mRix8a0uhmlOzHlBn8IAfI0WcAlBYe1udZELxXFs2DrLICPQfIAXJgvNOKtyZoSSUHyAFygBwYsiEN1ucZtKP+9zmUFZAD5AA5kOO0Yn2ex7wiOaCsIJGyoqgoKpIDHRpS6/McokNDCg0pyAFygBzIcVqxPs9iXJEciJscckNuSA6QA+RAlGnFs5Ucmg7TCpQVkAPJF6ubV+45BWxuSIP1OZQVkAPkADlADiQ5rVifQ3KAHCAHYvQcOg5IDnSYVjxbgeQAOUAOkAODNqTW55AcaJ0ccgOSA+QAORBlWrE+h+QAOUAOkAMD8gsqtXyq8UkhRwAAAABJRU5ErkJggg==">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  /* Unified English Quest identity: one heading font across hub, lesson and dungeon */
+  .game-title, #world-title, #map-title, #unit-title, .end-title, #learn-title, .modal-title {
+    font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color: #f0e9ff;
+    display: flex; justify-content: center; min-height: 100dvh; overflow-x: hidden;
+  }
+  body.golden-mode { background: linear-gradient(180deg, #1c1503 0%, #3d2e08 60%, #1c1503 100%); }
+  #app { width: 100%; max-width: 480px; padding: 14px; display: flex; flex-direction: column; min-height: 100dvh; position: relative; z-index: 1; }
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+  button { font-family: inherit; cursor: pointer; border: none; }
+
+  .ember { position: fixed; bottom: -20px; z-index: 0; pointer-events: none; font-size: 12px; opacity: 0; animation: emberRise linear infinite; }
+  @keyframes emberRise {
+    0% { opacity: 0; transform: translateY(0) translateX(0) scale(.6); }
+    10% { opacity: .7; } 90% { opacity: .2; }
+    100% { opacity: 0; transform: translateY(-105vh) translateX(var(--drift, 20px)) scale(1.1); }
+  }
+
+  #sound-toggle, #music-toggle {
+    position: fixed; top: 10px; z-index: 60;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.25);
+    color: #fff; font-size: 18px; width: 40px; height: 40px; border-radius: 50%;
+  }
+  #sound-toggle { right: 10px; }
+  #music-toggle { right: 58px; }
+  #music-toggle.off, #sound-toggle.off { opacity: .35; }
+
+  /* ===== TITLE ===== */
+  #title-screen { justify-content: center; text-align: center; gap: 16px; }
+  .game-title { font-size: 30px; font-weight: 800; line-height: 1.2;
+    background: linear-gradient(90deg, #fbbf24, #f87171);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .unit-label { font-size: 15px; color: #c4b5fd; font-weight: 600; margin-top: 4px; }
+  .boss-preview { font-size: 82px; animation: bossFly 3s ease-in-out infinite; filter: drop-shadow(0 0 24px rgba(249,115,22,.5)); }
+  .rules { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px; padding: 13px 16px; text-align: left; font-size: 13.5px; line-height: 1.8; }
+  .btn-primary { background: linear-gradient(90deg, #7c3aed, #db2777); color: #fff;
+    font-size: 19px; font-weight: 800; padding: 16px; border-radius: 14px; width: 100%;
+    box-shadow: 0 6px 18px rgba(124,58,237,.45); transition: transform .1s; }
+  .btn-primary:active { transform: scale(.96); }
+  .btn-gold { background: linear-gradient(90deg, #d97706, #fbbf24); color: #451a03;
+    font-size: 18px; font-weight: 900; padding: 15px; border-radius: 14px; width: 100%;
+    box-shadow: 0 6px 18px rgba(251,191,36,.4); transition: transform .1s; animation: goldPulse 1.6s ease-in-out infinite; }
+  .btn-gold:active { transform: scale(.96); }
+  @keyframes goldPulse { 0%,100% { box-shadow: 0 6px 18px rgba(251,191,36,.35); } 50% { box-shadow: 0 6px 28px rgba(251,191,36,.7); } }
+  .btn-ghost { background: transparent; border: 2px solid rgba(255,255,255,.3); color: #d8cffc;
+    font-size: 15px; font-weight: 700; padding: 12px; border-radius: 12px; width: 100%; }
+
+  /* ===== DUNGEON MAP ===== */
+  #map-screen { gap: 10px; padding-bottom: 10px; }
+  #map-header { text-align: center; margin-bottom: 4px; }
+  #map-title { font-size: 22px; font-weight: 900;
+    background: linear-gradient(90deg, #fbbf24, #f87171);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #map-sub { font-size: 13px; color: #c4b5fd; font-weight: 600; }
+  #map-xp { font-size: 14px; color: #fbbf24; font-weight: 800; margin-top: 3px; }
+  .floor-node {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.15);
+    border-radius: 16px; padding: 12px 14px; text-align: left; color: #f0e9ff;
+    transition: transform .1s;
+  }
+  .floor-node:active { transform: scale(.98); }
+  .floor-node.unlocked { border-color: #7c3aed; box-shadow: 0 0 14px rgba(124,58,237,.35); }
+  .floor-node.cleared { border-color: #22c55e; }
+  .floor-node.locked { opacity: .45; }
+  .floor-node.final { border-color: #f97316; background: rgba(249,115,22,.1); }
+  .floor-node.final.locked { opacity: .45; }
+  .floor-node.quick { border-color: #22d3ee; background: rgba(34,211,238,.08); box-shadow: 0 0 12px rgba(34,211,238,.25); }
+  .fn-emoji { font-size: 34px; min-width: 42px; text-align: center; }
+  .fn-info { flex: 1; }
+  .fn-name { font-size: 15px; font-weight: 800; }
+  .fn-lesson { font-size: 11.5px; color: #a78bfa; font-weight: 600; }
+  .fn-status { font-size: 16px; min-width: 64px; text-align: right; letter-spacing: 1px; }
+  .floor-connector { width: 4px; height: 12px; background: rgba(255,255,255,.2); border-radius: 2px; margin: -6px auto; }
+
+  /* ===== BATTLE ===== */
+  #hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 15px; font-weight: 700; }
+  #lives { letter-spacing: 2px; font-size: 18px; }
+  #xp-display { color: #fbbf24; }
+  #boss-area { text-align: center; padding: 2px 0 8px; }
+  #boss-name { font-size: 13px; font-weight: 700; color: #fca5a5; margin-bottom: 2px; letter-spacing: 1px; text-transform: uppercase; }
+  body.golden-mode #boss-name { color: #fde047; }
+  #boss-wrap { position: relative; height: 92px; }
+  #boss-sprite { font-size: 70px; display: inline-block; position: relative; z-index: 2;
+    animation: bossFly 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 18px rgba(249,115,22,.55)) drop-shadow(0 8px 16px rgba(0,0,0,.5)); }
+  body.golden-mode #boss-sprite { filter: drop-shadow(0 0 22px rgba(253,224,71,.75)) drop-shadow(0 8px 16px rgba(0,0,0,.5)); }
+  #boss-sprite.hit { animation: shake .45s; }
+  #boss-sprite.breathe { animation: lunge .8s; }
+  .fireball { position: absolute; left: 50%; top: 55px; z-index: 3; font-size: 30px; pointer-events: none; animation: fireFly 0.9s ease-in forwards; }
+  .hp-bar-wrap { background: rgba(0,0,0,.5); border-radius: 999px; height: 20px; overflow: hidden; border: 2px solid rgba(255,255,255,.2); margin-top: 4px; position: relative; }
+  #hp-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #ef4444, #f97316); border-radius: 999px; transition: width .5s ease; position: relative; overflow: hidden; }
+  body.golden-mode #hp-bar { background: linear-gradient(90deg, #d97706, #fde047); }
+  #hp-bar::after { content: ''; position: absolute; inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.35) 50%, transparent 60%);
+    animation: hpShine 2.4s linear infinite; }
+  @keyframes hpShine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+  #hp-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
+  #dmg-float { position: absolute; left: 50%; transform: translateX(-50%); top: 0; z-index: 4;
+    font-size: 26px; font-weight: 900; color: #fbbf24; opacity: 0; pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,.6); }
+  #dmg-float.show { animation: floatUp 0.9s ease-out; }
+
+  #timer-wrap { background: rgba(0,0,0,.45); border-radius: 999px; height: 10px; overflow: hidden; margin-bottom: 8px; border: 1px solid rgba(255,255,255,.15); }
+  #timer-bar { height: 100%; width: 100%; background: linear-gradient(90deg, #22d3ee, #3b82f6); border-radius: 999px; transition: width .1s linear, background .3s; }
+  #timer-bar.danger { background: linear-gradient(90deg, #ef4444, #f97316); }
+  #timer-label { text-align: center; font-size: 12px; font-weight: 800; color: #7dd3fc; margin-bottom: 4px; }
+  #timer-label.danger { color: #f87171; animation: pulseText .5s ease infinite alternate; }
+  @keyframes pulseText { from { opacity: 1; } to { opacity: .45; } }
+
+  #category-chip { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    background: rgba(124,58,237,.35); border: 1px solid #7c3aed; color: #d8b4fe;
+    padding: 4px 12px; border-radius: 999px; margin-bottom: 8px; }
+  body.golden-mode #category-chip { background: rgba(217,119,6,.3); border-color: #d97706; color: #fde047; }
+  #question-box { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+    border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; }
+  #question-box.slide-in { animation: slideIn .35s ease; }
+  @keyframes slideIn { 0% { transform: translateX(60px); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+  #question-text { font-size: 17.5px; font-weight: 700; line-height: 1.45; }
+  #progress-text { font-size: 12px; color: #a78bfa; margin-top: 6px; font-weight: 600; }
+
+  #answers { display: flex; flex-direction: column; gap: 9px; }
+  .answer-btn { background: rgba(255,255,255,.09); border: 2px solid rgba(255,255,255,.18); color: #f0e9ff;
+    font-size: 16px; font-weight: 600; padding: 13px 16px; border-radius: 14px; text-align: left;
+    transition: transform .08s, background .15s, border-color .15s; }
+  .answer-btn:active { transform: scale(.97); }
+  .answer-btn.correct { background: rgba(34,197,94,.3); border-color: #22c55e; }
+  .answer-btn.wrong { background: rgba(239,68,68,.3); border-color: #ef4444; }
+  .answer-btn:disabled { pointer-events: none; }
+
+  /* ===== WORD-ORDER QUESTIONS ===== */
+  #order-area { display: none; flex-direction: column; gap: 10px; }
+  #order-area.show { display: flex; }
+  #order-line { min-height: 52px; background: rgba(0,0,0,.35); border: 2px dashed rgba(255,255,255,.3);
+    border-radius: 14px; padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  #order-line.correct-flash { border-color: #22c55e; background: rgba(34,197,94,.15); }
+  #order-line.wrong-flash { border-color: #ef4444; background: rgba(239,68,68,.15); animation: shake .4s; }
+  #order-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .token-btn { background: rgba(124,58,237,.35); border: 2px solid #7c3aed; color: #f0e9ff;
+    font-size: 16px; font-weight: 700; padding: 9px 14px; border-radius: 12px; transition: transform .08s; }
+  .token-btn:active { transform: scale(.94); }
+  .token-btn.in-line { background: rgba(34,197,94,.25); border-color: #22c55e; }
+  #order-submit { background: linear-gradient(90deg, #0ea5e9, #6366f1); color: #fff;
+    font-size: 17px; font-weight: 800; padding: 13px; border-radius: 12px; }
+
+  /* ===== TYPED (GOLDEN) ===== */
+  #typed-area { display: none; flex-direction: column; gap: 10px; }
+  #typed-area.show { display: flex; }
+  #typed-input { font-family: inherit; font-size: 18px; font-weight: 700; color: #1c1503;
+    padding: 14px 16px; border-radius: 14px; border: 3px solid #fbbf24; background: #fffbeb; width: 100%; text-align: center; }
+  #typed-input:focus { outline: none; border-color: #d97706; }
+  #typed-input.correct-flash { border-color: #22c55e; background: #dcfce7; }
+  #typed-input.wrong-flash { border-color: #ef4444; background: #fee2e2; animation: shake .4s; }
+  #typed-submit { background: linear-gradient(90deg, #d97706, #fbbf24); color: #451a03;
+    font-size: 17px; font-weight: 900; padding: 14px; border-radius: 14px; }
+
+  /* ===== FEEDBACK ===== */
+  #feedback-panel { display: none; margin-top: 10px; border-radius: 16px; padding: 14px 16px; animation: popIn .35s ease; line-height: 1.6; }
+  #feedback-panel.show { display: block; }
+  #feedback-panel.good { background: rgba(22,163,74,.18); border: 2px solid #22c55e; }
+  #feedback-panel.bad { background: rgba(220,38,38,.16); border: 2px solid #ef4444; }
+  #feedback-title { font-size: 16px; font-weight: 900; margin-bottom: 4px; }
+  #feedback-panel.good #feedback-title { color: #4ade80; }
+  #feedback-panel.bad #feedback-title { color: #f87171; }
+  #feedback-answer { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  #feedback-tip { font-size: 14.5px; color: #ddd6fe; }
+  #next-btn { display: none; margin-top: 12px; width: 100%;
+    background: linear-gradient(90deg, #0ea5e9, #6366f1); color: #fff;
+    font-size: 17px; font-weight: 800; padding: 13px; border-radius: 12px;
+    box-shadow: 0 5px 14px rgba(14,165,233,.4); position: relative; overflow: hidden; }
+  #next-btn.show { display: block; animation: popIn .4s ease; }
+  #next-btn .auto-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%;
+    background: rgba(255,255,255,.22); pointer-events: none; }
+  #streak-badge { text-align: center; font-size: 13px; font-weight: 800; color: #fbbf24; min-height: 18px; margin-top: 6px; }
+
+  /* ===== PET POP ===== */
+  #pet-pop { position: fixed; inset: 0; display: none; z-index: 50; align-items: center; justify-content: center; flex-direction: column; pointer-events: none; }
+  #pet-pop.show { display: flex; }
+  #pet-emoji { font-size: 110px; animation: petBounce .8s ease; filter: drop-shadow(0 10px 25px rgba(0,0,0,.6)); }
+  #pet-text { font-size: 22px; font-weight: 900; margin-top: 6px; padding: 8px 22px; border-radius: 999px; animation: petBounce .8s ease; }
+  #pet-pop.good #pet-text { background: #16a34a; color: #fff; }
+  #pet-pop.bad #pet-text { background: #dc2626; color: #fff; }
+  #pet-pop.fading #pet-emoji, #pet-pop.fading #pet-text { animation: petFade .5s ease forwards; }
+  @keyframes petFade { to { opacity: 0; transform: scale(.8); } }
+
+  /* ===== MODALS ===== */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 100;
+    display: none; align-items: center; justify-content: center; padding: 24px; }
+  .modal-overlay.show { display: flex; }
+  .modal-card { background: linear-gradient(180deg, #2d1b4e, #1a0b2e);
+    border: 2px solid rgba(255,255,255,.2); border-radius: 22px;
+    padding: 28px 22px; text-align: center; width: 100%; max-width: 360px;
+    animation: popIn .45s cubic-bezier(.18,1.25,.4,1); }
+  .modal-emoji { font-size: 72px; }
+  .modal-title { font-size: 30px; font-weight: 900; margin: 8px 0; }
+  .modal-text { font-size: 15px; color: #d8cffc; line-height: 1.6; margin-bottom: 18px; }
+  #fail-modal .modal-title { color: #f87171; }
+  #cheat-modal .modal-title { color: #fbbf24; }
+
+  /* ===== END SCREENS ===== */
+  #floor-clear-screen, #victory-screen, #defeat-screen, #legend-screen { justify-content: center; text-align: center; gap: 13px; }
+  .end-emoji { font-size: 84px; }
+  .end-title { font-size: 30px; font-weight: 900; }
+  #floor-clear-screen .end-title { color: #4ade80; }
+  #victory-screen .end-title { color: #fbbf24; }
+  #defeat-screen .end-title { color: #f87171; }
+  #legend-screen .end-title { background: linear-gradient(90deg, #fde047, #f59e0b, #fde047);
+    -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 34px; }
+  #rank-line { font-size: 17px; font-weight: 900; color: #a5f3fc; }
+  .stats-card { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15);
+    border-radius: 16px; padding: 15px; font-size: 16px; line-height: 2; font-weight: 600; }
+  .stars { font-size: 32px; letter-spacing: 6px; }
+  .screenshot-hint { font-size: 14px; color: #c4b5fd; line-height: 1.6; }
+  #challenge-offer { display: none; flex-direction: column; gap: 8px; }
+  #challenge-offer.show { display: flex; animation: popIn .5s ease; }
+  #challenge-note { font-size: 13.5px; color: #fde047; font-weight: 700; }
+  #legend-crown { font-size: 100px; animation: crownFloat 2.4s ease-in-out infinite; filter: drop-shadow(0 0 30px rgba(253,224,71,.8)); }
+  @keyframes crownFloat { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-14px) rotate(3deg); } }
+
+  /* ===== HOME BUTTON ===== */
+  #home-btn {
+    position: fixed; top: 10px; left: 10px; z-index: 60; display: none;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.25);
+    color: #fff; font-size: 18px; width: 40px; height: 40px; border-radius: 50%;
+  }
+  #home-btn.show { display: block; }
+
+  /* ===== LEARN SCREEN (guided study) ===== */
+  #learn-screen { justify-content: center; gap: 14px; }
+  #learn-header { text-align: center; }
+  #learn-title { font-size: 20px; font-weight: 900; color: #a5f3fc; }
+  #learn-sub { font-size: 13px; color: #c4b5fd; font-weight: 600; }
+  #guide-row { display: flex; align-items: flex-start; gap: 12px; }
+  #guide-avatar {
+    font-size: 46px; min-width: 72px; height: 72px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #7c3aed, #2d1b4e);
+    border: 3px solid #a78bfa; display: flex; align-items: center; justify-content: center;
+    animation: bob 2.6s ease-in-out infinite;
+    box-shadow: 0 0 18px rgba(167,139,250,.4);
+  }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  #guide-bubble {
+    flex: 1; background: #fff; color: #1a0b2e; border-radius: 16px; border-top-left-radius: 4px;
+    padding: 14px 16px; font-size: 16.5px; font-weight: 600; line-height: 1.6;
+    animation: popIn .35s ease; min-height: 100px;
+  }
+  #guide-bubble b { color: #7c3aed; }
+  #learn-dots { text-align: center; font-size: 13px; letter-spacing: 5px; color: #7c3aed; font-weight: 900; }
+  #learn-buttons { display: flex; gap: 10px; }
+  #learn-back {
+    background: transparent; border: 2px solid rgba(255,255,255,.3); color: #d8cffc;
+    font-size: 16px; font-weight: 700; padding: 14px; border-radius: 14px; flex: 1;
+  }
+  #learn-next { flex: 2; }
+
+  /* ===== WORLD MAP (home) ===== */
+  #world-screen { gap: 10px; }
+  #world-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 2px; }
+  #world-title { font-size: 21px; font-weight: 900;
+    background: linear-gradient(90deg, #fbbf24, #f87171);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #dungeon-btn {
+    background: linear-gradient(90deg, #7c3aed, #db2777); color: #fff;
+    font-size: 14px; font-weight: 900; padding: 10px 14px; border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(124,58,237,.4);
+  }
+  #world-greet { font-size: 13.5px; color: #c4b5fd; font-weight: 700; }
+  #world-guide-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .guide-mini {
+    font-size: 28px; min-width: 48px; height: 48px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #7c3aed, #2d1b4e);
+    border: 2px solid #a78bfa; display: flex; align-items: center; justify-content: center;
+    animation: bob 2.6s ease-in-out infinite; cursor: pointer; flex-shrink: 0;
+  }
+  .guide-mini-bubble {
+    flex: 1; background: #fff; color: #1a0b2e; border-radius: 12px; border-top-left-radius: 3px;
+    padding: 9px 12px; font-size: 13.5px; font-weight: 700; line-height: 1.5;
+  }
+  #world-path {
+    position: relative; flex: 1; border-radius: 18px; padding: 18px 10px;
+    background: linear-gradient(180deg, rgba(34,197,94,.12), rgba(59,130,246,.10), rgba(249,115,22,.10));
+    border: 1px solid rgba(255,255,255,.12);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .unit-row { display: flex; }
+  .unit-row.pos-0 { justify-content: flex-start; padding-left: 6%; }
+  .unit-row.pos-1 { justify-content: center; }
+  .unit-row.pos-2 { justify-content: flex-end; padding-right: 6%; }
+  .unit-node {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: none; border: none; color: #f0e9ff; width: 96px;
+  }
+  .unit-circle {
+    width: 62px; height: 62px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; border: 3px solid;
+    transition: transform .1s;
+  }
+  .unit-node:active .unit-circle { transform: scale(.92); }
+  .unit-node.active .unit-circle {
+    background: radial-gradient(circle at 35% 30%, #fbbf24, #d97706); border-color: #fde047; color: #451a03;
+    box-shadow: 0 0 18px rgba(251,191,36,.6); animation: goldPulse 1.8s ease-in-out infinite;
+  }
+  .unit-node.done .unit-circle { background: radial-gradient(circle at 35% 30%, #22c55e, #15803d); border-color: #4ade80; color: #fff; }
+  .unit-node.locked .unit-circle { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.2); color: #6b7280; }
+  .unit-label { font-size: 11px; font-weight: 800; text-align: center; line-height: 1.25; }
+  .unit-node.locked .unit-label { color: #6b7280; }
+  .unit-deco { position: absolute; font-size: 15px; opacity: .5; pointer-events: none; }
+
+  /* ===== UNIT SCREEN (lesson picker) ===== */
+  #unit-screen { gap: 10px; }
+  #unit-title { font-size: 20px; font-weight: 900; color: #fbbf24; text-align: center; }
+  #unit-sub { font-size: 13px; color: #c4b5fd; font-weight: 600; text-align: center; }
+  #lesson-list { display: flex; flex-direction: column; gap: 9px; }
+  .lesson-node {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    background: rgba(255,255,255,.07); border: 2px solid rgba(255,255,255,.15);
+    border-radius: 14px; padding: 11px 14px; text-align: left; color: #f0e9ff;
+    transition: transform .1s;
+  }
+  .lesson-node:active { transform: scale(.98); }
+  .lesson-node.done { border-color: #22c55e; }
+  .ln-icon { font-size: 26px; min-width: 34px; text-align: center; }
+  .ln-info { flex: 1; }
+  .ln-name { font-size: 14.5px; font-weight: 800; }
+  .ln-skill { font-size: 11px; color: #a78bfa; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+  .ln-status { font-size: 18px; }
+  #unit-dungeon-cta { margin-top: 6px; }
+
+  /* ===== LESSON EXERCISES (inside learn screen) ===== */
+  #lesson-answers { display: none; flex-direction: column; gap: 8px; }
+  #lesson-answers.show { display: flex; }
+  #lesson-answers .answer-btn { padding: 12px 14px; font-size: 15.5px; }
+
+  /* ===== BOSS SPEECH BUBBLE ===== */
+  #boss-speech {
+    display: none; position: absolute; left: 50%; transform: translateX(-50%); top: -34px; z-index: 5;
+    background: #fff; color: #1a0b2e; font-size: 13.5px; font-weight: 800;
+    padding: 8px 14px; border-radius: 14px; white-space: nowrap; max-width: 92vw;
+    box-shadow: 0 4px 14px rgba(0,0,0,.4);
+  }
+  #boss-speech::after {
+    content: ''; position: absolute; left: 50%; transform: translateX(-50%); bottom: -7px;
+    border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid #fff;
+  }
+  #boss-speech.show { display: block; animation: popIn .3s ease; }
+  #boss-speech.angry { background: #fecaca; color: #7f1d1d; }
+  #boss-speech.angry::after { border-top-color: #fecaca; }
+
+  /* ===== ENRAGED BOSS ===== */
+  #boss-sprite.enraged {
+    animation: bossFly 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 26px rgba(239,68,68,.9)) hue-rotate(-30deg) saturate(1.6) drop-shadow(0 8px 16px rgba(0,0,0,.5)) !important;
+  }
+
+  /* ===== NAME SCREEN ===== */
+  #name-screen { justify-content: center; text-align: center; gap: 16px; }
+  #name-input {
+    font-family: inherit; font-size: 20px; font-weight: 800; color: #1a0b2e;
+    padding: 15px 16px; border-radius: 14px; border: 3px solid #7c3aed; background: #f5f3ff;
+    width: 100%; text-align: center;
+  }
+  #name-input:focus { outline: none; border-color: #db2777; }
+
+  /* ===== MAP GREETING ===== */
+  #map-greet { font-size: 14.5px; color: #f0e9ff; font-weight: 700; margin-top: 4px; }
+  #edit-name-btn { background: none; border: none; color: #a78bfa; font-size: 13px; }
+
+  /* ===== TRAINING MODE ===== */
+  #training-badge {
+    display: none; text-align: center; font-size: 12.5px; font-weight: 900; color: #4ade80;
+    background: rgba(34,197,94,.15); border: 1px solid #22c55e; border-radius: 999px;
+    padding: 4px 12px; margin: 0 auto 8px; width: fit-content;
+  }
+  #training-badge.show { display: block; }
+  .btn-training {
+    background: linear-gradient(90deg, #059669, #10b981); color: #fff;
+    font-size: 16px; font-weight: 800; padding: 13px; border-radius: 12px; width: 100%; margin-top: 8px;
+    display: none;
+  }
+  .btn-training.show { display: block; animation: popIn .4s ease; }
+
+  body.flash-red { animation: redFlash .5s; }
+  @keyframes bossFly { 0%,100% { transform: translateY(0) translateX(0) rotate(0deg); }
+    25% { transform: translateY(-12px) translateX(-14px) rotate(-4deg); }
+    50% { transform: translateY(-4px) translateX(0) rotate(0deg); }
+    75% { transform: translateY(-14px) translateX(14px) rotate(4deg); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-14px) rotate(-7deg); } 40% { transform: translateX(12px) rotate(6deg); } 60% { transform: translateX(-9px); } 80% { transform: translateX(7px); } }
+  @keyframes lunge { 0%,100% { transform: scale(1); } 35% { transform: scale(1.4) translateY(16px); } 70% { transform: scale(1.15) translateY(8px); } }
+  @keyframes fireFly { 0% { opacity: 1; transform: translate(-50%, 0) scale(.6); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--fx, 0px)), 55vh) scale(1.8); } }
+  @keyframes floatUp { 0% { opacity: 1; top: 24px; } 100% { opacity: 0; top: -34px; } }
+  @keyframes redFlash { 0%,100% { background-color: transparent; } 30% { background-color: rgba(239,68,68,.28); } }
+  @keyframes petBounce { 0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+    55% { transform: scale(1.2) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+  @keyframes popIn { 0% { transform: scale(.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+<body>
+<button id="sound-toggle" onclick="toggleSound()">🔊</button>
+<button id="music-toggle" onclick="toggleMusic()">🎵</button>
+<button id="home-btn" onclick="goHome()">🏠</button>
+<div id="app">
+
+  <!-- ===== TITLE ===== -->
+  <div id="title-screen" class="screen active">
+    <div class="boss-preview">🌍</div>
+    <div>
+      <div class="game-title">ENGLISH QUEST</div>
+      <div class="unit-label">Outlook · Common Core</div>
+    </div>
+    <div class="rules">
+      🌍 Explore the map — one adventure for each unit!<br>
+      📖 LEARN: your guide teaches every lesson (he speaks — turn on sound! 🔊)<br>
+      ✏️ Quick exercises check what you understood.<br>
+      🏰 Then enter the DUNGEON: fight a boss for every lesson!<br>
+      🐉 Beat the FIRE DRAGON — the unit test — and become a legend.<br>
+      💾 Your progress is saved on this phone.
+    </div>
+    <button class="btn-primary" onclick="enterDungeon()">🗺️ START YOUR QUEST</button>
+  </div>
+
+  <!-- ===== NAME SCREEN ===== -->
+  <div id="name-screen" class="screen">
+    <div class="boss-preview">🧙</div>
+    <div>
+      <div class="game-title">WHO ARE YOU, HERO?</div>
+      <div class="unit-label">The dungeon keeper wants your name (in English!)</div>
+    </div>
+    <input id="name-input" type="text" maxlength="20" autocomplete="off" placeholder="My name is...">
+    <button class="btn-primary" onclick="saveName()">⚔️ THAT'S ME!</button>
+  </div>
+
+  <!-- ===== DUNGEON MAP ===== -->
+  <div id="map-screen" class="screen">
+    <div id="map-header">
+      <div id="map-title">🗺️ DUNGEON MAP</div>
+      <div id="map-sub">Unit 1: Myself &amp; Others</div>
+      <div id="map-greet"></div>
+      <div id="map-xp"></div>
+    </div>
+    <div id="map-floors"></div>
+  </div>
+
+  <!-- ===== WORLD MAP (home) ===== -->
+  <div id="world-screen" class="screen">
+    <div id="world-header">
+      <div id="world-title">🌍 ENGLISH QUEST</div>
+      <button id="dungeon-btn" onclick="showMap()">🏰 DUNGEON</button>
+    </div>
+    <div id="world-greet"></div>
+    <div id="world-guide-row">
+      <div class="guide-mini" id="world-guide" onclick="worldGuideTap()">🧙</div>
+      <div class="guide-mini-bubble" id="world-guide-bubble"></div>
+    </div>
+    <div id="world-path"></div>
+  </div>
+
+  <!-- ===== UNIT SCREEN (lesson picker) ===== -->
+  <div id="unit-screen" class="screen">
+    <div>
+      <div id="unit-title">📚 UNIT 1: MYSELF &amp; OTHERS</div>
+      <div id="unit-sub">Outlook · Common Core</div>
+    </div>
+    <div id="world-guide-row2" style="display:flex;align-items:center;gap:10px;">
+      <div class="guide-mini" onclick="unitGuideTap()">🧙</div>
+      <div class="guide-mini-bubble" id="unit-guide-bubble"></div>
+    </div>
+    <div id="lesson-list"></div>
+    <button class="btn-gold" id="unit-dungeon-cta" onclick="showMap()">🏰 GO TO THE DUNGEON</button>
+  </div>
+
+  <!-- ===== LEARN SCREEN (guided lessons) ===== -->
+  <div id="learn-screen" class="screen">
+    <div id="learn-header">
+      <div id="learn-title">📖 LESSON TIME</div>
+      <div id="learn-sub"></div>
+    </div>
+    <div id="guide-row">
+      <div id="guide-avatar" onclick="lessonGuideTap()">🧙</div>
+      <div id="guide-bubble"></div>
+    </div>
+    <div id="lesson-answers"></div>
+    <div id="learn-dots"></div>
+    <div id="learn-buttons">
+      <button id="learn-back" onclick="learnBack()">◀ Back</button>
+      <button id="learn-next" class="btn-primary" onclick="learnNext()">Next ▶</button>
+    </div>
+  </div>
+
+  <!-- ===== DUNGEON INVITE MODAL ===== -->
+  <div id="dungeon-invite-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-emoji">🏰🐉</div>
+      <div class="modal-title" style="color:#fbbf24;font-size:24px">THE DUNGEON OPENS!</div>
+      <div class="modal-text">You finished ALL the Unit 1 lessons!<br>Now prove your knowledge — fight the guardians floor by floor!</div>
+      <button class="btn-gold" onclick="closeInvite(true)">⚔️ ENTER THE DUNGEON</button>
+      <button class="btn-ghost" style="margin-top:8px" onclick="closeInvite(false)">Later — back to the map</button>
+    </div>
+  </div>
+
+  <!-- ===== BATTLE ===== -->
+  <div id="battle-screen" class="screen">
+    <div id="hud">
+      <span id="lives"></span>
+      <span id="xp-display"></span>
+    </div>
+    <div id="training-badge">🎓 TRAINING MODE — no timer, no lost hearts, just learning!</div>
+    <div id="boss-area">
+      <div id="boss-name"></div>
+      <div id="boss-wrap">
+        <div id="boss-speech"></div>
+        <span id="boss-sprite">🐉</span>
+        <span id="dmg-float"></span>
+      </div>
+      <div class="hp-bar-wrap">
+        <div id="hp-bar"></div>
+        <div id="hp-text"></div>
+      </div>
+    </div>
+    <div id="timer-label">⏱️ 20s</div>
+    <div id="timer-wrap"><div id="timer-bar"></div></div>
+    <div style="text-align:center"><span id="category-chip"></span></div>
+    <div id="question-box">
+      <div id="question-text"></div>
+      <div id="progress-text"></div>
+    </div>
+    <div id="answers"></div>
+    <div id="order-area">
+      <div id="order-line"></div>
+      <div id="order-pool"></div>
+      <button id="order-submit" onclick="submitOrder()">⚔️ ATTACK</button>
+    </div>
+    <div id="typed-area">
+      <input id="typed-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer...">
+      <button id="typed-submit" onclick="submitTyped()">⚔️ ATTACK</button>
+    </div>
+    <div id="feedback-panel">
+      <div id="feedback-title"></div>
+      <div id="feedback-answer"></div>
+      <div id="feedback-tip"></div>
+      <button id="next-btn" onclick="continueAfterFeedback()"><span class="auto-fill" id="auto-fill"></span>NEXT ▶</button>
+    </div>
+    <div id="streak-badge"></div>
+  </div>
+
+  <!-- ===== FLOOR CLEAR ===== -->
+  <div id="floor-clear-screen" class="screen">
+    <div class="end-emoji" id="fc-emoji">🎉</div>
+    <div class="end-title">FLOOR CLEARED!</div>
+    <div class="stars" id="fc-stars"></div>
+    <div class="stats-card">
+      <span id="fc-floor-name"></span><br>
+      ⭐ XP earned: <span id="fc-xp"></span><br>
+      ❤️ Hearts left: <span id="fc-lives"></span>
+    </div>
+    <button class="btn-primary" onclick="showMap()">🗺️ BACK TO THE MAP</button>
+  </div>
+
+  <!-- ===== FINAL VICTORY ===== -->
+  <div id="victory-screen" class="screen">
+    <div class="end-emoji">🏆</div>
+    <div class="end-title">DRAGON DEFEATED!</div>
+    <div id="rank-line"></div>
+    <div class="stars" id="victory-stars"></div>
+    <div class="stats-card">
+      ⭐ XP this battle: <span id="final-xp"></span><br>
+      ✅ Correct answers: <span id="final-correct"></span><br>
+      ❤️ Hearts left: <span id="final-lives"></span>
+    </div>
+    <div id="challenge-offer">
+      <div id="challenge-note">👑 You earned a challenge from the GOLDEN DRAGON!<br>Type the answers yourself — double XP!</div>
+      <button class="btn-gold" onclick="startGolden()">🐲 FIGHT THE GOLDEN DRAGON</button>
+      <button class="btn-ghost" onclick="skipChallenge()">No thanks, keep my victory</button>
+    </div>
+    <div class="screenshot-hint">📸 Take a screenshot of this screen<br>and show it to your teacher!</div>
+    <button class="btn-primary" onclick="showMap()">🗺️ BACK TO THE MAP</button>
+  </div>
+
+  <!-- ===== LEGEND ===== -->
+  <div id="legend-screen" class="screen">
+    <div id="legend-crown">👑</div>
+    <div class="end-title">LEGEND OF UNIT 1!</div>
+    <div style="font-size:16px;font-weight:900;color:#fde047;">You defeated the GOLDEN DRAGON!</div>
+    <div class="stats-card">
+      ⭐ Total XP: <span id="legend-xp"></span><br>
+      🐉 Fire Dragon: <span id="legend-base"></span> XP<br>
+      🐲 Golden Dragon: <span id="legend-bonus"></span> XP
+    </div>
+    <div class="screenshot-hint">📸 Screenshot this — very few students<br>will ever see this screen! 🌟</div>
+    <button class="btn-primary" onclick="showMap()">🗺️ BACK TO THE MAP</button>
+  </div>
+
+  <!-- ===== DEFEAT ===== -->
+  <div id="defeat-screen" class="screen">
+    <div class="end-emoji">💀</div>
+    <div class="end-title">FLOOR FAILED</div>
+    <div class="stats-card">
+      <span id="defeat-floor-name"></span><br>
+      The guardian was too strong this time.<br>
+      ✅ Correct answers: <span id="defeat-correct"></span>
+    </div>
+    <div class="screenshot-hint">Read the tips and try again — new questions await! 💪</div>
+    <button class="btn-primary" onclick="retryFloor()">⚔️ TRY THIS FLOOR AGAIN</button>
+    <button class="btn-training" id="training-btn" onclick="startTraining()">🎓 TRAINING MODE — practise without timer or hearts</button>
+    <button class="btn-ghost" onclick="showMap()" style="margin-top:8px">🗺️ Back to the map</button>
+  </div>
+
+  <!-- ===== PET POP ===== -->
+  <div id="pet-pop">
+    <div id="pet-emoji"></div>
+    <div id="pet-text"></div>
+  </div>
+
+  <!-- ===== FAIL MODAL ===== -->
+  <div id="fail-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-emoji" id="fail-emoji">🔥</div>
+      <div class="modal-title">YOU FAILED!</div>
+      <div class="modal-text" id="fail-text">The guardian wins this time...<br>But heroes never give up!</div>
+      <button class="btn-primary" onclick="closeFailModal()">CONTINUE</button>
+    </div>
+  </div>
+
+  <!-- ===== PAUSE MODAL (friendly anti-cheat) ===== -->
+  <div id="pause-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-emoji">⏸️</div>
+      <div class="modal-title" style="color:#7dd3fc">BATTLE PAUSED</div>
+      <div class="modal-text" id="pause-text"></div>
+      <button class="btn-primary" onclick="resumeBattle()">▶ TAP TO RESUME</button>
+    </div>
+  </div>
+
+  <!-- ===== TUTORIAL MODAL ===== -->
+  <div id="tutorial-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-emoji">🧙</div>
+      <div class="modal-title" style="color:#a5f3fc;font-size:24px">HOW TO PLAY</div>
+      <div class="modal-text" style="text-align:left">
+        1️⃣ Tap the correct answer to attack the boss ⚔️<br><br>
+        2️⃣ After every answer, read the 💡 tip — it teaches you the rule!<br><br>
+        3️⃣ Tap <b>NEXT ▶</b> when you are ready.<br><br>
+        ⏱️ Watch the timer — too slow means the boss attacks!
+      </div>
+      <button class="btn-primary" onclick="closeTutorial()">⚔️ LET'S FIGHT!</button>
+    </div>
+  </div>
+
+  <!-- ===== LEFT-PAGE MODAL ===== -->
+  <div id="cheat-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-emoji">🚪👀</div>
+      <div class="modal-title">YOU LEFT THE BATTLE!</div>
+      <div class="modal-text">The guardian saw you leave the page.<br>This floor restarts — with <b>different questions</b>!</div>
+      <button class="btn-primary" onclick="restartAfterCheat()">⚔️ FIGHT AGAIN</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =====================================================================
+   ⚙️ GAME CONTENT — Outlook (Common Core) · UNIT 1: MYSELF & OTHERS
+   ---------------------------------------------------------------------
+   Sources: Outlook Student's Book Unit 1 (pages 8–17) + the teacher's
+   own Unit 1 lesson contents and worksheets (Functions "Hello", Verb be
+   worksheet, Plural Nouns lesson, Names & Titles vocabulary lesson,
+   The Pygmies reading lesson, Writing a letter lesson).
+   ---------------------------------------------------------------------
+   Question types:
+     t:"mc"    → multiple choice: options (4), answer = correct index
+     t:"order" → put words/parts in order: tokens = correct sequence
+   Each floor draws QUESTIONS_PER_FLOOR at random from its bank.
+   ===================================================================== */
+const CONFIG = {
+  lives: 3,
+  xpPerCorrect: 10,
+  streakBonus: 5,
+  goldenXpPerCorrect: 20,
+  goldenStreakBonus: 10,
+  secondsPerQuestion: 20,
+  secondsPerOrder: 40,       // more time for word-order questions
+  secondsPerTyped: 35,       // more time for typing (golden)
+  readTimeCorrect: 7,
+  fastAvgSeconds: 8,
+  questionsPerFloor: 8
+};
+
+const FLOORS = [
+  { id: 1, name: "Hello & Introductions", lesson: "Conversation — introducing yourself & others",
+    boss: "The Greeting Goblin", emoji: "👺",
+    bank: [
+      { t:"mc", q:"You meet someone new. You say: \"____\"", options:["You're welcome","Never mind","Nice to meet you","Good luck"], answer:2,
+        tip:"First meeting → 'Nice to meet you.' Answer: 'Nice to meet you, too!'" },
+      { t:"mc", q:"How do you introduce yourself?", options:["Take care!","Hello! I am Sara.","Good night!","So long!"], answer:1,
+        tip:"Introduce yourself with: 'Hello! I am...' or 'Hi! My name is...'" },
+      { t:"mc", q:"\"Let me introduce you. ____ my friend, Ahmed.\"", options:["This is","He are","You is","They are"], answer:0,
+        tip:"To introduce a person, use: 'This is...' → This is my friend, Ahmed." },
+      { t:"mc", q:"\"Have you ____ Amina? She is really good at reading Manga.\"", options:["meet","meeting","meets","met"], answer:3,
+        tip:"'Have you met...?' is a friendly way to introduce someone." },
+      { t:"mc", q:"\"Excuse me, ____ you Layla's sister?\"", options:["is","are","am","be"], answer:1,
+        tip:"Questions with 'you' use ARE → Are you Layla's sister?" },
+      { t:"mc", q:"— \"How are you doing today?\" — \"____\"", options:["This is Ahmed.","Goodbye!","I am doing great! And you?","I am 15 years old."], answer:2,
+        tip:"'How are you doing?' asks how you feel → 'I am doing great! And you?'" },
+      { t:"mc", q:"Which question asks about someone's NAME?", options:["How old are you?","What's your name?","Where are you from?","How are you?"], answer:1,
+        tip:"'What's your name?' asks the name. 'How old...?' asks the age." },
+      { t:"mc", q:"\"Hi! My ____ Adnan, and I love playing basketball.\"", options:["name are","names is","name am","name is"], answer:3,
+        tip:"'My name is...' — name = it → use IS." },
+      { t:"mc", q:"To ask about another person, you say:", options:["Who is this?","I am Sara.","See you later.","Take care."], answer:0,
+        tip:"'Who is this?' asks about a person you don't know." },
+      { t:"mc", q:"— \"Nice to meet you.\" — \"____\"", options:["So long!","Nice to meet you, too!","Good night!","You're welcome."], answer:1,
+        tip:"The friendly answer is: 'Nice to meet you, too!'" }
+    ] },
+  { id: 2, name: "The Verb Be", lesson: "Grammar — am / is / are (present simple)",
+    boss: "The Grammar Zombie", emoji: "🧟",
+    bank: [
+      { t:"mc", q:"She ____ a student.", options:["am","are","is","be"], answer:2,
+        tip:"Use IS with he, she and it." },
+      { t:"mc", q:"We ____ happy today.", options:["are","is","am","be"], answer:0,
+        tip:"Use ARE with you, we and they." },
+      { t:"mc", q:"I ____ excited for the lesson.", options:["is","are","be","am"], answer:3,
+        tip:"Use AM only with I. → I am excited." },
+      { t:"mc", q:"Make it NEGATIVE: \"He is a teacher.\"", options:["He isn't a teacher.","He aren't a teacher.","He am not a teacher.","He not is a teacher."], answer:0,
+        tip:"is → isn't (is not). The 'not' comes after the verb be." },
+      { t:"mc", q:"Make it NEGATIVE: \"They are friends.\"", options:["They isn't friends.","They aren't friends.","They am not friends.","They not are friends."], answer:1,
+        tip:"are → aren't (are not)." },
+      { t:"mc", q:"Make it a QUESTION: \"She is from Spain.\"", options:["She is from Spain?","From Spain she is?","Is she from Spain?","Does she from Spain?"], answer:2,
+        tip:"Questions: put the verb BE first → Is she...? / Are you...?" },
+      { t:"mc", q:"Make it a QUESTION: \"You are ready for the test.\"", options:["You are ready?","Are you ready for the test?","Ready you are for the test?","Do you ready for the test?"], answer:1,
+        tip:"Put ARE before 'you' → Are you ready...?" },
+      { t:"order", q:"Put the words in order to make a question:", tokens:["What","is","your","first","name","?"],
+        tip:"Question word + is/are + subject → What is your first name?" },
+      { t:"order", q:"Put the words in order to make a question:", tokens:["What","is","the","capital","of","Morocco","?"],
+        tip:"What + is + the capital of Morocco?" },
+      { t:"order", q:"Put the words in order to make a question:", tokens:["Are","you","OK","?"],
+        tip:"Yes/No questions start with the verb be → Are you OK?" },
+      { t:"order", q:"Put the words in order to make a question:", tokens:["When","is","the","concert","?"],
+        tip:"Question word (When) + is + subject → When is the concert?" }
+    ] },
+  { id: 3, name: "Plural Nouns", lesson: "Grammar — regular & irregular plurals",
+    boss: "The Plural Serpent", emoji: "🐍",
+    bank: [
+      { t:"mc", q:"What is the plural of \"bus\"?", options:["buss","buses","busies","bus"], answer:1,
+        tip:"Nouns ending in s, ch, sh, ss, x take -ES: bus → buses." },
+      { t:"mc", q:"What is the plural of \"story\"?", options:["storys","storyes","stories","story"], answer:2,
+        tip:"Consonant + y → -IES: story → stories, baby → babies." },
+      { t:"mc", q:"What is the plural of \"boy\"?", options:["boys","boies","boyes","boy"], answer:0,
+        tip:"VOWEL + y → just add -S: boy → boys, day → days, key → keys." },
+      { t:"mc", q:"What is the plural of \"life\"?", options:["lifes","lifies","life","lives"], answer:3,
+        tip:"f / fe → -VES: life → lives, elf → elves, calf → calves." },
+      { t:"mc", q:"What is the plural of \"potato\"?", options:["potatos","potatoes","potaties","potato"], answer:1,
+        tip:"Consonant + o → -ES: potato → potatoes, echo → echoes." },
+      { t:"mc", q:"What is the plural of \"video\"?", options:["videoes","vidies","videos","video"], answer:2,
+        tip:"VOWEL + o → just add -S: video → videos, zoo → zoos." },
+      { t:"mc", q:"What is the plural of \"foot\"?", options:["feet","foots","footes","feets"], answer:0,
+        tip:"IRREGULAR: foot → feet, tooth → teeth, goose → geese." },
+      { t:"mc", q:"What is the plural of \"mouse\"?", options:["mouses","mice","mousies","mices"], answer:1,
+        tip:"IRREGULAR: mouse → mice. Memorize it!" },
+      { t:"mc", q:"What is the plural of \"person\"?", options:["persons","persones","people","peoples"], answer:2,
+        tip:"IRREGULAR: person → people." },
+      { t:"mc", q:"What is the plural of \"sheep\"?", options:["sheeps","sheepes","shoop","sheep"], answer:3,
+        tip:"NO CHANGE: sheep → sheep, fish → fish, deer → deer." },
+      { t:"mc", q:"What is the plural of \"fox\"?", options:["foxes","foxs","foxies","fox"], answer:0,
+        tip:"Nouns ending in x take -ES: fox → foxes, box → boxes." },
+      { t:"mc", q:"What is the plural of \"woman\"?", options:["womans","women","womens","womanes"], answer:1,
+        tip:"IRREGULAR: woman → women, man → men." }
+    ] },
+  { id: 4, name: "Titles & Greetings", lesson: "Vocabulary — names, titles & ways of greeting",
+    boss: "The Vampire of Manners", emoji: "🧛",
+    bank: [
+      { t:"mc", q:"Mrs. Sarah Johnson is ____.", options:["a single woman","a man","a married woman","a child"], answer:2,
+        tip:"Mrs. = a MARRIED woman → Mrs. Johnson." },
+      { t:"mc", q:"We use \"Mr.\" for ____.", options:["all men, married or single","married men only","single men only","women"], answer:0,
+        tip:"Mr. works for ALL men — like Mr. Ali Hassan." },
+      { t:"mc", q:"Which title is for a SINGLE woman?", options:["Mrs","Miss","Mr","Sir"], answer:1,
+        tip:"Miss = single woman · Mrs = married · Ms = any woman." },
+      { t:"mc", q:"\"Ms\" is a title for ____.", options:["men only","children","married women only","a woman, married or single"], answer:3,
+        tip:"Ms works for ANY woman — useful when you don't know!" },
+      { t:"mc", q:"In many countries, people greet each other by shaking ____.", options:["heads","arms","hands","feet"], answer:2,
+        tip:"Ways of greeting: shaking hands, hugging, bowing, kissing on the cheeks." },
+      { t:"mc", q:"Which greeting means putting your arms around someone?", options:["hugging","bowing","shaking hands","patting on the back"], answer:0,
+        tip:"Hugging = arms around someone. Bowing = bending forward." },
+      { t:"mc", q:"In Japan, people often greet each other by ____.", options:["hugging","bowing","kissing on the cheeks","patting on the back"], answer:1,
+        tip:"Bowing = bending your head/body forward to greet politely." },
+      { t:"mc", q:"\"Good morning\" means ____.", options:["Goodbye","Thank you","Hello","Sorry"], answer:2,
+        tip:"Hello words: Good morning, How are you?, How's everything?" },
+      { t:"mc", q:"\"Take care\" means ____.", options:["Goodbye","Hello","Please","Welcome"], answer:0,
+        tip:"Goodbye words: Take care, See you later, So long, Good night." },
+      { t:"mc", q:"Which of these is NOT a way of greeting?", options:["hugging","sleeping","bowing","shaking hands"], answer:1,
+        tip:"Greetings: hugging, bowing, shaking hands, kissing cheeks, patting the back." }
+    ] },
+  { id: 5, name: "Reading: The Pygmies", lesson: "Reading comprehension + vocabulary",
+    boss: "The Forest Guardian", emoji: "🦍",
+    bank: [
+      { t:"mc", q:"The Pygmies live in the forest in the centre of ____.", options:["Asia","Europe","America","Africa"], answer:3,
+        tip:"From the text: 'The forest in the centre of Africa is a dangerous place.'" },
+      { t:"mc", q:"Why do the Pygmies move easily in the forest?", options:["Because they are very small","Because they have cars","Because they are very tall","Because they are rich"], answer:0,
+        tip:"'They move easily in the forest because they are very small.'" },
+      { t:"mc", q:"A big Pygmy is only ____ tall.", options:["2 metres","1 metre 40 centimetres","1 metre 80","1 metre"], answer:1,
+        tip:"'A big Pygmy is only 1 metre 40 centimetres tall.'" },
+      { t:"mc", q:"How do the Pygmies get their food?", options:["From supermarkets","From farms","From plants and animals in the forest","From restaurants"], answer:2,
+        tip:"They are not farmers — they are great hunters." },
+      { t:"mc", q:"The Pygmies are not rich, but they are ____.", options:["sad","afraid","angry","happy"], answer:3,
+        tip:"'They are not rich, but they are happy.'" },
+      { t:"mc", q:"\"Hunters\" are people who ____.", options:["catch wild animals for food","grow vegetables","build houses","teach students"], answer:0,
+        tip:"Hunters catch or kill wild animals for food. The Pygmies are great hunters." },
+      { t:"mc", q:"A \"hut\" is ____.", options:["a big city building","a small simple house made of natural materials","a type of car","a kind of food"], answer:1,
+        tip:"Hut = small, simple dwelling made of wood, mud or straw — found in villages." },
+      { t:"mc", q:"The opposite of \"rich\" is ____.", options:["happy","tall","poor","small"], answer:2,
+        tip:"rich ↔ poor · happy ↔ sad · big ↔ small." },
+      { t:"mc", q:"\"Afraid\" means ____.", options:["feeling fear","feeling happy","feeling hungry","feeling tired"], answer:0,
+        tip:"Afraid = feeling fear. 'Pygmies know the forest well and they are not afraid of it.'" },
+      { t:"mc", q:"What is very important for the Pygmies?", options:["Cars and money","Television","Big houses","Songs, dances and stories"], answer:3,
+        tip:"'Songs, dances and stories are very important for the Pygmies.'" }
+    ] },
+  { id: 6, name: "Writing a Letter", lesson: "Writing — a letter to a pen friend",
+    boss: "The Letter Ghost", emoji: "👻",
+    bank: [
+      { t:"mc", q:"Where do you write your ADDRESS in a letter?", options:["At the end","In the middle","In the top right corner","Under your signature"], answer:2,
+        tip:"Address goes in the top right corner. The date goes below it." },
+      { t:"mc", q:"The DATE goes ____.", options:["below the address","under the signature","in the greeting","at the bottom left"], answer:0,
+        tip:"Top right corner: address first, then the date below it." },
+      { t:"mc", q:"A friendly letter starts with ____.", options:["Take care,","Best wishes,","Yours,","Dear Sara,"], answer:3,
+        tip:"The greeting is 'Dear + name,' → Dear Sara," },
+      { t:"mc", q:"In the INTRODUCTION of your letter, you write ____.", options:["your name and age","only questions","the date","your signature"], answer:0,
+        tip:"Introduce yourself briefly: name, age, school... like Youssef Benali did." },
+      { t:"mc", q:"\"Take care,\" at the end of a letter is ____.", options:["a greeting","a closing","a question","an address"], answer:1,
+        tip:"Closings: 'Take care,' or 'Best wishes,' — written above your signature." },
+      { t:"mc", q:"Where does your SIGNATURE go?", options:["At the very end, under the closing","At the top","Before the greeting","In the introduction"], answer:0,
+        tip:"Sign your name at the end, right under 'Take care,' or 'Best wishes,'." },
+      { t:"mc", q:"A good way to END the body of your letter is ____.", options:["writing your address","asking your friend questions","writing the date again","saying your name again"], answer:1,
+        tip:"Ask engaging questions: 'What do you like to do in your free time?'" },
+      { t:"mc", q:"\"I can't wait to hear from you\" means ____.", options:["I don't want you to write","I am angry with you","I can't listen to you","I want you to write back soon"], answer:3,
+        tip:"'I can't wait to hear from you' = please answer soon — a friendly ending." },
+      { t:"order", q:"Put the parts of a letter in the correct order:", tokens:["Address & Date","Greeting","Introduction","Personal details","Questions","Closing","Signature"],
+        tip:"Address & Date → Dear... → who you are → your hobbies → questions → Take care, → your name." },
+      { t:"mc", q:"In his letter, what does Youssef love doing in his free time?", options:["Playing football and reading comic books","Cooking dinner","Cleaning the house","Sleeping all day"], answer:0,
+        tip:"From the example letter: football with friends, comic books, and anime (Naruto!)." }
+    ] }
+];
+
+/* ---------- FINAL BOSS: mixed Unit 1 test (draws across all floors) ---------- */
+const FINAL_PICK_PER_FLOOR = 2;   // questions taken from each floor's bank
+const GOLDEN_PICK = 8;
+
+/* ---------- GOLDEN DRAGON: typed-answer questions (Unit 1 only) ---------- */
+const GOLDEN_BANK = [
+  { q:"Write the plural of \"child\":", accept:["children"], display:"children", tip:"Child is IRREGULAR: child → children." },
+  { q:"Write the plural of \"wife\":", accept:["wives"], display:"wives", tip:"f / fe → -VES: wife → wives." },
+  { q:"Write the plural of \"family\":", accept:["families"], display:"families", tip:"Consonant + y → -IES: family → families." },
+  { q:"Write the plural of \"watch\":", accept:["watches"], display:"watches", tip:"Nouns ending in ch take -ES: watch → watches." },
+  { q:"Write the plural of \"man\":", accept:["men"], display:"men", tip:"Man is IRREGULAR: man → men." },
+  { q:"Write the plural of \"box\":", accept:["boxes"], display:"boxes", tip:"Nouns ending in x take -ES: box → boxes." },
+  { q:"Write the plural of \"tomato\":", accept:["tomatoes"], display:"tomatoes", tip:"Consonant + o → -ES: tomato → tomatoes." },
+  { q:"Write the plural of \"foot\":", accept:["feet"], display:"feet", tip:"IRREGULAR: foot → feet." },
+  { q:"Write the plural of \"mouse\":", accept:["mice"], display:"mice", tip:"IRREGULAR: mouse → mice." },
+  { q:"Complete with the verb be: \"She ____ a student.\"", accept:["is"], display:"is", tip:"Use IS with he, she and it." },
+  { q:"Complete with the verb be: \"I ____ Moroccan.\"", accept:["am"], display:"am", tip:"Use AM only with I." },
+  { q:"Complete with the verb be: \"We ____ happy today.\"", accept:["are"], display:"are", tip:"Use ARE with you, we and they." },
+  { q:"Complete the question: \"____ you Tunisian?\"", accept:["are"], display:"Are", tip:"Questions with 'you' start with ARE." },
+  { q:"Write the SHORT form of \"is not\":", accept:["isnt"], display:"isn't", tip:"is not → isn't." },
+  { q:"Write the SHORT form of \"are not\":", accept:["arent"], display:"aren't", tip:"are not → aren't." },
+  { q:"Complete: \"Nice to ____ you.\"", accept:["meet"], display:"meet", tip:"First meeting → 'Nice to meet you.'" },
+  { q:"Write the title for a MARRIED woman:", accept:["mrs","mrs."], display:"Mrs", tip:"Mrs = married woman." },
+  { q:"Write the title for a SINGLE woman:", accept:["miss"], display:"Miss", tip:"Miss = single woman." }
+];
+/* ================== END OF CONTENT BLOCK ================== */
+
+/* =====================================================================
+   🎮 GAME ENGINE — no need to touch anything below this line
+   ===================================================================== */
+let queue, lives, xp, correctCount, streak, bossHP, maxHP, dmgPerHit, locked;
+let battleActive = false, leftPage = false, totalPicked = 0;
+let timerId = null, timeLeft = 0;
+let pendingAction = null, autoAdvanceId = null;
+let mode = 'floor';               // 'floor' | 'final' | 'golden'
+let currentFloor = 0;             // index into FLOORS (floor mode)
+let baseXP = 0, battleStart = 0, challengeEarned = false;
+let orderPicked = [];             // student's current word-order attempt
+let training = false;             // training mode: no timer, no heart loss, no rewards
+let enraged = false;              // boss enrage state (below 30% HP)
+let speechTimer = null;
+
+/* ---------- BOSS TAUNTS (simple A1 English) ---------- */
+const TAUNTS = {
+  1: ["Hello... and GOODBYE, little hero!", "You don't know how to say hi!", "Nobody introduces ME!"],
+  2: ["I is... I are... I AM your end!", "You am not ready for me!", "Is you scared? Ha ha!"],
+  3: ["One hero, two heroes... ZERO heroes!", "My teeth are sharp. Yes, TEETH, not tooths!", "You will run like little mice!"],
+  4: ["Call me MISTER Vampire!", "You have no manners!", "I never shake hands... I BITE them!"],
+  5: ["My forest, my rules!", "You are not small enough to escape!", "The forest gives ME everything!"],
+  6: ["Your letter has NO address!", "Dear hero... goodbye forever!", "I eat signatures for breakfast!"],
+  final: ["I am the FIRE DRAGON! Bow before me!", "Six floors? Impressive... but useless!", "No student has ever beaten me!"],
+  golden: ["So... the legend wants MY gold?", "TYPE your answers, if you dare!", "Even dragons fear me, little hero!"],
+  enrage: ["GRRRR! NOW I AM ANGRY!", "ENOUGH! Feel my fire!", "RAAAAH! No more games!"]
+};
+function bossSay(text, angry, ms) {
+  const b = document.getElementById('boss-speech');
+  b.textContent = text;
+  b.className = 'show' + (angry ? ' angry' : '');
+  if (speechTimer) clearTimeout(speechTimer);
+  speechTimer = setTimeout(() => { b.className = ''; }, ms || 5200);   // stays long enough to read comfortably
+}
+function randomTaunt(key) {
+  const arr = TAUNTS[key] || [];
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/* ---------- GUIDED LESSONS (Unit 1) ----------
+   Guide avatar 🧙 "Wizzy" teaches each lesson step by step (text + voice),
+   then gives 2 quick exercises. Content from the Outlook Student's Book
+   Unit 1 and the teacher's own lesson materials. */
+const LESSONS = [
+  { id: "functions", icon: "👋", name: "Hello & Introductions", skill: "Functions",
+    steps: [
+      { html: "Hello, <b>{name}</b>! Today's lesson: <b>how to introduce yourself and others</b>!",
+        say: "Hello {name}! Today's lesson: how to introduce yourself and others!" },
+      { html: "To introduce <b>YOURSELF</b>, say:<br>🗣️ \"<b>Hello! I am Sara.</b>\"<br>🗣️ \"<b>Hi! My name is Adnan.</b>\"<br>Easy — your name + the verb <b>be</b>!",
+        say: "To introduce yourself, say: Hello! I am Sara. Or: Hi! My name is Adnan. Easy — your name plus the verb be!" },
+      { html: "To introduce <b>SOMEONE ELSE</b>:<br>🗣️ \"<b>This is my friend, Ahmed.</b>\"<br>🗣️ \"<b>Have you met Amina?</b>\"<br>To ask about someone: \"<b>Who is this?</b>\" · \"<b>What's your name?</b>\"",
+        say: "To introduce someone else, say: This is my friend, Ahmed. Or: Have you met Amina? To ask about someone: Who is this? Or: What's your name?" },
+      { html: "When you meet someone new:<br>🗣️ \"<b>Nice to meet you.</b>\"<br>Answer: \"<b>Nice to meet you, too!</b>\"<br><br>Now let's check what you learned! ✏️",
+        say: "When you meet someone new, say: Nice to meet you. The answer is: Nice to meet you, too! Now let's check what you learned!" }
+    ],
+    exercises: [
+      { q: "You meet someone new. What do you say?", options: ["Nice to meet you", "Good night", "So long", "You're welcome"], answer: 0,
+        tip: "First meeting → 'Nice to meet you.'" },
+      { q: "How do you introduce your friend?", options: ["See you later, Ahmed.", "This is my friend, Ahmed.", "Take care, Ahmed.", "Goodbye, Ahmed."], answer: 1,
+        tip: "Use 'This is...' to introduce a person." }
+    ] },
+  { id: "verbbe", icon: "🔤", name: "The Verb Be", skill: "Grammar",
+    steps: [
+      { html: "The verb <b>BE</b> has 3 forms in the present:<br>• <b>I am</b> — \"I am Moroccan.\"<br>• <b>He / She / It is</b> — \"She is a student.\"<br>• <b>You / We / They are</b> — \"They are from the USA.\"",
+        say: "The verb be has three forms in the present. I am — I am Moroccan. He, she, it — is: She is a student. You, we, they — are: They are from the USA." },
+      { html: "The <b>NEGATIVE</b>: add <b>not</b> after the verb.<br>• is not → <b>isn't</b>: \"He <b>isn't</b> Tunisian.\"<br>• are not → <b>aren't</b>: \"They <b>aren't</b> friends.\"<br>• I am not → \"I<b>'m not</b> tired.\"",
+        say: "The negative: add not after the verb. He isn't Tunisian. They aren't friends. I'm not tired." },
+      { html: "<b>QUESTIONS</b>: put the verb be FIRST.<br>• \"<b>Are</b> you ready?\"<br>• \"<b>Is</b> she from Spain?\"<br>• \"What <b>is</b> your first name?\"<br><br>Time to practise! ✏️",
+        say: "Questions: put the verb be first. Are you ready? Is she from Spain? What is your first name? Time to practise!" }
+    ],
+    exercises: [
+      { q: "She ____ a student.", options: ["am", "is", "are", "be"], answer: 1,
+        tip: "Use IS with he, she and it." },
+      { q: "Make it negative: \"They are friends.\"", options: ["They isn't friends.", "They am not friends.", "They aren't friends.", "They not friends."], answer: 2,
+        tip: "are not → aren't." }
+    ] },
+  { id: "plurals", icon: "🔢", name: "Plural Nouns", skill: "Grammar",
+    steps: [
+      { html: "Most nouns: add <b>-S</b>. 🚗 car → cars, 📚 book → books.<br>Nouns ending in <b>s, ch, sh, ss, x</b>: add <b>-ES</b>.<br>bus → bus<b>es</b>, watch → watch<b>es</b>, box → box<b>es</b>.",
+        say: "Most nouns: add S. Car, cars. Book, books. Nouns ending in s, ch, sh, double s, or x: add E S. Bus, buses. Watch, watches. Box, boxes." },
+      { html: "Special endings:<br>• consonant + <b>y</b> → <b>-ies</b>: family → famil<b>ies</b>, story → stor<b>ies</b><br>• vowel + y → just -s: boy → boys, day → days<br>• <b>f / fe</b> → <b>-ves</b>: wife → wi<b>ves</b>, life → li<b>ves</b><br>• consonant + <b>o</b> → -es: tomato → tomato<b>es</b>",
+        say: "Special endings. Consonant plus y becomes i e s: family, families. Vowel plus y: just add s: boy, boys. F or f e becomes v e s: wife, wives. Consonant plus o: add e s: tomato, tomatoes." },
+      { html: "<b>IRREGULAR</b> nouns — memorize them!<br>man → <b>men</b> · woman → <b>women</b> · child → <b>children</b><br>foot → <b>feet</b> · tooth → <b>teeth</b> · mouse → <b>mice</b> · person → <b>people</b><br>No change: <b>sheep</b>, <b>fish</b>! ✏️",
+        say: "Irregular nouns — memorize them! Man, men. Woman, women. Child, children. Foot, feet. Tooth, teeth. Mouse, mice. Person, people. And no change: sheep and fish!" }
+    ],
+    exercises: [
+      { q: "What is the plural of \"box\"?", options: ["boxs", "boxes", "boxies", "box"], answer: 1,
+        tip: "Nouns ending in x take -ES." },
+      { q: "What is the plural of \"child\"?", options: ["childs", "childes", "children", "childrens"], answer: 2,
+        tip: "Child is IRREGULAR: child → children." }
+    ] },
+  { id: "vocab", icon: "🎩", name: "Names, Titles & Greetings", skill: "Vocabulary",
+    steps: [
+      { html: "English <b>titles</b>:<br>• <b>Mr.</b> — ALL men: \"Mr. Ali Hassan\"<br>• <b>Mrs.</b> — a MARRIED woman: \"Mrs. Sarah Johnson\"<br>• <b>Miss</b> — a SINGLE woman<br>• <b>Ms</b> — ANY woman (married or single)",
+        say: "English titles. Mister — for all men, like Mister Ali Hassan. Missus — for a married woman, like Missus Sarah Johnson. Miss — for a single woman. And Ms — for any woman." },
+      { html: "<b>Hello</b> words: Good morning · How are you? · How's everything?<br><b>Goodbye</b> words: See you later · So long · Take care · Good night",
+        say: "Hello words: Good morning. How are you? How's everything? Goodbye words: See you later. So long. Take care. Good night." },
+      { html: "<b>Ways of greeting</b> around the world:<br>🤝 shaking hands · 🤗 hugging · 🙇 bowing (Japan)<br>😘 kissing on the cheeks · 👋 patting on the back<br><br>Let's practise! ✏️",
+        say: "Ways of greeting around the world: shaking hands, hugging, bowing like in Japan, kissing on the cheeks, and patting on the back. Let's practise!" }
+    ],
+    exercises: [
+      { q: "Which title is for a MARRIED woman?", options: ["Mr", "Miss", "Ms", "Mrs"], answer: 3,
+        tip: "Mrs = married · Miss = single · Ms = any woman." },
+      { q: "\"Take care\" means ____.", options: ["Goodbye", "Hello", "Thank you", "Sorry"], answer: 0,
+        tip: "Goodbye words: Take care, See you later, So long." }
+    ] },
+  { id: "listening", icon: "🎧", name: "Listening & Speaking", skill: "Listening",
+    steps: [
+      { html: "English has a <b>LONG</b> sound /iː/ and a <b>SHORT</b> sound /ɪ/.<br>Long /iː/: <b>he's, speak, sleep, meat</b> 🐝<br>Short /ɪ/: <b>his, in, this, sick</b> ⚡<br>Tap me to hear them again!",
+        say: "English has a long sound, ee, and a short sound, ih. Long: he's. speak. sleep. meat. Short: his. in. this. sick. Can you hear the difference?" },
+      { html: "Listen to the interviews (Student's Book p.14):<br>• <b>Lisa</b> likes Hicham El Guerrouj, documentaries, and Toyota.<br>• <b>Jamil</b> likes Michael Jordan, films, and Mercedes.<br>• <b>Fred</b> likes Thierry Henry, sports news, and Volkswagen.",
+        say: "Listen to the interviews. Lisa likes Hicham El Guerrouj, documentaries, and Toyota. Jamil likes Michael Jordan, films, and Mercedes. Fred likes Thierry Henry, sports news, and Volkswagen." },
+      { html: "To make a friend's <b>personal profile</b>, ask:<br>\"What's your surname? Your first name?\"<br>\"What's your city of origin? How old are you?\"<br>\"What languages do you speak? What are your likes and dislikes?\" ✏️",
+        say: "To make a friend's personal profile, ask: What's your surname? Your first name? What's your city of origin? How old are you? What languages do you speak? What are your likes and dislikes?" }
+    ],
+    exercises: [
+      { q: "🎧 Listen: which word has the LONG /iː/ sound?", options: ["sick", "in", "sleep", "this"], answer: 2,
+        tip: "Long /iː/: sleep, speak, meat, he's. Short /ɪ/: sick, in, this, his.",
+        listen: "Listen carefully. Which word has the long ee sound? sick. in. sleep. this." },
+      { q: "What is Lisa's favourite TV programme?", options: ["Films", "Documentaries", "Sports news", "Cartoons"], answer: 1,
+        tip: "Lisa likes documentaries. Jamil likes films. Fred likes sports news." }
+    ] },
+  { id: "reading", icon: "🌳", name: "Reading: The Pygmies", skill: "Reading",
+    steps: [
+      { html: "<b>The Pygmies</b> live in the forest in the centre of <b>Africa</b>.<br>The forest is dangerous, but they are happy there. They move easily because they are <b>very small</b> — a big Pygmy is only <b>1 metre 40</b>!",
+        say: "The Pygmies live in the forest in the centre of Africa. The forest is dangerous, but they are happy there. They move easily because they are very small. A big Pygmy is only one metre forty!" },
+      { html: "They are not farmers — they are great <b>hunters</b> (people who catch wild animals for food). They get their food from the <b>plants and animals</b> of the forest.",
+        say: "They are not farmers. They are great hunters — people who catch wild animals for food. They get their food from the plants and animals of the forest." },
+      { html: "They are not <b>rich</b>, but they are <b>happy</b>! (rich ↔ poor)<br>The forest gives them everything. <b>Songs, dances and stories</b> are very important — they help them live happily together. ✏️",
+        say: "They are not rich, but they are happy! The forest gives them everything. Songs, dances and stories are very important. They help them live happily together." }
+    ],
+    exercises: [
+      { q: "Why do the Pygmies move easily in the forest?", options: ["Because they are very small", "Because they are rich", "Because they have cars", "Because they are tall"], answer: 0,
+        tip: "'They move easily because they are very small.'" },
+      { q: "The opposite of \"rich\" is ____.", options: ["happy", "small", "poor", "tall"], answer: 2,
+        tip: "rich ↔ poor · happy ↔ sad · big ↔ small." }
+    ] },
+  { id: "writing", icon: "✍️", name: "Writing a Letter", skill: "Writing",
+    steps: [
+      { html: "A friendly letter has a <b>structure</b>:<br>1️⃣ Your <b>address</b> — top right corner<br>2️⃣ The <b>date</b> — below the address<br>3️⃣ The <b>greeting</b> — \"Dear Sara,\"",
+        say: "A friendly letter has a structure. First: your address, in the top right corner. Second: the date, below the address. Third: the greeting — Dear Sara." },
+      { html: "The <b>body</b>:<br>4️⃣ <b>Introduction</b> — your name, age, school<br>5️⃣ <b>Personal details</b> — your hobbies (like Youssef: football, comics, anime!)<br>6️⃣ <b>Questions</b> — \"What do you like to do in your free time?\"",
+        say: "The body. Fourth: the introduction — your name, age, and school. Fifth: personal details — your hobbies. Like Youssef: football, comics and anime! Sixth: questions — What do you like to do in your free time?" },
+      { html: "The end:<br>7️⃣ <b>Closing</b> — \"Take care,\" or \"Best wishes,\"<br>8️⃣ Your <b>signature</b> — your name, under the closing<br><br>Now show me you know the structure! ✏️",
+        say: "The end. Seventh: the closing — Take care, or Best wishes. Eighth: your signature — your name, under the closing. Now show me you know the structure!" }
+    ],
+    exercises: [
+      { q: "Where do you write your address?", options: ["At the end", "In the top right corner", "Under the signature", "In the greeting"], answer: 1,
+        tip: "Address top right, date below it." },
+      { q: "\"Take care,\" is ____.", options: ["a greeting", "a question", "an address", "a closing"], answer: 3,
+        tip: "Closings: 'Take care,' / 'Best wishes,' — above your signature." }
+    ] }
+];
+let lessonIdx = 0, learnStep = 0, lessonPhase = 'steps', exIdx = 0, exAnswered = false;
+
+/* ---------- GUIDE VOICE (text + speech) ---------- */
+/* Shared EQVoice engine: cleaned text (no emojis), slower rate, Kokoro + fallback */
+function speakText(text) {
+  if (!soundOn) return;
+  if (window.EQVoice) EQVoice.speak(text);
+}
+function stopSpeaking() { if (window.EQVoice) EQVoice.stop(); else { try { speechSynthesis.cancel(); } catch(e) {} } }
+
+/* ---------- WORLD MAP (home) ---------- */
+const UNIT_NAMES = ["Myself & Others", "What & How I Learn", "Our Shopping Habits", "Artistic Interests",
+  "Our Eating Habits", "How We Keep Healthy", "Our Hobbies", "Keep Our Environment Clean",
+  "The World of Money", "New Technologies"];
+const WORLD_DECOS = ["🌲","🏔️","🌵","🏜️","🌊","🌋","🏝️","❄️","🌸","⭐"];
+function lessonsDone() {
+  const p = loadProgress();
+  return p.lessons || {};
+}
+function unitComplete() {
+  const done = lessonsDone();
+  return LESSONS.every(l => done[l.id]);
+}
+function showWorld() {
+  stopMusic(); stopSpeaking();
+  document.body.classList.remove('golden-mode');
+  const p = loadProgress();
+  const doneCount = LESSONS.filter(l => (p.lessons || {})[l.id]).length;
+  document.getElementById('world-greet').textContent =
+    '⚔️ ' + (p.name || 'Hero') + ' · ⭐ ' + (p.totalXP || 0) + ' XP';
+  document.getElementById('world-guide-bubble').textContent = unitComplete()
+    ? 'Unit 1 complete! Enter the DUNGEON — or review any lesson!'
+    : doneCount === 0
+      ? 'Welcome! Tap Unit 1 to start learning — or be brave and go straight to the DUNGEON!'
+      : 'Great work! ' + doneCount + '/' + LESSONS.length + ' lessons done. Keep going!';
+  const path = document.getElementById('world-path');
+  path.innerHTML = '';
+  for (let u = 1; u <= 10; u++) {
+    const row = document.createElement('div');
+    row.className = 'unit-row pos-' + ((u - 1) % 3);
+    const node = document.createElement('button');
+    const state = u === 1 ? (unitComplete() ? 'done' : 'active') : 'locked';
+    node.className = 'unit-node ' + state;
+    node.innerHTML =
+      '<span class="unit-circle">' + (u === 1 ? (unitComplete() ? '✓' : '1') : '🔒') + '</span>' +
+      '<span class="unit-label">Unit ' + u + '<br>' + UNIT_NAMES[u - 1] + '</span>';
+    node.onclick = u === 1 ? () => showUnit() : () => lockedUnitTap(u);
+    row.appendChild(node);
+    path.appendChild(row);
+    const deco = document.createElement('span');
+    deco.className = 'unit-deco';
+    deco.textContent = WORLD_DECOS[u - 1];
+    deco.style.top = (u * 9.5 - 4) + '%';
+    deco.style.left = (u % 2 ? 78 : 12) + '%';
+    path.appendChild(deco);
+  }
+  show('world-screen');
+}
+function lockedUnitTap(u) {
+  const msg = 'Unit ' + u + ' is coming soon! Finish Unit 1 first, hero!';
+  document.getElementById('world-guide-bubble').textContent = '🔒 ' + msg;
+  speakText(msg);
+}
+function worldGuideTap() {
+  speakText(document.getElementById('world-guide-bubble').textContent.replace(/[^\w\s!?',.:—\/-]/g, ''));
+}
+
+/* ---------- UNIT SCREEN (lesson picker) ---------- */
+function showUnit() {
+  stopMusic(); stopSpeaking();
+  const done = lessonsDone();
+  document.getElementById('unit-guide-bubble').textContent = unitComplete()
+    ? 'All lessons done! The Dungeon is waiting for you...'
+    : 'What do you want to learn today, ' + (heroName() || 'hero') + '?';
+  const list = document.getElementById('lesson-list');
+  list.innerHTML = '';
+  LESSONS.forEach((l, i) => {
+    const node = document.createElement('button');
+    node.className = 'lesson-node' + (done[l.id] ? ' done' : '');
+    node.innerHTML =
+      '<span class="ln-icon">' + l.icon + '</span>' +
+      '<span class="ln-info"><span class="ln-name">' + (i + 1) + '. ' + l.name + '</span><br>' +
+      '<span class="ln-skill">' + l.skill + '</span></span>' +
+      '<span class="ln-status">' + (done[l.id] ? '✅' : '▶️') + '</span>';
+    node.onclick = () => startLesson(i);
+    list.appendChild(node);
+  });
+  show('unit-screen');
+  speakText('What do you want to learn today, ' + (heroName() || 'hero') + '?');
+}
+function unitGuideTap() {
+  speakText(document.getElementById('unit-guide-bubble').textContent);
+}
+
+/* ---------- LESSON FLOW (steps → exercises → done) ---------- */
+function startLesson(i) {
+  lessonIdx = i;
+  learnStep = 0;
+  lessonPhase = 'steps';
+  exIdx = 0;
+  const l = LESSONS[i];
+  document.getElementById('learn-sub').textContent = 'Unit 1 · ' + l.skill + ' · ' + l.name;
+  startMusic('learn');
+  show('learn-screen');
+  renderLearnStep();
+}
+function renderLearnStep() {
+  const l = LESSONS[lessonIdx];
+  const name = heroName() || 'hero';
+  const answers = document.getElementById('lesson-answers');
+  const nextBtn = document.getElementById('learn-next');
+  const backBtn = document.getElementById('learn-back');
+
+  if (lessonPhase === 'steps') {
+    const step = l.steps[learnStep];
+    answers.className = '';
+    answers.innerHTML = '';
+    document.getElementById('guide-bubble').innerHTML = step.html.replace('{name}', name);
+    document.getElementById('learn-dots').textContent =
+      l.steps.map((s, i) => i === learnStep ? '●' : '○').join(' ');
+    backBtn.style.visibility = learnStep === 0 ? 'hidden' : 'visible';
+    nextBtn.style.display = '';
+    nextBtn.textContent = learnStep === l.steps.length - 1 ? '✏️ TRY THE EXERCISES' : 'Next ▶';
+    speakText(step.say.replace('{name}', name));
+
+  } else if (lessonPhase === 'ex') {
+    const ex = l.exercises[exIdx];
+    exAnswered = false;
+    document.getElementById('guide-bubble').innerHTML =
+      '<b>Exercise ' + (exIdx + 1) + '/' + l.exercises.length + ':</b><br>' + ex.q;
+    document.getElementById('learn-dots').textContent = '✏️';
+    backBtn.style.visibility = 'hidden';
+    nextBtn.style.display = 'none';
+    answers.className = 'show';
+    answers.innerHTML = '';
+    shuffle(ex.options.map((opt, k) => ({ opt, k }))).forEach(({ opt, k }) => {
+      const b = document.createElement('button');
+      b.className = 'answer-btn';
+      b.textContent = opt;
+      b.onclick = () => answerExercise(b, k === ex.answer, ex);
+      answers.appendChild(b);
+    });
+    speakText(ex.listen ? ex.listen : ex.q);
+  }
+}
+function answerExercise(btn, ok, ex) {
+  if (exAnswered) return;
+  exAnswered = true;
+  document.querySelectorAll('#lesson-answers .answer-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === ex.options[ex.answer]) b.classList.add('correct');
+  });
+  const l = LESSONS[lessonIdx];
+  if (ok) {
+    btn.classList.add('correct');
+    sfx('correct'); buzz(60);
+    petPop(true, 1600);
+    document.getElementById('guide-bubble').innerHTML = '🎉 <b>Correct!</b> ' + ex.tip;
+    speakText('Correct! ' + ex.tip);
+  } else {
+    btn.classList.add('wrong');
+    sfx('wrong'); buzz([80, 60, 120]);
+    document.getElementById('guide-bubble').innerHTML =
+      '❌ Not quite. The answer is: "<b>' + ex.options[ex.answer] + '</b>"<br>💡 ' + ex.tip;
+    speakText('Not quite. The answer is: ' + ex.options[ex.answer] + '. ' + ex.tip);
+  }
+  const nextBtn = document.getElementById('learn-next');
+  nextBtn.style.display = '';
+  nextBtn.textContent = exIdx === l.exercises.length - 1 ? '🏁 FINISH LESSON' : 'Next exercise ▶';
+}
+function learnNext() {
+  const l = LESSONS[lessonIdx];
+  if (lessonPhase === 'steps') {
+    if (learnStep < l.steps.length - 1) { learnStep++; renderLearnStep(); }
+    else { lessonPhase = 'ex'; exIdx = 0; renderLearnStep(); }
+  } else {
+    if (exIdx < l.exercises.length - 1) { exIdx++; renderLearnStep(); }
+    else finishLesson();
+  }
+}
+function learnBack() {
+  if (lessonPhase === 'steps' && learnStep > 0) { learnStep--; renderLearnStep(); }
+}
+function finishLesson() {
+  stopSpeaking();
+  const p = loadProgress();
+  p.lessons = p.lessons || {};
+  const first = !p.lessons[LESSONS[lessonIdx].id];
+  p.lessons[LESSONS[lessonIdx].id] = true;
+  saveProgress(p);
+  sfx('victory');
+  if (unitComplete() && first && !p.dungeonInvited) {
+    p.dungeonInvited = true;
+    saveProgress(p);
+    stopMusic();
+    document.getElementById('dungeon-invite-modal').classList.add('show');
+    speakText('Congratulations! You finished all the Unit 1 lessons! The dungeon is now open. Ready to fight?');
+    return;
+  }
+  showUnit();
+}
+function closeInvite(goDungeon) {
+  document.getElementById('dungeon-invite-modal').classList.remove('show');
+  stopSpeaking();
+  if (goDungeon) showMap();
+  else showWorld();
+}
+function lessonGuideTap() {
+  const l = LESSONS[lessonIdx];
+  if (lessonPhase === 'steps') speakText(l.steps[learnStep].say.replace('{name}', heroName() || 'hero'));
+  else if (l.exercises[exIdx]) speakText(l.exercises[exIdx].listen || l.exercises[exIdx].q);
+}
+
+const CATS = ["😺", "😸", "😻", "🐱"];
+const CAT_MSGS = ["Purr-fect!", "Meow! Great hit!", "The cat is proud of you!", "Paw-some!"];
+const DOGS = ["🐶", "🐕", "🐩"];
+const DOG_MSGS = ["Woof... that's wrong!", "The dog is sad now...", "Ruff luck! Read the tip!", "Oh no! Learn and retry!"];
+
+/* ---------- SAVED PROGRESS (this phone only) ---------- */
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem('u1_dungeon') || '{}'); } catch(e) { return {}; }
+}
+function saveProgress(p) {
+  try { localStorage.setItem('u1_dungeon', JSON.stringify(p)); } catch(e) {}
+}
+function recordFloorClear(floorId, stars, gainedXP) {
+  const p = loadProgress();
+  p.stars = p.stars || {};
+  p.stars[floorId] = Math.max(p.stars[floorId] || 0, stars);
+  p.totalXP = (p.totalXP || 0) + gainedXP;
+  saveProgress(p);
+}
+function floorUnlocked(i) {
+  if (i === 0) return true;
+  const p = loadProgress();
+  return !!(p.stars && p.stars[FLOORS[i-1] ? FLOORS[i-1].id : 0]);
+}
+
+/* ---------- HERO NAME ---------- */
+function heroName() {
+  const p = loadProgress();
+  return p.name || '';
+}
+/* Hub deep links: ⚔️ Play → #dungeon (floor map) · ✏️ Practice → #practice (lesson quests) */
+function hubEntry() {
+  if (window.location.hash === '#dungeon') return showMap;
+  if (window.location.hash === '#practice') return showUnit;
+  return showWorld;
+}
+function enterDungeon() {
+  if (heroName()) hubEntry()();
+  else {
+    document.getElementById('name-input').value = '';
+    show('name-screen');
+    setTimeout(() => document.getElementById('name-input').focus(), 200);
+  }
+}
+function saveName() {
+  const raw = document.getElementById('name-input').value.trim().replace(/[<>"']/g, '').slice(0, 20);
+  const p = loadProgress();
+  p.name = raw || 'Hero';
+  saveProgress(p);
+  hubEntry()();
+}
+function editName() {
+  document.getElementById('name-input').value = heroName();
+  show('name-screen');
+  setTimeout(() => document.getElementById('name-input').focus(), 200);
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('name-screen').classList.contains('active')) saveName();
+});
+function finalUnlocked() {
+  const p = loadProgress();
+  return FLOORS.every(f => p.stars && p.stars[f.id]);
+}
+
+/* ---------- SOUND (WebAudio, no files needed) ---------- */
+let soundOn = true;
+try { soundOn = localStorage.getItem('u1_sound') !== 'off'; } catch(e) {}
+let audioCtx = null;
+function beep(freq, dur, type, vol, delay) {
+  if (!soundOn) return;
+  if (window.EQCalm && EQCalm.on) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const t = audioCtx.currentTime + (delay || 0);
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol || .15, t);
+    g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t + dur);
+  } catch(e) {}
+}
+function sfx(kind) {
+  if (kind === 'correct') { beep(660, .12, 'sine', .18); beep(880, .18, 'sine', .18, .1); }
+  else if (kind === 'wrong') { beep(200, .25, 'sawtooth', .12); beep(140, .3, 'sawtooth', .12, .12); }
+  else if (kind === 'victory') { [523,659,784,1047].forEach((f,i)=>beep(f,.22,'triangle',.18,i*.14)); }
+  else if (kind === 'fail') { [400,300,220,150].forEach((f,i)=>beep(f,.3,'sawtooth',.12,i*.18)); }
+  else if (kind === 'tick') { beep(1000, .05, 'square', .05); }
+  else if (kind === 'golden') { [784,988,1175,1568].forEach((f,i)=>beep(f,.2,'triangle',.18,i*.12)); }
+  else if (kind === 'unlock') { [523,784].forEach((f,i)=>beep(f,.15,'triangle',.15,i*.1)); }
+}
+function toggleSound() {
+  soundOn = !soundOn;
+  const b = document.getElementById('sound-toggle');
+  b.textContent = soundOn ? '🔊' : '🔇';
+  b.className = soundOn ? '' : 'off';
+  try { localStorage.setItem('u1_sound', soundOn ? 'on' : 'off'); } catch(e) {}
+}
+function buzz(pattern) { if (window.EQCalm && EQCalm.on) return; try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {} }
+
+/* ---------- MUSIC (WebAudio chiptune loop) ---------- */
+let musicOn = true;
+try { musicOn = localStorage.getItem('u1_music') !== 'off'; } catch(e) {}
+let musicTimer = null, musicStep = 0, musicNextTime = 0, musicGain = null;
+let musicTempo = 116, musicTranspose = 0;
+/* Three musical patterns (A = heroic, B = tense, C = calm/mysterious) */
+const BASS_A = [45,-1,45,-1,48,-1,45,-1, 43,-1,43,-1,40,-1,43,-1,
+                45,-1,45,-1,48,-1,50,-1, 43,-1,40,-1,43,-1,47,-1];
+const LEAD_A = [69,-1,72,74,76,-1,74,72, 69,-1,67,69,64,-1,-1,-1,
+                69,-1,72,74,76,-1,79,76, 74,-1,72,74,69,-1,-1,-1];
+const BASS_B = [40,-1,43,-1,45,-1,43,-1, 40,-1,43,-1,47,-1,45,-1,
+                40,-1,43,-1,45,-1,48,-1, 47,-1,45,-1,43,-1,40,-1];
+const LEAD_B = [64,-1,67,69,71,-1,69,67, 64,-1,-1,-1,72,-1,71,69,
+                67,-1,69,71,72,-1,74,72, 71,-1,69,67,64,-1,-1,-1];
+const BASS_C = [45,-1,-1,-1,41,-1,-1,-1, 43,-1,-1,-1,40,-1,-1,-1,
+                45,-1,-1,-1,41,-1,-1,-1, 43,-1,-1,-1,47,-1,-1,-1];
+const LEAD_C = [69,-1,-1,72,-1,-1,71,-1, 69,-1,-1,67,-1,-1,64,-1,
+                69,-1,-1,72,-1,-1,74,-1, 72,-1,-1,71,-1,-1,69,-1];
+/* Every place has its own sound: pattern + speed + key */
+const MUSIC_THEMES = {
+  floor1: { bass: BASS_A, lead: LEAD_A, tempo: 116, tr: 0,  vol: 1 },
+  floor2: { bass: BASS_B, lead: LEAD_B, tempo: 120, tr: 0,  vol: 1 },
+  floor3: { bass: BASS_A, lead: LEAD_A, tempo: 122, tr: 2,  vol: 1 },
+  floor4: { bass: BASS_B, lead: LEAD_B, tempo: 118, tr: 3,  vol: 1 },
+  floor5: { bass: BASS_C, lead: LEAD_C, tempo: 106, tr: 0,  vol: 1 },
+  floor6: { bass: BASS_C, lead: LEAD_C, tempo: 114, tr: 4,  vol: 1 },
+  final:  { bass: BASS_A, lead: LEAD_A, tempo: 126, tr: -2, vol: 1 },
+  golden: { bass: BASS_B, lead: LEAD_B, tempo: 138, tr: 3,  vol: 1 },
+  quick:  { bass: BASS_B, lead: LEAD_B, tempo: 130, tr: 5,  vol: 1 },
+  learn:  { bass: BASS_C, lead: LEAD_C, tempo: 88,  tr: 0,  vol: 0.55 }
+};
+let musicBass = BASS_A, musicLead = LEAD_A, musicVol = 1;
+function midiF(n) { return 440 * Math.pow(2, (n - 69) / 12); }
+function ensureCtx() {
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playNote(midi, t, dur, type, vol) {
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = midiF(midi + musicTranspose);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g); g.connect(musicGain);
+  o.start(t); o.stop(t + dur);
+}
+function musicSchedule() {
+  try {
+    const stepDur = 60 / musicTempo / 2;
+    while (musicNextTime < audioCtx.currentTime + .15) {
+      const b = musicBass[musicStep % musicBass.length];
+      const l = musicLead[musicStep % musicLead.length];
+      if (b >= 0) playNote(b, musicNextTime, stepDur * .9, 'triangle', .11 * musicVol);
+      if (l >= 0) playNote(l, musicNextTime, stepDur * .85, 'square', .04 * musicVol);
+      musicNextTime += stepDur;
+      musicStep++;
+    }
+  } catch(e) {}
+}
+let lastMusicKind = 'floor1';
+function startMusic(kind) {
+  stopMusic();
+  lastMusicKind = kind;
+  if (!musicOn) return;
+  if (window.EQCalm && EQCalm.on) return;
+  try {
+    ensureCtx();
+    if (!musicGain) { musicGain = audioCtx.createGain(); musicGain.connect(audioCtx.destination); }
+    const th = MUSIC_THEMES[kind] || MUSIC_THEMES.floor1;
+    musicBass = th.bass; musicLead = th.lead;
+    musicTempo = th.tempo; musicTranspose = th.tr; musicVol = th.vol;
+    musicStep = 0;
+    musicNextTime = audioCtx.currentTime + .05;
+    musicTimer = setInterval(musicSchedule, 50);
+  } catch(e) {}
+}
+function stopMusic() { if (musicTimer) { clearInterval(musicTimer); musicTimer = null; } }
+function toggleMusic() {
+  musicOn = !musicOn;
+  const b = document.getElementById('music-toggle');
+  b.className = musicOn ? '' : 'off';
+  try { localStorage.setItem('u1_music', musicOn ? 'on' : 'off'); } catch(e) {}
+  if (!musicOn) stopMusic();
+  else if (battleActive) startMusic(mode);
+}
+
+/* ---------- HELPERS ---------- */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function normalize(s) {
+  return s.toLowerCase().trim().replace(/['’`´]/g, '').replace(/\.$/, '').replace(/\s+/g, ' ');
+}
+function show(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  /* Home button (→ hub): visible everywhere except mid name-entry */
+  document.getElementById('home-btn').className = screenId === 'name-screen' ? '' : 'show';
+}
+function goHome() {
+  stopSpeaking();
+  stopMusic();
+  if (battleActive) {          // abandon the current battle safely
+    battleActive = false;
+    stopTimer();
+    leftPage = false;
+  }
+  window.location.href = './index.html';   // home = the English Quest hub
+}
+
+/* ---------- DUNGEON MAP ---------- */
+function showMap() {
+  stopMusic();
+  document.body.classList.remove('golden-mode');
+  const p = loadProgress();
+  const cleared = p.stars ? Object.keys(p.stars).length : 0;
+  const left = FLOORS.length - cleared;
+  let greet;
+  if (cleared === 0) greet = '⚔️ Welcome, ' + (p.name || 'hero') + '! Your quest begins on Floor 1.';
+  else if (p.finalBeaten) greet = '🏆 ' + (p.name || 'Hero') + ', Slayer of Unit 1!' + (p.goldenBeaten ? ' 👑 LEGEND!' : '');
+  else if (left === 0) greet = '🔥 ' + (p.name || 'Hero') + ', the Fire Dragon awaits you!';
+  else greet = '⚔️ Welcome back, ' + (p.name || 'hero') + '! ' + left + ' floor' + (left > 1 ? 's' : '') + ' left.';
+  document.getElementById('map-greet').innerHTML = greet + ' <button id="edit-name-btn" onclick="editName()">✏️</button>';
+  document.getElementById('map-xp').textContent = '⭐ Total XP: ' + (p.totalXP || 0);
+  const wrap = document.getElementById('map-floors');
+  wrap.innerHTML = '';
+  /* Quick Practice door — always open, no floor progression */
+  const qnode = document.createElement('button');
+  qnode.className = 'floor-node quick';
+  qnode.innerHTML =
+    '<span class="fn-emoji">⚡</span>' +
+    '<span class="fn-info"><span class="fn-name">Quick Practice</span><br>' +
+    '<span class="fn-lesson">Fast mixed round — all lessons, no progression</span></span>' +
+    '<span class="fn-status">🎯</span>';
+  qnode.onclick = startQuick;
+  wrap.appendChild(qnode);
+  const qconn = document.createElement('div');
+  qconn.className = 'floor-connector';
+  wrap.appendChild(qconn);
+  FLOORS.forEach((f, i) => {
+    const unlocked = floorUnlocked(i);
+    const stars = (p.stars && p.stars[f.id]) || 0;
+    const node = document.createElement('button');
+    node.className = 'floor-node ' + (stars ? 'cleared' : unlocked ? 'unlocked' : 'locked');
+    node.innerHTML =
+      '<span class="fn-emoji">' + (unlocked ? f.emoji : '🔒') + '</span>' +
+      '<span class="fn-info"><span class="fn-name">Floor ' + f.id + ': ' + f.name + '</span><br>' +
+      '<span class="fn-lesson">' + f.lesson + '</span></span>' +
+      '<span class="fn-status">' + (stars ? '⭐'.repeat(stars) : unlocked ? '⚔️' : '') + '</span>';
+    if (unlocked) node.onclick = () => startFloor(i);
+    wrap.appendChild(node);
+    const conn = document.createElement('div');
+    conn.className = 'floor-connector';
+    wrap.appendChild(conn);
+  });
+  /* Final boss node */
+  const fUnlocked = finalUnlocked();
+  const beaten = !!(p.finalBeaten);
+  const node = document.createElement('button');
+  node.className = 'floor-node final ' + (fUnlocked ? (beaten ? 'cleared' : 'unlocked') : 'locked');
+  node.innerHTML =
+    '<span class="fn-emoji">' + (fUnlocked ? '🐉' : '🔒') + '</span>' +
+    '<span class="fn-info"><span class="fn-name">FINAL: The Fire Dragon</span><br>' +
+    '<span class="fn-lesson">Unit 1 test — all lessons mixed' + (p.goldenBeaten ? ' · 👑 LEGEND' : '') + '</span></span>' +
+    '<span class="fn-status">' + (beaten ? '🏆' : fUnlocked ? '🔥' : '') + '</span>';
+  if (fUnlocked) node.onclick = startFinal;
+  wrap.appendChild(node);
+  show('map-screen');
+}
+
+/* ---------- BATTLE SETUP ---------- */
+function setupBattle(qs, bossName, bossEmoji, musicKind, tauntKey) {
+  queue = qs;
+  totalPicked = queue.length;
+  lives = CONFIG.lives;
+  xp = 0; correctCount = 0; streak = 0; locked = false;
+  enraged = false;
+  dmgPerHit = Math.ceil(100 / totalPicked);
+  maxHP = dmgPerHit * totalPicked;
+  bossHP = maxHP;
+  battleActive = true;
+  pendingAction = null;
+  battleStart = Date.now();
+  leaveCount = 0;
+  const boss = document.getElementById('boss-sprite');
+  boss.classList.remove('enraged');
+  document.getElementById('boss-name').textContent = bossName;
+  boss.textContent = bossEmoji;
+  document.getElementById('training-badge').className = training ? 'show' : '';
+  startMusic(musicKind);
+  updateHUD();
+  show('battle-screen');
+  if (tauntKey) setTimeout(() => { if (battleActive) bossSay(randomTaunt(tauntKey)); }, 500);
+  /* First battle ever → show the how-to-play tutorial before the timer starts */
+  const p = loadProgress();
+  if (!p.tutorialSeen) {
+    document.getElementById('tutorial-modal').classList.add('show');
+    nextQuestion(true);   // render question but hold the timer
+  } else {
+    nextQuestion();
+  }
+}
+function closeTutorial() {
+  document.getElementById('tutorial-modal').classList.remove('show');
+  const p = loadProgress();
+  p.tutorialSeen = true;
+  saveProgress(p);
+  if (battleActive && !training) startTimer(questionSeconds(queue[0]));
+}
+
+function startFloor(i) {
+  currentFloor = i;
+  beginFloorBattle(i);   // lessons now live in the Unit screen; the dungeon is pure play
+}
+function beginFloorBattle(i) {
+  mode = 'floor';
+  training = false;
+  currentFloor = i;
+  document.body.classList.remove('golden-mode');
+  const f = FLOORS[i];
+  setupBattle(shuffle(f.bank).slice(0, CONFIG.questionsPerFloor), f.boss, f.emoji, 'floor' + f.id, f.id);
+}
+
+function startTraining() {
+  mode = 'floor';
+  training = true;
+  document.body.classList.remove('golden-mode');
+  const f = FLOORS[currentFloor];
+  setupBattle(shuffle(f.bank).slice(0, CONFIG.questionsPerFloor), f.boss + ' (training)', f.emoji, 'floor' + f.id, null);
+}
+
+function startQuick() {
+  mode = 'quick';
+  training = false;
+  document.body.classList.remove('golden-mode');
+  let qs = [];
+  FLOORS.forEach(f => {
+    const mcOnly = f.bank.filter(q => q.t === 'mc');
+    qs = qs.concat(shuffle(mcOnly).slice(0, 2));
+  });
+  setupBattle(shuffle(qs).slice(0, 10), 'The Practice Golem', '🗿', 'quick', null);
+}
+
+function startFinal() {
+  mode = 'final';
+  training = false;
+  document.body.classList.remove('golden-mode');
+  let qs = [];
+  FLOORS.forEach(f => {
+    const mcOnly = f.bank.filter(q => q.t === 'mc');
+    qs = qs.concat(shuffle(mcOnly).slice(0, FINAL_PICK_PER_FLOOR));
+  });
+  setupBattle(shuffle(qs), 'The Fire Dragon', '🐉', 'final', 'final');
+}
+
+function startGolden() {
+  mode = 'golden';
+  training = false;
+  document.body.classList.add('golden-mode');
+  baseXP = xp;
+  const qs = shuffle(GOLDEN_BANK).slice(0, GOLDEN_PICK).map(g => ({ t:'typed', ...g }));
+  setupBattle(qs, 'The Golden Dragon', '🐲', 'golden', 'golden');
+  sfx('golden');
+}
+
+function retryFloor() {
+  if (mode === 'final') startFinal();
+  else if (mode === 'quick') startQuick();
+  else beginFloorBattle(currentFloor);   // retry goes straight to battle, no lesson replay
+}
+
+function updateHUD() {
+  document.getElementById('lives').textContent = training ? '🎓 practice' : '❤️'.repeat(lives) + '🖤'.repeat(CONFIG.lives - lives);
+  document.getElementById('xp-display').textContent = '⭐ ' + xp + ' XP';
+  const pct = Math.max(0, (bossHP / maxHP) * 100);
+  document.getElementById('hp-bar').style.width = pct + '%';
+  document.getElementById('hp-text').textContent = Math.max(0, bossHP) + ' / ' + maxHP + ' HP';
+  document.getElementById('streak-badge').textContent = streak >= 3 ? '🔥 Streak x' + streak + ' — bonus XP!' : '';
+}
+
+/* ---------- TIMER ---------- */
+function questionSeconds(item) {
+  if (item.t === 'order') return CONFIG.secondsPerOrder;
+  if (item.t === 'typed') return CONFIG.secondsPerTyped;
+  return CONFIG.secondsPerQuestion;
+}
+let timerTotal = 0;
+function startTimer(secs) {
+  timerTotal = secs * 10;
+  runTimer(timerTotal);
+}
+function resumeTimerFrom(ticks) {
+  if (ticks > 0 && timerTotal > 0) runTimer(ticks);
+}
+function runTimer(ticks) {
+  stopTimer();
+  timeLeft = ticks;
+  const total = timerTotal;
+  const bar = document.getElementById('timer-bar');
+  const label = document.getElementById('timer-label');
+  bar.classList.remove('danger'); label.classList.remove('danger');
+  bar.style.width = (ticks / total * 100) + '%';
+  label.textContent = '⏱️ ' + Math.ceil(ticks / 10) + 's';
+  timerId = setInterval(() => {
+    timeLeft--;
+    bar.style.width = (timeLeft / total * 100) + '%';
+    label.textContent = '⏱️ ' + Math.ceil(timeLeft / 10) + 's';
+    if (timeLeft <= 50 && !bar.classList.contains('danger')) {
+      bar.classList.add('danger'); label.classList.add('danger');
+    }
+    if (timeLeft <= 50 && timeLeft % 10 === 0) sfx('tick');
+    if (timeLeft <= 0) { stopTimer(); timeOut(); }
+  }, 100);
+}
+function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+/* ---------- QUESTION FLOW ---------- */
+function nextQuestion(holdTimer) {
+  if (autoAdvanceId) { clearTimeout(autoAdvanceId); autoAdvanceId = null; }
+  locked = false;
+  pendingAction = null;
+  const item = queue[0];
+  const chipText = mode === 'golden' ? '👑 Golden Challenge — TYPE it!'
+    : mode === 'final' ? '🐉 Unit 1 Test'
+    : mode === 'quick' ? '⚡ Quick Practice'
+    : 'Floor ' + FLOORS[currentFloor].id + ' · ' + FLOORS[currentFloor].name;
+  document.getElementById('category-chip').textContent = chipText;
+  document.getElementById('question-text').textContent = item.q;
+  document.getElementById('progress-text').textContent = correctCount + ' / ' + totalPicked + ' hits landed';
+  hideFeedback();
+
+  const qbox = document.getElementById('question-box');
+  qbox.classList.remove('slide-in'); void qbox.offsetWidth; qbox.classList.add('slide-in');
+
+  const answersDiv = document.getElementById('answers');
+  const orderArea = document.getElementById('order-area');
+  const typedArea = document.getElementById('typed-area');
+  answersDiv.innerHTML = '';
+  orderArea.classList.remove('show');
+  typedArea.classList.remove('show');
+
+  if (item.t === 'typed') {
+    typedArea.classList.add('show');
+    const input = document.getElementById('typed-input');
+    input.value = ''; input.className = ''; input.disabled = false;
+    document.getElementById('typed-submit').disabled = false;
+    setTimeout(() => input.focus(), 150);
+  } else if (item.t === 'order') {
+    orderArea.classList.add('show');
+    orderPicked = [];
+    renderOrder(item);
+  } else {
+    const order = shuffle([0, 1, 2, 3]);
+    order.forEach(optIdx => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = item.options[optIdx];
+      btn.onclick = () => answer(btn, optIdx === item.answer, item);
+      answersDiv.appendChild(btn);
+    });
+  }
+  const tw = document.getElementById('timer-wrap'), tl = document.getElementById('timer-label');
+  if (training) {
+    stopTimer();   // safety: never let a stale timer run in training
+    tw.style.display = 'none';
+    tl.textContent = '🎓 No timer — take your time!';
+    tl.classList.remove('danger');
+  } else {
+    tw.style.display = '';
+    if (!holdTimer) startTimer(questionSeconds(item));
+    else tl.textContent = '⏱️ ready...';
+  }
+}
+
+/* ---------- WORD-ORDER UI ---------- */
+let orderShuffled = [];
+function renderOrder(item) {
+  const line = document.getElementById('order-line');
+  const pool = document.getElementById('order-pool');
+  line.className = '';
+  line.innerHTML = '';
+  pool.innerHTML = '';
+  if (orderPicked.length === 0) {
+    orderShuffled = shuffle(item.tokens.map((tok, i) => ({ tok, i })));
+    /* re-shuffle if it accidentally starts in correct order */
+    if (orderShuffled.every((o, k) => o.i === k) && item.tokens.length > 2) {
+      orderShuffled.reverse();
+    }
+  }
+  orderPicked.forEach((entry, k) => {
+    const b = document.createElement('button');
+    b.className = 'token-btn in-line';
+    b.textContent = entry.tok;
+    b.onclick = () => { if (!locked) { orderPicked.splice(k, 1); renderOrder(item); } };
+    line.appendChild(b);
+  });
+  orderShuffled.forEach(entry => {
+    if (orderPicked.includes(entry)) return;
+    const b = document.createElement('button');
+    b.className = 'token-btn';
+    b.textContent = entry.tok;
+    b.onclick = () => { if (!locked) { orderPicked.push(entry); renderOrder(item); } };
+    pool.appendChild(b);
+  });
+  document.getElementById('order-submit').disabled = false;
+}
+function submitOrder() {
+  if (locked) return;
+  const item = queue[0];
+  if (orderPicked.length !== item.tokens.length) return;   // must use all words
+  locked = true;
+  stopTimer();
+  document.getElementById('order-submit').disabled = true;
+  const ok = orderPicked.every((entry, k) => entry.i === k);
+  document.getElementById('order-line').className = ok ? 'correct-flash' : 'wrong-flash';
+  if (ok) handleCorrect(item);
+  else handleWrong(item, '❌ Not the right order!');
+}
+
+/* ---------- FEEDBACK PANEL ---------- */
+function showFeedback(good, title, answerLine, tip, withNextBtn, autoSecs) {
+  const panel = document.getElementById('feedback-panel');
+  document.getElementById('feedback-title').textContent = title;
+  document.getElementById('feedback-answer').textContent = answerLine;
+  document.getElementById('feedback-tip').textContent = tip ? '💡 ' + tip : '';
+  panel.className = 'show ' + (good ? 'good' : 'bad');
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.className = withNextBtn ? 'show' : '';
+  const fill = document.getElementById('auto-fill');
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  if (withNextBtn && autoSecs) {
+    requestAnimationFrame(() => {
+      fill.style.transition = 'width ' + autoSecs + 's linear';
+      fill.style.width = '100%';
+    });
+  }
+}
+function hideFeedback() {
+  document.getElementById('feedback-panel').className = '';
+  document.getElementById('next-btn').className = '';
+  document.getElementById('auto-fill').style.width = '0%';
+}
+function continueAfterFeedback() {
+  if (autoAdvanceId) { clearTimeout(autoAdvanceId); autoAdvanceId = null; }
+  if (pendingAction) { const fn = pendingAction; pendingAction = null; fn(); }
+}
+
+/* ---------- PET POPS & FIRE ---------- */
+function petPop(good, durationMs) {
+  const pop = document.getElementById('pet-pop');
+  const emo = document.getElementById('pet-emoji');
+  const txt = document.getElementById('pet-text');
+  if (good) {
+    emo.textContent = CATS[Math.floor(Math.random() * CATS.length)];
+    txt.textContent = CAT_MSGS[Math.floor(Math.random() * CAT_MSGS.length)];
+    pop.className = 'show good';
+  } else {
+    emo.textContent = DOGS[Math.floor(Math.random() * DOGS.length)];
+    txt.textContent = DOG_MSGS[Math.floor(Math.random() * DOG_MSGS.length)];
+    pop.className = 'show bad';
+  }
+  setTimeout(() => { pop.classList.add('fading'); }, durationMs - 500);
+  setTimeout(() => { pop.className = ''; }, durationMs);
+}
+function breatheFire() {
+  const boss = document.getElementById('boss-sprite');
+  boss.classList.remove('breathe'); void boss.offsetWidth; boss.classList.add('breathe');
+  const wrap = document.getElementById('boss-wrap');
+  for (let i = 0; i < 4; i++) {
+    setTimeout(() => {
+      const f = document.createElement('span');
+      f.className = 'fireball';
+      f.textContent = '🔥';
+      f.style.setProperty('--fx', (Math.random() * 160 - 80) + 'px');
+      wrap.appendChild(f);
+      setTimeout(() => f.remove(), 1000);
+    }, i * 120);
+  }
+  document.body.classList.remove('flash-red'); void document.body.offsetWidth;
+  document.body.classList.add('flash-red');
+}
+
+/* ---------- ANSWER HANDLING ---------- */
+function answer(btn, isCorrect, item) {
+  if (locked) return;
+  locked = true;
+  stopTimer();
+  document.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    handleCorrect(item);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.answer-btn').forEach(b => {
+      if (b.textContent === item.options[item.answer]) b.classList.add('correct');
+    });
+    handleWrong(item, '❌ Wrong answer!');
+  }
+}
+function submitTyped() {
+  if (locked) return;
+  const input = document.getElementById('typed-input');
+  const val = normalize(input.value);
+  if (!val) { input.focus(); return; }
+  locked = true;
+  stopTimer();
+  input.disabled = true;
+  document.getElementById('typed-submit').disabled = true;
+  const item = queue[0];
+  const ok = item.accept.map(normalize).includes(val);
+  input.className = ok ? 'correct-flash' : 'wrong-flash';
+  if (ok) handleCorrect(item);
+  else handleWrong(item, '❌ Not quite!');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && mode === 'golden' && battleActive && !locked
+      && document.getElementById('typed-area').classList.contains('show')) {
+    submitTyped();
+  }
+});
+function timeOut() {
+  if (locked) return;
+  locked = true;
+  const item = queue[0];
+  document.querySelectorAll('.answer-btn').forEach(b => {
+    b.disabled = true;
+    if (item.t === 'mc' && b.textContent === item.options[item.answer]) b.classList.add('correct');
+  });
+  if (item.t === 'typed') {
+    document.getElementById('typed-input').disabled = true;
+    document.getElementById('typed-submit').disabled = true;
+  }
+  if (item.t === 'order') document.getElementById('order-submit').disabled = true;
+  handleWrong(item, '⏱️ Time is up!');
+}
+function correctAnswerText(item) {
+  if (item.t === 'typed') return item.display;
+  if (item.t === 'order') return item.tokens.join(' ');
+  return item.options[item.answer];
+}
+function handleCorrect(item) {
+  queue.shift();
+  correctCount++;
+  streak++;
+  const perHit = mode === 'golden' ? CONFIG.goldenXpPerCorrect : CONFIG.xpPerCorrect;
+  const bonusVal = mode === 'golden' ? CONFIG.goldenStreakBonus : CONFIG.streakBonus;
+  const bonus = streak >= 3 ? bonusVal : 0;
+  xp += perHit + bonus;
+  bossHP -= dmgPerHit;
+
+  sfx('correct');
+  buzz(60);
+  const boss = document.getElementById('boss-sprite');
+  boss.classList.remove('hit'); void boss.offsetWidth; boss.classList.add('hit');
+  const dmg = document.getElementById('dmg-float');
+  dmg.textContent = '-' + dmgPerHit;
+  dmg.classList.remove('show'); void dmg.offsetWidth; dmg.classList.add('show');
+  petPop(true, 1600);
+  updateHUD();
+
+  if (bossHP <= 0) {
+    setTimeout(mode === 'golden' ? legendVictory : mode === 'final' ? finalVictory : mode === 'quick' ? quickVictory : floorVictory, 1800);
+    return;
+  }
+  /* ENRAGE: below 30% HP the boss gets angry */
+  if (!enraged && bossHP <= maxHP * 0.3) {
+    enraged = true;
+    setTimeout(() => {
+      if (!battleActive) return;
+      document.getElementById('boss-sprite').classList.add('enraged');
+      bossSay(randomTaunt('enrage'), true, 5200);
+      sfx('wrong');
+      buzz([60, 40, 200]);
+      if (musicTimer) { musicTempo += 16; }   // music speeds up
+    }, 900);
+  }
+  showFeedback(true,
+    '⚔️ Great hit! +' + (perHit + bonus) + ' XP' + (bonus ? ' (streak bonus!)' : ''),
+    '✅ "' + correctAnswerText(item) + '"', item.tip, true, CONFIG.readTimeCorrect);
+  pendingAction = nextQuestion;
+  autoAdvanceId = setTimeout(() => {
+    autoAdvanceId = null;
+    if (battleActive) continueAfterFeedback();
+  }, CONFIG.readTimeCorrect * 1000);
+}
+function handleWrong(item, titleText) {
+  queue.push(queue.shift());
+  if (!training) lives--;
+  streak = 0;
+  orderPicked = [];   // reset any half-built word order
+
+  sfx('wrong');
+  buzz([80, 60, 120]);
+  breatheFire();
+  petPop(false, 2200);
+  if (!training && mode === 'floor' && Math.random() < 0.5) {
+    setTimeout(() => { if (battleActive) bossSay(randomTaunt(FLOORS[currentFloor].id), true); }, 1200);
+  }
+  updateHUD();
+
+  if (lives <= 0) {
+    showFeedback(false, titleText, '✅ Correct answer: "' + correctAnswerText(item) + '"', item.tip, false);
+    setTimeout(showFailModal, 2400);
+    return;
+  }
+  showFeedback(false, titleText, '✅ Correct answer: "' + correctAnswerText(item) + '"', item.tip, true);
+  pendingAction = nextQuestion;
+}
+
+/* ---------- WIN / LOSE ---------- */
+function floorVictory() {
+  battleActive = false;
+  stopTimer(); stopMusic();
+  sfx('victory');
+  buzz([60, 40, 60, 40, 200]);
+  const f = FLOORS[currentFloor];
+  if (training) {
+    document.getElementById('fc-emoji').textContent = '🎓';
+    document.getElementById('fc-stars').textContent = '';
+    document.getElementById('fc-floor-name').textContent = '🎓 Training complete, ' + (heroName() || 'hero') + '! Now fight the real ' + f.boss + '!';
+    document.getElementById('fc-xp').textContent = '0 (training gives no XP)';
+    document.getElementById('fc-lives').textContent = '∞';
+    show('floor-clear-screen');
+    return;
+  }
+  const stars = Math.max(1, lives);
+  recordFloorClear(f.id, stars, xp);
+  document.getElementById('fc-emoji').textContent = f.emoji;
+  document.getElementById('fc-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+  document.getElementById('fc-floor-name').textContent = '🏰 ' + (heroName() || 'Hero') + ' cleared Floor ' + f.id + ': ' + f.name + '!';
+  document.getElementById('fc-xp').textContent = xp;
+  document.getElementById('fc-lives').textContent = lives + ' / ' + CONFIG.lives;
+  show('floor-clear-screen');
+}
+function quickVictory() {
+  battleActive = false;
+  stopTimer(); stopMusic();
+  sfx('victory');
+  buzz([60, 40, 60, 40, 200]);
+  const p = loadProgress();
+  p.totalXP = (p.totalXP || 0) + xp;
+  saveProgress(p);
+  document.getElementById('fc-emoji').textContent = '⚡';
+  document.getElementById('fc-stars').textContent = '';
+  document.getElementById('fc-floor-name').textContent = '⚡ Quick Practice complete, ' + (heroName() || 'hero') + '!';
+  document.getElementById('fc-xp').textContent = xp;
+  document.getElementById('fc-lives').textContent = lives + ' / ' + CONFIG.lives;
+  show('floor-clear-screen');
+}
+
+function finalVictory() {
+  battleActive = false;
+  stopTimer(); stopMusic();
+  sfx('victory');
+  buzz([60, 40, 60, 40, 200]);
+  const p = loadProgress();
+  p.finalBeaten = true;
+  p.totalXP = (p.totalXP || 0) + xp;
+  saveProgress(p);
+  const elapsed = (Date.now() - battleStart) / 1000;
+  const fast = elapsed <= totalPicked * CONFIG.fastAvgSeconds;
+  const perfect = lives === CONFIG.lives;
+  challengeEarned = fast || perfect;
+  document.getElementById('final-xp').textContent = xp;
+  document.getElementById('final-correct').textContent = correctCount + ' / ' + totalPicked;
+  document.getElementById('final-lives').textContent = lives + ' / ' + CONFIG.lives;
+  document.getElementById('victory-stars').textContent = '⭐'.repeat(Math.max(lives,1)) + '☆'.repeat(CONFIG.lives - Math.max(lives,1));
+  document.getElementById('rank-line').textContent = (heroName() || 'Hero') +
+    (lives === CONFIG.lives ? ' — DRAGON MASTER! Perfect battle!' : ' — BOSS SLAYER of Unit 1!');
+  document.getElementById('challenge-offer').className = challengeEarned ? 'show' : '';
+  show('victory-screen');
+}
+function skipChallenge() {
+  document.getElementById('challenge-offer').className = '';
+}
+function legendVictory() {
+  battleActive = false;
+  stopTimer(); stopMusic();
+  sfx('golden');
+  buzz([60, 40, 60, 40, 60, 40, 300]);
+  document.body.classList.remove('golden-mode');
+  const p = loadProgress();
+  p.goldenBeaten = true;
+  p.totalXP = (p.totalXP || 0) + (xp - baseXP);
+  saveProgress(p);
+  document.getElementById('legend-xp').textContent = xp;
+  document.getElementById('legend-base').textContent = baseXP;
+  document.getElementById('legend-bonus').textContent = xp - baseXP;
+  document.querySelector('#legend-screen .end-title').textContent = (heroName() || 'HERO').toUpperCase() + ' — LEGEND OF UNIT 1!';
+  show('legend-screen');
+}
+function showFailModal() {
+  battleActive = false;
+  stopMusic();
+  sfx('fail');
+  buzz([150, 80, 150, 80, 300]);
+  const emoji = mode === 'golden' ? '🐲🔥' : mode === 'final' ? '🐉🔥' : mode === 'quick' ? '🗿💥' : FLOORS[currentFloor].emoji + '🔥';
+  document.getElementById('fail-emoji').textContent = emoji;
+  document.getElementById('fail-text').innerHTML = mode === 'golden'
+    ? 'The Golden Dragon was too strong...<br>But your Fire Dragon victory still counts!'
+    : 'The guardian wins this time...<br>But heroes never give up!';
+  document.getElementById('fail-modal').classList.add('show');
+}
+function closeFailModal() {
+  document.getElementById('fail-modal').classList.remove('show');
+  if (mode === 'golden') {
+    xp = baseXP;
+    document.body.classList.remove('golden-mode');
+    document.getElementById('challenge-offer').className = '';
+    show('victory-screen');
+  } else {
+    /* count fails per floor — 2+ fails unlocks Training Mode */
+    let showTraining = false;
+    if (mode === 'floor') {
+      const p = loadProgress();
+      p.fails = p.fails || {};
+      const fid = FLOORS[currentFloor].id;
+      p.fails[fid] = (p.fails[fid] || 0) + 1;
+      saveProgress(p);
+      showTraining = p.fails[fid] >= 2;
+    }
+    document.getElementById('training-btn').className = 'btn-training' + (showTraining ? ' show' : '');
+    document.getElementById('defeat-floor-name').textContent =
+      mode === 'final' ? '🐉 The Fire Dragon (Unit 1 test)'
+      : mode === 'quick' ? '⚡ Quick Practice'
+      : '🏰 Floor ' + FLOORS[currentFloor].id + ': ' + FLOORS[currentFloor].name;
+    document.getElementById('defeat-correct').textContent = correctCount + ' / ' + totalPicked;
+    show('defeat-screen');
+  }
+}
+
+/* ---------- FRIENDLY ANTI-CHEAT ----------
+   Leaving the page PAUSES the battle (progress kept). A "tap to resume"
+   overlay appears on return. Only leaving MORE THAN 3 times in one
+   battle counts as cheating and restarts it with new questions. */
+let leaveCount = 0, pausedRemaining = 0, pausedHadTimer = false;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && battleActive && training) { stopMusic(); return; }  // training: no punishment
+  if (document.hidden && battleActive) {
+    leaveCount++;
+    pausedHadTimer = (timerId !== null);
+    pausedRemaining = timeLeft;
+    stopTimer();
+    stopMusic();
+    if (autoAdvanceId) { clearTimeout(autoAdvanceId); autoAdvanceId = null; }  // NEXT stays available
+    leftPage = true;
+  } else if (!document.hidden && leftPage) {
+    leftPage = false;
+    if (!battleActive) return;                     // battle already ended
+    if (leaveCount > 3) {                          // too many exits = cheating
+      battleActive = false;
+      stopTimer();
+      document.getElementById('pause-modal').classList.remove('show');
+      document.getElementById('cheat-modal').classList.add('show');
+      return;
+    }
+    document.getElementById('pause-text').innerHTML =
+      'No problem — your progress is safe!<br>❤️ Lives, ⭐ XP and boss HP are all kept.<br><br>⚠️ Careful: leaving more than 3 times restarts the battle. (' + leaveCount + '/3)';
+    document.getElementById('pause-modal').classList.add('show');
+  } else if (!document.hidden && battleActive && training) {
+    startMusic(lastMusicKind);
+  }
+});
+function resumeBattle() {
+  document.getElementById('pause-modal').classList.remove('show');
+  if (!battleActive) return;
+  startMusic(lastMusicKind);
+  if (pausedHadTimer && !locked) resumeTimerFrom(pausedRemaining);
+}
+function restartAfterCheat() {
+  document.getElementById('cheat-modal').classList.remove('show');
+  document.body.classList.remove('golden-mode');
+  if (mode === 'golden') startGolden();
+  else if (mode === 'final') startFinal();
+  else if (mode === 'quick') startQuick();
+  else beginFloorBattle(currentFloor);
+}
+
+/* ---------- BACKGROUND EMBERS ---------- */
+(function spawnEmbers() {
+  for (let i = 0; i < 12; i++) {
+    const e = document.createElement('span');
+    e.className = 'ember';
+    e.textContent = Math.random() < 0.5 ? '🔥' : '✨';
+    e.style.left = Math.random() * 100 + 'vw';
+    e.style.fontSize = (8 + Math.random() * 10) + 'px';
+    e.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+    e.style.animationDuration = (7 + Math.random() * 8) + 's';
+    e.style.animationDelay = (Math.random() * 8) + 's';
+    document.body.appendChild(e);
+  }
+})();
+
+document.getElementById('sound-toggle').textContent = soundOn ? '🔊' : '🔇';
+document.getElementById('sound-toggle').className = soundOn ? '' : 'off';
+document.getElementById('music-toggle').className = musicOn ? '' : 'off';
+document.getElementById('home-btn').className = 'show';   // the hub is always reachable
+/* Fast lane from the hub: returning players skip the title screen */
+if (window.location.hash === '#dungeon' && heroName()) showMap();
+else if (window.location.hash === '#practice' && heroName()) showUnit();
+</script>
+</body>
+</html>

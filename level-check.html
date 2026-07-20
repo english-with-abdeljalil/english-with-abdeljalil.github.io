@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level Check — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Level Check">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<script src="./eq-music.js"></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script><script data-goatcounter="https://jalil.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(60% 40% at 20% 0%, rgba(124,58,237,.35), transparent 60%),
+      radial-gradient(50% 35% at 90% 15%, rgba(219,39,119,.22), transparent 60%),
+      linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color:#f0e9ff; min-height:100dvh; display:flex; justify-content:center;
+  }
+  #app { width:100%; max-width:520px; padding:0 16px 60px; }
+  a { color:inherit; }
+
+  .eq-header { display:flex; align-items:center; gap:12px; padding:16px 2px 8px; }
+  .eq-logo { width:42px; height:42px; border-radius:12px; box-shadow:0 0 16px rgba(251,191,36,.4); }
+  .eq-title { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:22px; font-weight:800; line-height:1;
+    background:linear-gradient(90deg,#fbbf24,#f87171); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .eq-sub { font-size:11.5px; color:#c4b5fd; font-weight:600; margin-top:3px; }
+  .back { display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:#c4b5fd;
+    font-weight:700; font-size:13px; padding:8px 2px 4px; }
+
+  h1.big { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:27px; font-weight:800; margin:8px 2px 4px; line-height:1.1; }
+  .lead { font-size:14px; color:#cdbef5; font-weight:600; line-height:1.55; margin:0 2px 16px; }
+
+  .card { background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.14); border-radius:20px; padding:16px; margin-bottom:12px; }
+
+  .mode { display:block; width:100%; text-align:left; border:none; cursor:pointer; color:#fff; border-radius:20px;
+    padding:15px 16px; margin-bottom:11px; position:relative; transition:transform .08s, box-shadow .08s; font-family:inherit; }
+  .mode:active { transform:translateY(5px); box-shadow:0 1px 0 var(--edge)!important; }
+  .mode.quick  { --edge:#075985; background:linear-gradient(160deg,#0ea5e9,#2563eb); box-shadow:0 6px 0 var(--edge); }
+  .mode.medium { --edge:#14532d; background:linear-gradient(160deg,#22c55e,#059669); box-shadow:0 6px 0 var(--edge); }
+  .mode.long   { --edge:#4a044e; background:linear-gradient(160deg,#a855f7,#db2777); box-shadow:0 6px 0 var(--edge); }
+  .mode-inner { display:flex; align-items:center; gap:14px; }
+  .mode-badge { min-width:52px; height:52px; border-radius:16px; background:rgba(255,255,255,.22);
+    display:flex; align-items:center; justify-content:center; font-size:27px; box-shadow:inset 0 -3px 0 rgba(0,0,0,.18); }
+  .mode-name { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:18px; font-weight:800; }
+  .mode-desc { font-size:12.5px; font-weight:600; opacity:.93; margin-top:2px; }
+
+  .field { margin:6px 2px 14px; }
+  .field label { display:block; font-size:12.5px; font-weight:700; color:#c4b5fd; margin-bottom:6px; }
+  .field input { width:100%; padding:12px 14px; border-radius:12px; border:1.5px solid rgba(255,255,255,.22);
+    background:rgba(0,0,0,.25); color:#fff; font-size:15px; font-family:inherit; font-weight:600; }
+  .field input:focus { outline:none; border-color:#fbbf24; }
+  .hint { font-size:11.5px; color:#9d8fc4; margin-top:5px; line-height:1.5; }
+
+  /* progress */
+  .prog-wrap { margin:6px 2px 14px; }
+  .prog-top { display:flex; justify-content:space-between; font-size:12px; font-weight:800; color:#c4b5fd; margin-bottom:6px; }
+  .prog-bar { height:9px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; }
+  .prog-fill { height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#fbbf24,#f87171); transition:width .3s; }
+
+  .skill-tag { display:inline-block; font-size:11px; font-weight:800; letter-spacing:.5px; text-transform:uppercase;
+    color:#fbbf24; background:rgba(251,191,36,.13); border:1px solid rgba(251,191,36,.3); border-radius:99px; padding:3px 10px; margin-bottom:12px; }
+  .q-text { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:19px; font-weight:700; line-height:1.4; margin:2px 2px 16px; }
+  .q-stem { font-size:14px; color:#d8cffc; font-weight:600; line-height:1.55; background:rgba(0,0,0,.2);
+    border-left:3px solid #a855f7; border-radius:0 10px 10px 0; padding:10px 13px; margin:0 2px 14px; }
+
+  .opt { display:block; width:100%; text-align:left; cursor:pointer; color:#f0e9ff; font-family:inherit; font-size:15px; font-weight:600;
+    background:rgba(255,255,255,.07); border:2px solid rgba(255,255,255,.16); border-radius:14px; padding:14px 16px; margin-bottom:10px;
+    transition:transform .06s, border-color .1s, background .1s; }
+  .opt:active { transform:scale(.99); }
+  .opt:hover { border-color:rgba(251,191,36,.5); }
+  .opt.chosen { border-color:#fbbf24; background:rgba(251,191,36,.16); }
+  .opt-key { display:inline-block; width:24px; height:24px; line-height:24px; text-align:center; border-radius:7px;
+    background:rgba(255,255,255,.16); font-weight:800; font-size:13px; margin-right:11px; }
+
+  .btn { display:block; width:100%; text-align:center; cursor:pointer; font-family:'Bricolage Grotesque','Segoe UI',sans-serif;
+    font-size:17px; font-weight:800; color:#451a03; border:none; border-radius:16px; padding:15px; margin-top:6px;
+    background:linear-gradient(160deg,#fde68a,#fbbf24); box-shadow:0 5px 0 #b45309; transition:transform .08s, box-shadow .08s; }
+  .btn:active { transform:translateY(4px); box-shadow:0 1px 0 #b45309; }
+  .btn:disabled { filter:saturate(.4) brightness(.8); box-shadow:0 5px 0 #6b5330; cursor:default; }
+  .btn.ghost { background:rgba(255,255,255,.08); color:#e9deff; box-shadow:0 5px 0 rgba(0,0,0,.35); }
+  .btn.ghost:active { box-shadow:0 1px 0 rgba(0,0,0,.35); }
+
+  /* result */
+  .result-badge { text-align:center; padding:24px 16px 20px; border-radius:24px; margin:6px 0 14px;
+    background:linear-gradient(160deg, rgba(251,191,36,.20), rgba(168,85,247,.16)); border:2px solid rgba(251,191,36,.5);
+    box-shadow:0 0 40px rgba(251,191,36,.18); }
+  .rb-level { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:62px; font-weight:800; line-height:1;
+    background:linear-gradient(90deg,#fde68a,#fbbf24,#f87171); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .rb-name { font-size:16px; font-weight:800; color:#fbbf24; margin-top:6px; }
+  .rb-can { font-size:13.5px; color:#e9deff; font-weight:600; line-height:1.55; margin:10px auto 0; max-width:400px; }
+  .rb-est { font-size:11.5px; color:#c4b5fd; margin-top:12px; font-weight:700; }
+
+  .skillrow { display:flex; align-items:center; gap:10px; margin:9px 2px; }
+  .skillrow .sn { font-size:13px; font-weight:800; min-width:96px; }
+  .skillrow .sbar { flex:1; height:10px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; }
+  .skillrow .sfill { height:100%; border-radius:99px; background:linear-gradient(90deg,#22c55e,#a3e635); }
+  .skillrow .sv { font-size:12px; font-weight:800; color:#c4b5fd; min-width:34px; text-align:right; }
+
+  .steps-next { font-size:13.5px; line-height:1.6; color:#e2d8ff; }
+  .steps-next li { margin:5px 0 5px 18px; }
+
+  .tutor-cta { display:block; text-decoration:none; border-radius:18px; padding:15px 16px; margin:12px 0 6px; color:#fff;
+    background:linear-gradient(160deg,#b45309,#f59e0b); box-shadow:0 6px 0 #78350f; }
+  .tutor-cta:active { transform:translateY(4px); box-shadow:0 2px 0 #78350f; }
+  .tc-title { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-weight:800; font-size:16px; }
+  .tc-sub { font-size:12.5px; font-weight:600; opacity:.95; margin-top:2px; }
+
+  .safety { font-size:11.5px; color:#9d8fc4; line-height:1.55; text-align:center; margin:18px 6px 0; }
+  footer { text-align:center; font-size:12px; color:#6b7280; margin-top:22px; line-height:1.7; }
+  .fade { animation:fade .35s ease; }
+  @keyframes fade { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+  .hidden { display:none!important; }
+</style>
+</head>
+<body>
+<div id="app">
+  <a class="back" href="./home.html">‹ Home</a>
+  <header class="eq-header">
+    <img class="eq-logo" src="./icon-192.png" alt="English Quest">
+    <div>
+      <div class="eq-title">LEVEL CHECK</div>
+      <div class="eq-sub">Free English level test · CEFR A1–C2</div>
+    </div>
+  </header>
+
+  <!-- ===================== INTRO ===================== -->
+  <section id="screen-intro">
+    <h1 class="big">What's your English level?</h1>
+    <p class="lead">An adaptive test that finds your level (A1 to C2). The questions get harder or easier as you go — so it's quick and accurate. Free, and nothing is saved to any server.</p>
+
+    <div class="field">
+      <label for="name">Your name or codename (optional — shown on your result)</label>
+      <input id="name" type="text" maxlength="20" placeholder="e.g. Sara, or FireFox07" autocomplete="off">
+      <div class="hint">This stays on your phone. It's only printed on your result card.</div>
+    </div>
+
+    <button class="mode quick" data-mode="quick">
+      <span class="mode-inner"><span class="mode-badge">⚡</span>
+      <span><span class="mode-name">Quick Check</span><br><span class="mode-desc">12 questions · about 5–10 minutes</span></span></span>
+    </button>
+    <button class="mode medium" data-mode="medium">
+      <span class="mode-inner"><span class="mode-badge">🎯</span>
+      <span><span class="mode-name">Standard Test</span><br><span class="mode-desc">20 questions · about 15–20 minutes</span></span></span>
+    </button>
+    <button class="mode long" data-mode="long">
+      <span class="mode-inner"><span class="mode-badge">🏆</span>
+      <span><span class="mode-name">Full Test</span><br><span class="mode-desc">30 questions · all skills · most accurate</span></span></span>
+    </button>
+
+    <p class="safety">This is a practice estimate to help you learn — not an official certificate. All questions are original, written to the public CEFR level descriptors.</p>
+  </section>
+
+  <!-- ===================== QUESTION ===================== -->
+  <section id="screen-quiz" class="hidden">
+    <div class="prog-wrap">
+      <div class="prog-top"><span id="prog-label">Question 1</span><span id="prog-count">1 / 12</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+    <div id="q-holder"></div>
+    <button class="btn" id="next-btn" disabled>Next ›</button>
+  </section>
+
+  <!-- ===================== RESULT ===================== -->
+  <section id="screen-result" class="hidden">
+    <h1 class="big" style="text-align:center">Your result</h1>
+    <div class="result-badge">
+      <div class="rb-level" id="r-level">B1</div>
+      <div class="rb-name" id="r-name">Intermediate</div>
+      <div class="rb-can" id="r-can"></div>
+      <div class="rb-est">⚑ An estimate — not an official certificate.</div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800; font-size:14px; margin-bottom:6px; color:#fbbf24;">Your skills</div>
+      <div id="r-skills"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800; font-size:14px; margin-bottom:8px; color:#fbbf24;">What to do next</div>
+      <ul class="steps-next" id="r-next"></ul>
+    </div>
+
+    <a class="tutor-cta" href="./tutoring.html">
+      <div class="tc-title">🗡️ Want to level up faster?</div>
+      <div class="tc-sub">Train with Mr. Fakrani — real sessions for speaking, writing & exams. Parents welcome.</div>
+    </a>
+
+    <button class="btn" id="share-btn">📣 Share my result</button>
+    <button class="btn ghost" id="save-btn" style="margin-top:10px">🖼️ Download result card</button>
+    <button class="btn ghost" id="again-btn" style="margin-top:10px">↻ Take it again</button>
+
+    <p class="safety">Your result is an estimate to guide your learning. Questions are original and drawn at random, so every attempt is different.</p>
+  </section>
+
+  <footer>English Quest · Made by your teacher, Mr. Fakrani 🇲🇦</footer>
+</div>
+
+<nav class="eq-nav" aria-label="Main navigation">
+  <div class="eq-nav-inner">
+    <a class="eq-nav-item" href="./home.html"><span class="ni-icon">🏠</span>Home</a>
+    <a class="eq-nav-item" href="./index.html"><span class="ni-icon">🏫</span>Class</a>
+    <a class="eq-nav-item" href="./speaking.html"><span class="ni-icon">🎙️</span>Speak</a>
+    <a class="eq-nav-item" href="./profile.html"><span class="ni-icon">🧑‍🚀</span>Profile</a>
+  </div>
+</nav>
+
+<canvas id="cardCanvas" width="1080" height="1080" style="display:none"></canvas>
+
+<script>
+/* =====================================================================
+   LEVEL CHECK — adaptive CEFR estimator
+   Original items only. Levels: 1=A1 2=A2 3=B1 4=B2 5=C1 6=C2.
+   Adaptive staircase: start at B1, step up on correct / down on wrong,
+   step shrinks over time so the ability estimate converges. Final score
+   is ability-based (weighted by item difficulty), not raw percentage.
+   ===================================================================== */
+const BANK = [
+  /* ---------- A1 (1) ---------- */
+  {l:1,s:"Grammar",   q:"She ___ my sister.", o:["is","are","am","be"], a:0},
+  {l:1,s:"Vocabulary",q:"I write with a ___.", o:["pen","spoon","shoe","plate"], a:0},
+  {l:1,s:"Grammar",   q:"___ you from Morocco?", o:["Are","Is","Am","Does"], a:0},
+  {l:1,s:"Vocabulary",q:"Monday, Tuesday, ___ …", o:["Wednesday","January","Blue","Ten"], a:0},
+  {l:1,s:"Functions", q:"“How are you?” — “___”", o:["I'm fine, thanks","I'm ten","It's Monday","Yes, a car"], a:0},
+  {l:1,s:"Grammar",   q:"They ___ students.", o:["are","is","am","be"], a:0},
+  {l:1,s:"Vocabulary",q:"A ___ says “meow” and has four legs.", o:["cat","bird","fish","bus"], a:0},
+  {l:1,s:"Grammar",   q:"This is ___ apple.", o:["an","a","the","some"], a:0},
+
+  /* ---------- A2 (2) ---------- */
+  {l:2,s:"Grammar",   q:"Yesterday I ___ to the market.", o:["went","go","gone","going"], a:0},
+  {l:2,s:"Grammar",   q:"This bag is ___ than that one.", o:["cheaper","cheap","cheapest","more cheap"], a:0},
+  {l:2,s:"Vocabulary",q:"I'm hungry. Let's cook ___ in the kitchen.", o:["dinner","homework","music","sleep"], a:0},
+  {l:2,s:"Functions", q:"“Would you like some tea?” — “___”", o:["Yes, please","I am a teacher","It's raining","He can swim"], a:0},
+  {l:2,s:"Grammar",   q:"She ___ TV every evening.", o:["watches","watch","watching","watched"], a:0},
+  {l:2,s:"Grammar",   q:"There ___ some milk in the fridge.", o:["is","are","have","be"], a:0},
+  {l:2,s:"Vocabulary",q:"Choose the opposite of “expensive”.", o:["cheap","tall","fast","heavy"], a:0},
+  {l:2,s:"Grammar",   q:"We didn't ___ the film.", o:["like","liked","likes","liking"], a:0},
+
+  /* ---------- B1 (3) ---------- */
+  {l:3,s:"Grammar",   q:"I have ___ been to London.", o:["never","ever","yet","since"], a:0},
+  {l:3,s:"Grammar",   q:"If it rains tomorrow, we ___ at home.", o:["will stay","stay","stayed","would stay"], a:0},
+  {l:3,s:"Vocabulary",q:"She's very ___; she helps everyone.", o:["generous","selfish","lazy","rude"], a:0},
+  {l:3,s:"Grammar",   q:"He's been learning English ___ three years.", o:["for","since","from","during"], a:0},
+  {l:3,s:"Functions", q:"“Sorry I'm late.” — “___”", o:["Never mind, come in","Here you are","Congratulations","You're welcome"], a:0},
+  {l:3,s:"Grammar",   q:"The homework ___ by the students last night.", o:["was done","did","done","is doing"], a:0},
+  {l:3,s:"Vocabulary",q:"I was ill; ___, I stayed home from school.", o:["therefore","however","although","unless"], a:0},
+  {l:3,s:"Reading",   stem:"Sara moved to a new city and knew nobody, but she joined a club and soon made friends.", q:"At first, Sara probably felt ___.", o:["lonely","proud","bored","angry"], a:0},
+
+  /* ---------- B2 (4) ---------- */
+  {l:4,s:"Grammar",   q:"By the time we arrived, the show ___.", o:["had already started","already started","has started","starts"], a:0},
+  {l:4,s:"Grammar",   q:"That's the man ___ car was stolen.", o:["whose","who","which","whom"], a:0},
+  {l:4,s:"Vocabulary",q:"The government promised to ___ the new policy next year.", o:["carry out","carry on","put up","take after"], a:0},
+  {l:4,s:"Grammar",   q:"I'd rather you ___ that.", o:["didn't do","don't do","not do","hadn't do"], a:0},
+  {l:4,s:"Vocabulary",q:"Her argument was ___; nobody could disagree.", o:["convincing","reluctant","vague","hollow"], a:0},
+  {l:4,s:"Functions", q:"“We should cut the budget.” — “___, but we'd lose quality.”", o:["I see your point","Never mind","You're welcome","It's up to you"], a:0},
+  {l:4,s:"Grammar",   q:"Not until he apologised ___ to speak to him again.", o:["did she agree","she agreed","she did agree","agreed she"], a:0},
+  {l:4,s:"Reading",   stem:"Despite the criticism, the author refused to change her position, insisting the evidence spoke for itself.", q:"The author can best be described as ___.", o:["resolute","apologetic","indifferent","hesitant"], a:0},
+
+  /* ---------- C1 (5) ---------- */
+  {l:5,s:"Vocabulary",q:"The proposal was met with ___ scepticism from the board.", o:["considerable","considerate","considering","considered"], a:0},
+  {l:5,s:"Grammar",   q:"Rarely ___ such a talented group of students.", o:["have we seen","we have seen","we saw","did we saw"], a:0},
+  {l:5,s:"Vocabulary",q:"She has a real ___ for languages — three in one year.", o:["flair","flavour","fluke","flare"], a:0},
+  {l:5,s:"Grammar",   q:"Were it not for your help, we ___ the deadline.", o:["would have missed","will miss","had missed","missed"], a:0},
+  {l:5,s:"Vocabulary",q:"The report ___ light on a long-ignored problem.", o:["shed","threw","put","gave"], a:0},
+  {l:5,s:"Functions", q:"Pick the most diplomatic way to disagree in a meeting.", o:["I'm afraid I can't quite agree with that.","That's totally wrong.","No way.","You must be joking."], a:0},
+  {l:5,s:"Reading",   stem:"The policy, well-intentioned though it was, ultimately did more harm than good.", q:"The writer's attitude is best described as ___.", o:["critical but fair","enthusiastic","indifferent","mocking"], a:0},
+  {l:5,s:"Vocabulary",q:"A ___ decision is one made after careful thought.", o:["considered","consideration","considerate","considerable"], a:0},
+
+  /* ---------- C2 (6) ---------- */
+  {l:6,s:"Vocabulary",q:"His remarks, though brief, were remarkably ___ and stayed with us for days.", o:["trenchant","transient","translucent","tentative"], a:0},
+  {l:6,s:"Grammar",   q:"So compelling was her testimony ___ the jury decided within the hour.", o:["that","which","so","as"], a:0},
+  {l:6,s:"Vocabulary",q:"The talks reached an ___; neither side would move.", o:["impasse","impact","impetus","imprint"], a:0},
+  {l:6,s:"Vocabulary",q:"“To take something with a pinch of salt” means to ___.", o:["be sceptical of it","enjoy it fully","follow it exactly","forget it"], a:0},
+  {l:6,s:"Vocabulary",q:"A ___ argument is superficially attractive but actually flawed.", o:["specious","spacious","species","special"], a:0},
+  {l:6,s:"Reading",   stem:"Her prose is deceptively simple, its restraint concealing a formidable command of rhythm.", q:"Towards the writer, the critic is ___.", o:["admiring","dismissive","pitying","confused"], a:0},
+  {l:6,s:"Vocabulary",q:"The minister's ___ non-answer frustrated every journalist in the room.", o:["studied","studious","student","studying"], a:0},
+  {l:6,s:"Grammar",   q:"Little ___ that one casual comment would spark a national debate.", o:["did he realise","he realised","he did realise","realised he"], a:0},
+];
+
+const LEVELS = ["","A1","A2","B1","B2","C1","C2"];
+const LNAME  = {A1:"Beginner",A2:"Elementary",B1:"Intermediate",B2:"Upper Intermediate",C1:"Advanced",C2:"Mastery"};
+const CANDO = {
+  A1:"You can understand and use very basic everyday words and simple sentences about yourself and familiar things.",
+  A2:"You can handle short, simple exchanges about routine matters — shopping, family, work — and describe your background in simple terms.",
+  B1:"You can deal with most situations while travelling, describe experiences and events, and give short reasons and explanations.",
+  B2:"You can interact fluently and spontaneously, understand the main ideas of complex text, and argue a viewpoint clearly.",
+  C1:"You can express yourself fluently and flexibly, understand demanding texts, and use language effectively for social, academic and professional purposes.",
+  C2:"You can understand virtually everything with ease and express yourself precisely, even in complex situations, close to a native speaker."
+};
+const NEXT = {
+  A1:["Learn the verb <b>to be</b> and a–an–the until they're automatic.","Build 10 new everyday words a day (family, school, food).","Practise short greetings and introductions out loud."],
+  A2:["Master the <b>past simple</b> (regular + common irregulars).","Learn comparatives and everyday phrasal verbs.","Read very short stories and retell them in your own words."],
+  B1:["Get confident with the <b>present perfect</b> and first conditional.","Use linking words (however, therefore, although) in writing.","Start reading graded articles and summarising them."],
+  B2:["Polish <b>perfect & continuous</b> tenses and relative clauses.","Grow your collocations and formal/informal register.","Practise arguing both sides of a topic in writing and speech."],
+  C1:["Work on advanced collocations, inversion and nuance.","Read opinion pieces and analyse the writer's stance.","Refine precision — say exactly what you mean, concisely."],
+  C2:["Focus on idiom, tone and stylistic control.","Engage with literature and academic argument.","Fine-tune the small differences that mark a true expert."]
+};
+
+const COUNTS = { quick:12, medium:20, long:30 };
+let mode="quick", total=12, idx=0, ability=3.0, used=new Set(), current=null, chosen=-1;
+let skillStat={}, answered=[];
+
+function $(id){ return document.getElementById(id); }
+function show(id){ ["screen-intro","screen-quiz","screen-result"].forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo(0,0); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* pick an unused item nearest to the target difficulty level */
+function drawItem(){
+  const target = Math.max(1, Math.min(6, Math.round(ability)));
+  for(let r=0;r<6;r++){
+    for(const dir of (Math.random()<.5?[-1,1]:[1,-1])){
+      const lv = r===0 ? target : target + r*dir;
+      if(lv<1||lv>6) continue;
+      const pool = BANK.filter((it,i)=> it.l===lv && !used.has(i));
+      if(pool.length){
+        const it = pool[Math.floor(Math.random()*pool.length)];
+        used.add(BANK.indexOf(it));
+        return it;
+      }
+    }
+  }
+  return null; /* bank exhausted */
+}
+
+function renderQ(){
+  current = drawItem();
+  if(!current || idx>=total){ finish(); return; }
+  chosen = -1;
+  const h = $("q-holder");
+  // options with shuffled order, remembering correct value
+  const correctVal = current.o[current.a];
+  const opts = shuffle(current.o.slice());
+  const keys = ["A","B","C","D"];
+  let html = '<div class="fade">';
+  html += '<span class="skill-tag">'+current.s+'</span>';
+  if(current.stem) html += '<div class="q-stem">'+current.stem+'</div>';
+  html += '<div class="q-text">'+current.q+'</div>';
+  opts.forEach((o,i)=>{
+    html += '<button class="opt" data-val="'+encodeURIComponent(o)+'"><span class="opt-key">'+keys[i]+'</span>'+o+'</button>';
+  });
+  html += '</div>';
+  h.innerHTML = html;
+  current._correctVal = correctVal;
+  h.querySelectorAll(".opt").forEach(b=>{
+    b.addEventListener("click",()=>{
+      h.querySelectorAll(".opt").forEach(x=>x.classList.remove("chosen"));
+      b.classList.add("chosen");
+      chosen = decodeURIComponent(b.dataset.val);
+      $("next-btn").disabled = false;
+    });
+  });
+  $("prog-label").textContent = "Question "+(idx+1);
+  $("prog-count").textContent = (idx+1)+" / "+total;
+  $("prog-fill").style.width = (idx/total*100)+"%";
+  $("next-btn").disabled = true;
+  $("next-btn").textContent = (idx+1>=total) ? "See my result ›" : "Next ›";
+}
+
+function submit(){
+  if(chosen===-1) return;
+  const correct = (chosen === current._correctVal);
+  const w = current.l; // difficulty weight
+  skillStat[current.s] = skillStat[current.s] || {c:0,t:0};
+  skillStat[current.s].t += w;
+  if(correct) skillStat[current.s].c += w;
+  answered.push({l:current.l, correct});
+  // adaptive staircase — shrinking step for convergence
+  const step = Math.max(0.3, 0.85 * Math.pow(0.86, idx));
+  ability += correct ? step : -step;
+  ability = Math.max(0.6, Math.min(6.4, ability));
+  idx++;
+  if(idx>=total){ finish(); } else { renderQ(); }
+}
+
+function bandFromAbility(t){
+  if(t<1.5) return "A1"; if(t<2.5) return "A2"; if(t<3.5) return "B1";
+  if(t<4.5) return "B2"; if(t<5.5) return "C1"; return "C2";
+}
+
+function finish(){
+  // final ability = converged estimate, nudged by overall accuracy on hardest half
+  const band = bandFromAbility(ability);
+  $("r-level").textContent = band;
+  $("r-name").textContent = LNAME[band];
+  $("r-can").textContent = CANDO[band];
+  // skills
+  const order = ["Grammar","Vocabulary","Reading","Functions"];
+  const sk = $("r-skills"); sk.innerHTML = "";
+  order.forEach(name=>{
+    const st = skillStat[name]; if(!st || st.t===0) return;
+    const pct = Math.round(st.c/st.t*100);
+    const row = document.createElement("div"); row.className="skillrow";
+    row.innerHTML = '<span class="sn">'+name+'</span><span class="sbar"><span class="sfill" style="width:'+pct+'%"></span></span><span class="sv">'+pct+'%</span>';
+    sk.appendChild(row);
+  });
+  // next steps
+  const nx = $("r-next"); nx.innerHTML = "";
+  (NEXT[band]||[]).forEach(t=>{ const li=document.createElement("li"); li.innerHTML=t; nx.appendChild(li); });
+  window._result = { band:band, name:LNAME[band] };
+  show("screen-result");
+  drawCard(band);
+}
+
+/* ---------- shareable / downloadable result card ---------- */
+function drawCard(band){
+  const c = $("cardCanvas"), g = c.getContext("2d"), W=1080, H=1080;
+  const nm = ($("name").value||"").trim();
+  const grd = g.createLinearGradient(0,0,W,H);
+  grd.addColorStop(0,"#241147"); grd.addColorStop(1,"#12071f");
+  g.fillStyle=grd; g.fillRect(0,0,W,H);
+  // glow
+  const rg = g.createRadialGradient(W*0.75,H*0.2,0,W*0.75,H*0.2,600);
+  rg.addColorStop(0,"rgba(124,58,237,.5)"); rg.addColorStop(1,"rgba(124,58,237,0)");
+  g.fillStyle=rg; g.fillRect(0,0,W,H);
+  g.textAlign="center";
+  g.fillStyle="#fbbf24"; g.font="800 46px 'Segoe UI',sans-serif";
+  g.fillText("ENGLISH QUEST", W/2, 150);
+  g.fillStyle="#c4b5fd"; g.font="600 30px 'Segoe UI',sans-serif";
+  g.fillText("Level Check · CEFR result", W/2, 205);
+  if(nm){ g.fillStyle="#f0e9ff"; g.font="700 40px 'Segoe UI',sans-serif"; g.fillText(nm, W/2, 330); }
+  // big level
+  g.fillStyle="#fde68a"; g.font="800 300px 'Segoe UI',sans-serif";
+  g.fillText(band, W/2, 640);
+  g.fillStyle="#fbbf24"; g.font="800 54px 'Segoe UI',sans-serif";
+  g.fillText(LNAME[band], W/2, 730);
+  // can-do (wrapped)
+  g.fillStyle="#e9deff"; g.font="400 30px 'Segoe UI',sans-serif";
+  wrap(g, CANDO[band], W/2, 810, 860, 40);
+  g.fillStyle="#9d8fc4"; g.font="600 24px 'Segoe UI',sans-serif";
+  g.fillText("An estimate — not an official certificate.", W/2, 1010);
+  g.fillStyle="#7c6ba8"; g.font="600 24px 'Segoe UI',sans-serif";
+  g.fillText("Take the free test · English Quest", W/2, 1050);
+}
+function wrap(g,text,x,y,maxW,lh){
+  const words=text.split(" "); let line="", yy=y;
+  for(const w of words){ const t=line+w+" ";
+    if(g.measureText(t).width>maxW && line){ g.fillText(line.trim(),x,yy); line=w+" "; yy+=lh; } else line=t; }
+  g.fillText(line.trim(),x,yy);
+}
+
+/* ---------- events ---------- */
+document.querySelectorAll(".mode").forEach(b=>{
+  b.addEventListener("click",()=>{
+    mode=b.dataset.mode; total=COUNTS[mode];
+    idx=0; ability=3.0; used=new Set(); skillStat={}; answered=[];
+    show("screen-quiz"); renderQ();
+  });
+});
+$("next-btn").addEventListener("click", submit);
+
+$("again-btn").addEventListener("click", ()=> show("screen-intro"));
+
+$("share-btn").addEventListener("click", async ()=>{
+  const band = window._result ? window._result.band : "";
+  const txt = "I got "+band+" ("+(LNAME[band]||"")+") on the English Quest Level Check! Try the free test:";
+  const url = location.href.split("?")[0];
+  try{
+    if(navigator.share){ await navigator.share({title:"English Quest Level Check", text:txt, url:url}); }
+    else { await navigator.clipboard.writeText(txt+" "+url); alert("Copied to clipboard — paste it anywhere to share!"); }
+  }catch(e){}
+});
+
+$("save-btn").addEventListener("click", ()=>{
+  const c=$("cardCanvas");
+  const a=document.createElement("a");
+  a.download="english-quest-level.png";
+  a.href=c.toDataURL("image/png");
+  a.click();
+});
+
+/* stars */
+for(let i=0;i<14;i++){ const s=document.createElement("span"); s.className="eq-star"; s.textContent="✦";
+  s.style.left=Math.random()*100+"vw"; s.style.top=Math.random()*100+"vh"; s.style.animationDelay=(Math.random()*3)+"s";
+  document.body.appendChild(s); }
+</script>
+</body>
+</html>

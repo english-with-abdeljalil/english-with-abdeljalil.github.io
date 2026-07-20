@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speaking Coach — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Speaking Coach">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<script src="./eq-music.js"></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+<style>
+* {margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body {font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:radial-gradient(60% 40% at 20% 0%,rgba(124,58,237,.35),transparent 60%),
+    radial-gradient(50% 35% at 90% 15%,rgba(219,39,119,.22),transparent 60%),
+    linear-gradient(180deg,#1a0b2e 0%,#2d1b4e 60%,#1a0b2e 100%);
+  color:#f0e9ff; min-height:100dvh; display:flex; justify-content:center;}
+#app {width:100%;max-width:520px;padding:0 16px 60px;}
+
+.back {display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#c4b5fd;font-weight:700;font-size:13px;padding:14px 2px 4px;}
+.eq-title {font-family:'Bricolage Grotesque','Segoe UI',sans-serif;font-size:24px;font-weight:800;margin:4px 2px 2px;}
+.eq-sub {font-size:12.5px;color:#a78bfa;font-weight:700;margin:2px 2px 14px;}
+
+h2 {font-family:'Bricolage Grotesque','Segoe UI',sans-serif;font-size:15px;font-weight:800;margin:18px 2px 8px;color:#fbbf24;}
+
+/* Menu */
+#menu {display:block;}
+#practice {display:none;}
+#practice.active {display:block;}
+#results {display:none;}
+#results.active {display:block;}
+
+.cat-grid {display:grid;gap:8px;}
+.cat-card {display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);
+  border-radius:16px;padding:13px 14px;cursor:pointer;transition:all .08s;}
+.cat-card:active {transform:scale(.98);background:rgba(255,255,255,.10);}
+.cat-icon {font-size:30px;width:46px;text-align:center;flex-shrink:0;}
+.cat-name {font-size:14px;font-weight:800;}
+.cat-meta {font-size:11px;color:#a78bfa;font-weight:700;margin-top:2px;}
+.cat-score {margin-left:auto;font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:#fbbf24;}
+
+/* Exercise Screen */
+.ex-header {display:flex;align-items:center;gap:10px;margin:6px 0 4px;}
+.ex-back {background:none;border:none;color:#c4b5fd;font-size:18px;font-weight:800;cursor:pointer;padding:4px;}
+.ex-progress {margin-left:auto;font-size:12px;font-weight:700;color:#a78bfa;}
+
+.speaker-box {text-align:center;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);
+  border-radius:20px;padding:24px 16px 18px;margin:12px 0;}
+.speech-icon {font-size:48px;margin-bottom:6px;}
+.target-text {font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;line-height:1.4;
+  color:#fde68a;margin:8px 0 6px;}
+.target-hint {font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:10px;}
+.speak-btn-row {display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0 4px;}
+.spk-btn {display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-weight:800;font-size:16px;
+  padding:14px 28px;border-radius:999px;border:none;cursor:pointer;transition:transform .08s;color:#fff;}
+.spk-btn:active {transform:scale(.96);}
+.spk-btn.listen {background:linear-gradient(90deg,#7c3aed,#db2777);box-shadow:0 5px 0 #4a044e;}
+.spk-btn.rec {background:linear-gradient(90deg,#ef4444,#db2777);box-shadow:0 5px 0 #7f1d1d;}
+.spk-btn.next {background:linear-gradient(90deg,#059669,#10b981);box-shadow:0 5px 0 #064e3b;}
+
+.rec-indicator {display:none;align-items:center;justify-content:center;gap:10px;margin:10px 0;font-size:14px;font-weight:800;color:#fca5a5;}
+.rec-indicator.show {display:flex;}
+.rec-dot {width:12px;height:12px;border-radius:50%;background:#ef4444;animation:pulse 1s ease infinite;}
+@keyframes pulse {0%,100%{opacity:1;} 50%{opacity:.3;}}
+
+/* Waveform */
+.wave-row {display:flex;align-items:center;justify-content:center;gap:3px;height:50px;margin:6px 0 10px;}
+.wave-row .bar {width:4px;border-radius:4px;background:#7c3aed;transition:height .1s;}
+
+/* Result */
+.result-box {background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);
+  border-radius:18px;padding:16px;margin:10px 0;}
+.word-row {display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;}
+.word-tag {font-size:15px;font-weight:700;padding:4px 10px;border-radius:8px;}
+.word-tag.correct {background:rgba(34,197,94,.2);color:#86efac;}
+.word-tag.wrong {background:rgba(239,68,68,.2);color:#fca5a5;}
+.word-tag.missed {background:rgba(251,191,36,.15);color:#fde68a;text-decoration:line-through;}
+
+.score-big {font-family:'Bricolage Grotesque',sans-serif;font-size:38px;font-weight:800;color:#fbbf24;text-align:center;margin:4px 0;}
+.score-label {font-size:12px;font-weight:700;color:#a78bfa;text-align:center;}
+.stars-row {text-align:center;font-size:28px;margin:4px 0;}
+
+.tip {font-size:13px;font-weight:600;color:#a78bfa;text-align:center;margin:10px 0;font-style:italic;}
+
+/* Results Summary */
+.stat-grid {display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0;}
+.r-stat {background:rgba(255,255,255,.05);border-radius:14px;padding:12px 6px;text-align:center;}
+.r-stat .v {font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;color:#fbbf24;}
+.r-stat .l {font-size:10.5px;font-weight:700;color:#a78bfa;margin-top:2px;}
+
+/* Fallback */
+.fallback-box {display:none;background:rgba(251,191,36,.1);border:2px solid rgba(251,191,36,.25);
+  border-radius:16px;padding:16px;margin:12px 0;text-align:center;}
+.fallback-box.show {display:block;}
+.fallback-box .fb-icon {font-size:28px;}
+.fallback-box .fb-text {font-size:13px;font-weight:700;color:#fde68a;margin:6px 0;}
+.fallback-input {width:100%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);
+  border-radius:12px;color:#fff;font-family:inherit;font-size:14px;font-weight:600;padding:10px 14px;}
+.fallback-input:focus {outline:none;border-color:#7c3aed;}
+
+/* Unsupported */
+.unsupported {text-align:center;padding:30px 10px;}
+.unsupported .big {font-size:48px;margin-bottom:10px;}
+
+.sr-only {position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <a class="back" href="./home.html">← Back to Quest</a>
+  <div class="eq-title">🎙️ Speaking Coach</div>
+  <div class="eq-sub">Listen. Speak. Improve your pronunciation.</div>
+
+  <!-- MENU SCREEN -->
+  <div id="menu">
+    <div id="speech-support" class="unsupported" style="display:none;">
+      <div class="big">🎙️</div>
+      <h2>No Speech Recognition?</h2>
+      <p style="font-size:14px;color:#a78bfa;font-weight:600;line-height:1.6;">
+        Your browser doesn't support speech recognition.<br>
+        Try <b>Chrome</b> or <b>Edge</b> on a phone or desktop.
+      </p>
+    </div>
+
+    <h2>📚 Choose a Topic</h2>
+    <div class="cat-grid" id="cat-list"></div>
+  </div>
+
+  <!-- PRACTICE SCREEN -->
+  <div id="practice">
+    <div class="ex-header">
+      <button class="ex-back" id="ex-back">← Back</button>
+      <div class="ex-progress" id="ex-progress">1 / 5</div>
+    </div>
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:800;color:#a78bfa;margin:2px 0;" id="ex-title">Exercise</div>
+
+    <div class="speaker-box">
+      <div class="speech-icon">🔊</div>
+      <div class="target-text" id="target-text">Hello!</div>
+      <div class="target-hint" id="target-hint">Tap "Listen" then "Record"</div>
+    </div>
+
+    <div class="speak-btn-row">
+      <button class="spk-btn listen" id="listen-btn">🔊 Listen</button>
+      <button class="spk-btn rec" id="rec-btn">🎤 Record</button>
+    </div>
+
+    <div class="rec-indicator" id="rec-indicator">
+      <span class="rec-dot"></span> Listening...
+    </div>
+
+    <!-- Waveform -->
+    <div class="wave-row" id="wave-row"></div>
+
+    <!-- Fallback text input (when SpeechRecognition unavailable) -->
+    <div class="fallback-box" id="fallback-box">
+      <div class="fb-icon">⌨️</div>
+      <div class="fb-text">Type what you heard:</div>
+      <input class="fallback-input" id="fallback-input" type="text" placeholder="Type the sentence here..." autocomplete="off">
+      <button class="spk-btn listen" style="margin-top:8px;font-size:13px;padding:10px 20px;" id="fallback-submit">✓ Check</button>
+    </div>
+
+    <!-- Result -->
+    <div class="result-box" id="result-box" style="display:none;">
+      <div class="score-big" id="score-pct">0%</div>
+      <div class="score-label">Accuracy</div>
+      <div class="stars-row" id="score-stars">☆☆☆</div>
+      <div class="word-row" id="word-result"></div>
+      <div class="tip" id="result-tip">Great effort!</div>
+      <div style="text-align:center;margin-top:8px;">
+        <button class="spk-btn next" id="next-btn">➡️ Next Sentence</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results">
+    <h2>📊 Session Complete!</h2>
+    <div class="stat-grid">
+      <div class="r-stat"><div class="v" id="r-avg">0%</div><div class="l">Average</div></div>
+      <div class="r-stat"><div class="v" id="r-best">0%</div><div class="l">Best</div></div>
+      <div class="r-stat"><div class="v" id="r-worst">0%</div><div class="l">Worst</div></div>
+    </div>
+    <div style="text-align:center;" id="r-stars"></div>
+    <div class="speak-btn-row" style="margin-top:12px;">
+      <button class="spk-btn listen" id="r-again">🔄 Practice Again</button>
+      <button class="spk-btn next" id="r-menu">📋 Back to Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ---------- EXERCISE DATA ---------- */
+  const EXERCISES = [
+    { id:'greetings', name:'Greetings & Introductions', icon:'👋',
+      sentences:[
+        {text:"Hello! My name is Sara."},
+        {text:"Nice to meet you!"},
+        {text:"How are you?"},
+        {text:"I am fine, thank you."},
+        {text:"What is your name?"},
+        {text:"My name is Ahmed."},
+        {text:"Good morning, class!"},
+        {text:"Goodbye, see you later!"}
+      ]},
+    { id:'verbbe', name:'The Verb Be', icon:'🔤',
+      sentences:[
+        {text:"I am a student."},
+        {text:"You are my friend."},
+        {text:"He is a teacher."},
+        {text:"She is from Morocco."},
+        {text:"It is a book."},
+        {text:"We are happy."},
+        {text:"They are in the classroom."},
+        {text:"This is my school."}
+      ]},
+    { id:'plurals', name:'Plurals', icon:'🔢',
+      sentences:[
+        {text:"I have one book and two pens."},
+        {text:"There are five chairs in the room."},
+        {text:"The cats are on the table."},
+        {text:"She has three boxes."},
+        {text:"We have many friends."},
+        {text:"The boys are playing football."},
+        {text:"They are students at this school."},
+        {text:"I see four apples on the desk."}
+      ]},
+    { id:'titles', name:'Titles & Greetings', icon:'👑',
+      sentences:[
+        {text:"Good afternoon, Mr. Smith."},
+        {text:"Hello, Mrs. Johnson."},
+        {text:"How are you today, Miss Brown?"},
+        {text:"Welcome to our class, Doctor."},
+        {text:"Please sit down, everyone."},
+        {text:"Thank you, teacher."},
+        {text:"May I come in, please?"},
+        {text:"Sorry, I am late."}
+      ]},
+    { id:'describe', name:'Describing People', icon:'👤',
+      sentences:[
+        {text:"She is tall and thin."},
+        {text:"He has short black hair."},
+        {text:"They are very friendly."},
+        {text:"My best friend is funny."},
+        {text:"The new student is shy."},
+        {text:"She has big brown eyes."},
+        {text:"He is wearing a blue shirt."},
+        {text:"They look happy today."}
+      ]},
+    { id:'daily', name:'Daily Routines', icon:'🌅',
+      sentences:[
+        {text:"I wake up at seven o'clock."},
+        {text:"She goes to school by bus."},
+        {text:"We eat lunch at noon."},
+        {text:"He does his homework in the evening."},
+        {text:"They watch TV after dinner."},
+        {text:"I brush my teeth every morning."},
+        {text:"She reads a book before bed."},
+        {text:"We play football on Friday."}
+      ]},
+    { id:'classroom', name:'Classroom Language', icon:'🏫',
+      sentences:[
+        {text:"Open your book to page ten."},
+        {text:"Please listen to the teacher."},
+        {text:"Can you repeat that, please?"},
+        {text:"I don't understand the question."},
+        {text:"Write your name on the paper."},
+        {text:"Raise your hand to speak."},
+        {text:"Let's work in pairs."},
+        {text:"The exam is next week."}
+      ]}
+  ];
+  const SCORE_KEY = 'eq_speaking';
+
+  /* ---------- STATE ---------- */
+  let currentCat = null; // index
+  let currentIdx = 0;
+  let sessionScores = [];
+  let recognition = null;
+  let isRecording = false;
+  let fallbackMode = false; // speech recognition unavailable
+  let usingFallback = false;
+
+  const targetEl = document.getElementById('target-text');
+  const hintEl = document.getElementById('target-hint');
+  const progressEl = document.getElementById('ex-progress');
+  const titleEl = document.getElementById('ex-title');
+  const resultBox = document.getElementById('result-box');
+  const scorePct = document.getElementById('score-pct');
+  const scoreStars = document.getElementById('score-stars');
+  const wordResult = document.getElementById('word-result');
+  const resultTip = document.getElementById('result-tip');
+  const recIndicator = document.getElementById('rec-indicator');
+  const practiceEl = document.getElementById('practice');
+  const menuEl = document.getElementById('menu');
+  const resultsEl = document.getElementById('results');
+  const waveRow = document.getElementById('wave-row');
+  const fallbackBox = document.getElementById('fallback-box');
+  const fallbackInput = document.getElementById('fallback-input');
+
+  /* ---------- SPEECH RECOGNITION SUPPORT ---------- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function isSpeechSupported() { return !!SR; }
+
+  /* ---------- LOAD SCORES ---------- */
+  function loadScores() {
+    try { return JSON.parse(localStorage.getItem(SCORE_KEY)) || {}; } catch(e) { return {}; }
+  }
+  function saveScores(scores) {
+    try { localStorage.setItem(SCORE_KEY, JSON.stringify(scores)); } catch(e) {}
+  }
+  function getBest(catId) {
+    const scores = loadScores();
+    return scores[catId] || null;
+  }
+  function setBest(catId, score) {
+    const scores = loadScores();
+    const prev = scores[catId];
+    if (!prev || score > prev) scores[catId] = score;
+    saveScores(scores);
+  }
+
+  /* ---------- RENDER MENU ---------- */
+  function renderMenu() {
+    const supported = isSpeechSupported();
+    document.getElementById('speech-support').style.display = supported ? 'none' : 'none'; // always show menu except very old browsers
+    // Actually show unsupported if no SR
+    if (!supported) {
+      document.getElementById('speech-support').style.display = 'block';
+    }
+    const list = document.getElementById('cat-list');
+    list.innerHTML = EXERCISES.map((cat, i) => {
+      const best = getBest(cat.id);
+      const pct = best !== null ? Math.round(best) + '%' : '—';
+      const stars = best !== null ? (best >= 80 ? '⭐⭐⭐' : best >= 50 ? '⭐⭐' : '⭐') : '☆☆☆';
+      return '<div class="cat-card" data-i="' + i + '">' +
+        '<div class="cat-icon">' + cat.icon + '</div>' +
+        '<div><div class="cat-name">' + cat.name + '</div>' +
+        '<div class="cat-meta">' + cat.sentences.length + ' sentences · Best: ' + pct + '</div></div>' +
+        '<div class="cat-score">' + stars + '</div></div>';
+    }).join('');
+    list.querySelectorAll('.cat-card').forEach(el => {
+      el.addEventListener('click', () => {
+        startPractice(parseInt(el.dataset.i, 10));
+      });
+    });
+  }
+
+  /* ---------- PRACTICE ---------- */
+  function startPractice(catIdx) {
+    currentCat = catIdx;
+    currentIdx = 0;
+    sessionScores = [];
+    resultsEl.classList.remove('active');
+    resultsEl.style.display = 'none';
+    menuEl.style.display = 'none';
+    practiceEl.classList.add('active');
+    practiceEl.style.display = 'block';
+    showSentence();
+  }
+
+  function showSentence() {
+    const cat = EXERCISES[currentCat];
+    const s = cat.sentences[currentIdx];
+    targetEl.textContent = s.text;
+    hintEl.textContent = s.hint || 'Listen, then repeat what you heard.';
+    progressEl.textContent = (currentIdx + 1) + ' / ' + cat.sentences.length;
+    titleEl.textContent = cat.icon + ' ' + cat.name;
+    resultBox.style.display = 'none';
+    recIndicator.classList.remove('show');
+    fallbackBox.classList.remove('show');
+    if (usingFallback) fallbackBox.classList.add('show');
+    fallbackInput.value = '';
+    // Reset wave
+    waveRow.innerHTML = Array.from({length:20}, () => '<div class="bar" style="height:8px;"></div>').join('');
+  }
+
+  /* ---------- SPEAKING ---------- */
+  function speakText(text, callback) {
+    if (!window.speechSynthesis) { if (callback) callback(); return; }
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = 0.88;
+    u.pitch = 1.0;
+    u.volume = 1.0;
+    try {
+      const vs = speechSynthesis.getVoices();
+      const en = vs.filter(v => v.lang && v.lang.startsWith('en'));
+      const pref = en.find(v => /natural|neural|microsoft/i.test(v.name)) || en.find(v => /google/i.test(v.name) && /united?states|american/i.test(v.name)) || en[0];
+      if (pref) u.voice = pref;
+    } catch(e) {}
+    // For Chrome — voices may not be loaded yet
+    if (callback) u.onend = callback;
+    speechSynthesis.speak(u);
+  }
+
+  document.getElementById('listen-btn').addEventListener('click', () => {
+    const text = targetEl.textContent;
+    speakText(text);
+  });
+
+  /* ---------- RECORD ---------- */
+  function startRecording() {
+    if (!SR) {
+      // Fallback to text input
+      usingFallback = true;
+      fallbackBox.classList.add('show');
+      fallbackInput.focus();
+      return;
+    }
+    if (isRecording) return;
+    try {
+      recognition = new SR();
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        isRecording = true;
+        recIndicator.classList.add('show');
+      };
+
+      recognition.onresult = (e) => {
+        const last = e.results.length - 1;
+        const transcript = e.results[last][0].transcript.trim();
+        // Waveform animation
+        animateWave();
+        // Show interim
+        if (e.results[last].isFinal) {
+          processResult(transcript);
+        }
+      };
+
+      recognition.onerror = (e) => {
+        isRecording = false;
+        recIndicator.classList.remove('show');
+        if (e.error === 'no-speech') {
+          alert('No speech detected. Tap the microphone and speak clearly.');
+        } else if (e.error === 'not-allowed') {
+          alert('Microphone permission denied. Please allow microphone access in your browser settings.');
+          // Offer fallback
+          usingFallback = true;
+          fallbackBox.classList.add('show');
+        } else {
+          // Fallback
+          usingFallback = true;
+          fallbackBox.classList.add('show');
+          fallbackInput.focus();
+        }
+      };
+
+      recognition.onend = () => {
+        isRecording = false;
+        recIndicator.classList.remove('show');
+      };
+
+      recognition.start();
+    } catch(e) {
+      isRecording = false;
+      recIndicator.classList.remove('show');
+      usingFallback = true;
+      fallbackBox.classList.add('show');
+      fallbackInput.focus();
+    }
+  }
+
+  document.getElementById('rec-btn').addEventListener('click', startRecording);
+
+  // Fallback submit
+  document.getElementById('fallback-submit').addEventListener('click', () => {
+    const text = fallbackInput.value.trim();
+    if (text) processResult(text);
+  });
+  fallbackInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const text = fallbackInput.value.trim();
+      if (text) processResult(text);
+    }
+  });
+
+  /* ---------- WAVE ANIMATION ---------- */
+  function animateWave() {
+    const bars = waveRow.querySelectorAll('.bar');
+    let interval = setInterval(() => {
+      if (!isRecording) { clearInterval(interval); bars.forEach(b => b.style.height = '8px'); return; }
+      bars.forEach(b => {
+        b.style.height = (4 + Math.random() * 32) + 'px';
+      });
+    }, 120);
+  }
+
+  /* ---------- SCORING ---------- */
+  function normalize(s) {
+    return s.toLowerCase().replace(/[^a-z0-9' ]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  function wordAccuracy(expected, spoken) {
+    const expWords = normalize(expected).split(/\s+/).filter(Boolean);
+    const spkWords = normalize(spoken).split(/\s+/).filter(Boolean);
+    if (!expWords.length) return { score: 100, matched: [], missed: [], extra: [] };
+    if (!spkWords.length) return { score: 0, matched: [], missed: expWords, extra: [] };
+    // Simple word-level matching
+    const matched = [];
+    const missed = [];
+    const extra = [...spkWords];
+    expWords.forEach(ew => {
+      const idx = extra.indexOf(ew);
+      if (idx >= 0) {
+        matched.push(ew);
+        extra.splice(idx, 1);
+      } else {
+        // Try similar word
+        const similar = extra.findIndex(sw => levenshtein(ew, sw) <= 1);
+        if (similar >= 0) {
+          matched.push(ew);
+          extra.splice(similar, 1);
+        } else {
+          missed.push(ew);
+        }
+      }
+    });
+    const score = expWords.length ? Math.round((matched.length / expWords.length) * 100) : 100;
+    return { score, matched, missed, extra };
+  }
+
+  function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({length: m + 1}, () => Array(n + 1).fill(0));
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+      }
+    }
+    return dp[m][n];
+  }
+
+  /* ---------- PROCESS RESULT ---------- */
+  function processResult(spoken) {
+    const expected = targetEl.textContent;
+    const { score, matched, missed, extra } = wordAccuracy(expected, spoken);
+    sessionScores.push(score);
+    setBest(EXERCISES[currentCat].id, Math.max(score, getBest(EXERCISES[currentCat].id) || 0));
+
+    // Display result
+    scorePct.textContent = score + '%';
+    const stars = score >= 80 ? '⭐⭐⭐' : score >= 50 ? '⭐⭐' : '⭐';
+    scoreStars.textContent = stars;
+
+    // Word highlighting
+    const expWords = normalize(expected).split(/\s+/).filter(Boolean);
+    wordResult.innerHTML = expWords.map(w => {
+      const isMatched = matched.includes(w);
+      const isMissed = missed.includes(w);
+      const cls = isMatched ? 'correct' : isMissed ? 'missed' : 'wrong';
+      return '<span class="word-tag ' + cls + '">' + w + '</span>';
+    }).join('');
+    if (extra.length) {
+      wordResult.innerHTML += '<span style="display:block;margin-top:4px;font-size:12px;font-weight:600;color:#a78bfa;">Extra words: <span style="color:#fca5a5;">' + extra.join(' ') + '</span></span>';
+    }
+
+    // Tip
+    if (score >= 80) resultTip.textContent = '🌟 Excellent pronunciation!';
+    else if (score >= 50) resultTip.textContent = '👍 Good try! Listen again and focus on the highlighted words.';
+    else resultTip.textContent = '💪 Keep practicing! Tap "Listen" again and try once more.';
+
+    resultBox.style.display = 'block';
+    recIndicator.classList.remove('show');
+  }
+
+  /* ---------- NEXT ---------- */
+  document.getElementById('next-btn').addEventListener('click', () => {
+    const cat = EXERCISES[currentCat];
+    currentIdx++;
+    if (currentIdx >= cat.sentences.length) {
+      showResults();
+    } else {
+      showSentence();
+    }
+  });
+
+  /* ---------- RESULTS ---------- */
+  function showResults() {
+    practiceEl.classList.remove('active');
+    practiceEl.style.display = 'none';
+    resultsEl.classList.add('active');
+    resultsEl.style.display = 'block';
+    const avg = sessionScores.length ? Math.round(sessionScores.reduce((a, b) => a + b, 0) / sessionScores.length) : 0;
+    const best = sessionScores.length ? Math.max(...sessionScores) : 0;
+    const worst = sessionScores.length ? Math.min(...sessionScores) : 0;
+    document.getElementById('r-avg').textContent = avg + '%';
+    document.getElementById('r-best').textContent = best + '%';
+    document.getElementById('r-worst').textContent = worst + '%';
+    const stars = avg >= 80 ? '⭐⭐⭐' : avg >= 50 ? '⭐⭐' : '⭐';
+    document.getElementById('r-stars').textContent = stars;
+    document.getElementById('r-stars').style.fontSize = '28px';
+    document.getElementById('r-stars').style.textAlign = 'center';
+  }
+
+  document.getElementById('r-again').addEventListener('click', () => {
+    if (currentCat !== null) startPractice(currentCat);
+  });
+  document.getElementById('r-menu').addEventListener('click', () => {
+    resultsEl.classList.remove('active');
+    resultsEl.style.display = 'none';
+    practiceEl.classList.remove('active');
+    practiceEl.style.display = 'none';
+    menuEl.style.display = 'block';
+    renderMenu();
+  });
+
+  /* ---------- BACK ---------- */
+  document.getElementById('ex-back').addEventListener('click', () => {
+    practiceEl.classList.remove('active');
+    practiceEl.style.display = 'none';
+    menuEl.style.display = 'block';
+    renderMenu();
+  });
+
+  /* ---------- INIT ---------- */
+  renderMenu();
+
+})();
+</script>
+</body>
+</html>

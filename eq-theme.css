@@ -1,0 +1,255 @@
+/* ============================================================
+   eq-theme.css — English Quest Design System
+   Shared styles across all pages. Include via:
+     <link rel="stylesheet" href="./eq-theme.css">
+   ============================================================ */
+
+/* ---------- Custom Properties ---------- */
+:root {
+  --eq-purple-dark: #1a0b2e;
+  --eq-purple-mid: #2d1b4e;
+  --eq-purple-light: #4c1d95;
+  --eq-gold: #fbbf24;
+  --eq-gold-light: #fde68a;
+  --eq-pink: #db2777;
+  --eq-teal: #06b6d4;
+  --eq-green: #22c55e;
+  --eq-red: #ef4444;
+  --eq-bg: #0d0b18;
+  --eq-surface: rgba(255,255,255,.06);
+  --eq-border: rgba(255,255,255,.12);
+  --eq-border-hover: rgba(255,255,255,.22);
+  --eq-text: #f0e9ff;
+  --eq-text-muted: #a78bfa;
+  --eq-text-dim: #6b7280;
+  --eq-text-on-primary: #451a03;
+  --eq-font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --eq-font-display: 'Bricolage Grotesque', 'Segoe UI', sans-serif;
+  --eq-radius-sm: 10px;
+  --eq-radius-md: 14px;
+  --eq-radius-lg: 18px;
+  --eq-radius-xl: 22px;
+  --eq-shadow-card: 0 6px 0 var(--eq-border);
+  --eq-shadow-sm: 0 2px 8px rgba(0,0,0,.25);
+  --eq-shadow-lg: 0 8px 32px rgba(0,0,0,.5);
+  --eq-transition-fast: .1s;
+  --eq-transition-normal: .2s;
+  --eq-nav-height: 56px;
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--eq-font);
+  background:
+    radial-gradient(60% 40% at 20% 0%, rgba(124,58,237,.35), transparent 60%),
+    radial-gradient(50% 35% at 90% 15%, rgba(219,39,119,.22), transparent 60%),
+    linear-gradient(180deg, var(--eq-purple-dark) 0%, var(--eq-purple-mid) 60%, var(--eq-purple-dark) 100%);
+  color: var(--eq-text); min-height: 100dvh; display: flex; justify-content: center;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  animation: eqFadeIn .4s ease;
+}
+
+@keyframes eqFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+#app { width:100%; max-width:520px; padding:0 16px calc(var(--eq-nav-height) + 20px); }
+
+/* ---------- Typography ---------- */
+h1, h2, h3, .eq-title, .eq-greeting {
+  font-family: var(--eq-font-display); font-weight: 800;
+}
+.eq-title {
+  font-size: 22px; line-height: 1.2;
+  background: linear-gradient(90deg, var(--eq-gold), #f87171);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ---------- Common Components ---------- */
+
+/* Back button */
+.eq-back {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; font-weight: 800; color: var(--eq-text-muted);
+  text-decoration: none; padding: 8px 0; margin-bottom: 4px;
+  border: none; background: none; cursor: pointer; font-family: inherit;
+  transition: opacity var(--eq-transition-fast);
+}
+.eq-back:active { opacity: .6; }
+
+/* Header row */
+.eq-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 2px 6px;
+}
+.eq-header img {
+  width: 48px; height: 48px; border-radius: var(--eq-radius-md);
+  box-shadow: 0 0 18px rgba(251,191,36,.35);
+}
+.eq-header .eq-title { font-size: 24px; }
+.eq-header .eq-sub {
+  font-size: 11px; color: var(--eq-text-muted); font-weight: 700; margin-top: 2px;
+}
+
+/* Card / Chip */
+.eq-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--eq-surface); border: 1.5px solid var(--eq-border);
+  border-radius: 999px; padding: 5px 12px;
+  font-size: 12px; font-weight: 800; white-space: nowrap;
+}
+
+/* Primary button */
+.eq-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  font-family: inherit; font-size: 15px; font-weight: 800;
+  padding: 12px 24px; border-radius: var(--eq-radius-md); border: none;
+  cursor: pointer; text-decoration: none; transition: transform var(--eq-transition-fast);
+  -webkit-user-select: none; user-select: none;
+}
+.eq-btn:active { transform: scale(.97); }
+.eq-btn.prim {
+  background: linear-gradient(90deg, var(--eq-gold), #f59e0b);
+  color: var(--eq-text-on-primary); box-shadow: 0 5px 0 #b45309;
+}
+.eq-btn.prim:active { transform: translateY(3px); box-shadow: 0 2px 0 #b45309; }
+.eq-btn.ghost {
+  background: rgba(255,255,255,.1); color: #fff;
+  border: 1.5px solid rgba(255,255,255,.2);
+}
+.eq-btn.purple {
+  background: linear-gradient(90deg, #7c3aed, var(--eq-pink));
+  color: #fff; box-shadow: 0 5px 0 #4a044e;
+}
+.eq-btn.purple:active { transform: translateY(3px); box-shadow: 0 2px 0 #4a044e; }
+
+/* Section heading */
+.eq-section {
+  font-family: var(--eq-font-display); font-size: 15px; font-weight: 800;
+  color: var(--eq-gold); margin: 18px 0 10px;
+}
+
+/* ---------- Bottom Navigation ---------- */
+.eq-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+  background: rgba(13,11,24,.95); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-top: 1.5px solid var(--eq-border);
+  display: flex; justify-content: center; padding: 6px 8px env(safe-area-inset-bottom, 8px);
+}
+.eq-nav-inner { display: flex; width: 100%; max-width: 520px; justify-content: space-around; }
+.eq-nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  text-decoration: none; color: var(--eq-text-dim);
+  font-size: 9.5px; font-weight: 700; padding: 4px 10px; border-radius: var(--eq-radius-sm);
+  transition: color var(--eq-transition-normal), background var(--eq-transition-fast);
+  -webkit-user-select: none; user-select: none;
+}
+.eq-nav-item .ni-icon { font-size: 20px; line-height: 1; }
+.eq-nav-item.active { color: var(--eq-gold); background: rgba(251,191,36,.1); }
+.eq-nav-item:active { background: rgba(255,255,255,.06); }
+
+/* ---------- Card Grid ---------- */
+.eq-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;
+}
+.eq-tile {
+  display: block; text-decoration: none; color: #fff;
+  border-radius: var(--eq-radius-xl); padding: 18px 15px 15px;
+  position: relative; min-height: 132px;
+  box-shadow: var(--eq-shadow-card);
+  transition: transform var(--eq-transition-fast), box-shadow var(--eq-transition-fast);
+  overflow: hidden;
+}
+.eq-tile:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--edge, var(--eq-border)) !important; }
+.eq-tile.wide { grid-column: 1 / -1; min-height: auto; display: flex; align-items: center; gap: 14px; padding: 16px; }
+.eq-tile .t-icon { font-size: 34px; line-height: 1; filter: drop-shadow(0 3px 6px rgba(0,0,0,.3)); }
+.eq-tile.wide .t-icon { font-size: 28px; }
+.eq-tile .t-name { font-family: var(--eq-font-display); font-size: 17px; font-weight: 800; margin-top: 10px; }
+.eq-tile.wide .t-name { margin-top: 0; }
+.eq-tile .t-desc { font-size: 11.5px; font-weight: 600; opacity: .92; margin-top: 3px; line-height: 1.4; }
+.eq-tile .t-badge {
+  position: absolute; top: 12px; right: 13px;
+  font-size: 10.5px; font-weight: 900; letter-spacing: .5px;
+  background: rgba(0,0,0,.28); border-radius: 99px; padding: 3px 9px;
+}
+
+/* ---------- PWA Install Banner ---------- */
+.eq-install-banner {
+  display: none; position: fixed; bottom: calc(var(--eq-nav-height) + 12px);
+  left: 10px; right: 10px; max-width: 500px; margin: 0 auto; z-index: 100;
+  background: linear-gradient(135deg, var(--eq-purple-mid), var(--eq-purple-dark));
+  border: 2px solid rgba(251,191,36,.4); border-radius: var(--eq-radius-lg);
+  padding: 14px 16px; box-shadow: var(--eq-shadow-lg);
+  align-items: center; gap: 12px;
+}
+.eq-install-banner.show { display: flex; }
+.eq-install-banner img { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; }
+.eq-install-banner .text { flex: 1; font-size: 13px; font-weight: 700; line-height: 1.4; }
+.eq-install-banner .text small { font-size: 11px; color: var(--eq-text-muted); font-weight: 600; }
+
+/* ---------- Star Animation ---------- */
+.eq-star {
+  position: fixed; z-index: -1; font-size: 10px; opacity: .4;
+  animation: eqTwinkle 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes eqTwinkle {
+  from { opacity: .15; }
+  to { opacity: .55; }
+}
+
+/* ---------- Confetti Animation ---------- */
+.eq-confetti {
+  position: fixed; top: -10px; z-index: 200; font-size: 24px;
+  animation: eqConfettiFall 2s ease-in forwards; pointer-events: none;
+}
+@keyframes eqConfettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ---------- Focus & Accessibility ---------- */
+:focus-visible {
+  outline: 2.5px solid var(--eq-gold); outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* Calm mode — disable all animations, transitions, sounds */
+body.calm *, body.calm *::before, body.calm *::after {
+  animation: none !important; transition: none !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important; transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- High Contrast Mode ---------- */
+@media (prefers-contrast: more) {
+  :root {
+    --eq-border: rgba(255,255,255,.35);
+    --eq-text-muted: #c4b5fd;
+  }
+  body { background: #0d0b18; }
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 99px; }
+
+/* ---------- Print ---------- */
+@media print {
+  .eq-nav, .eq-install-banner, .eq-star { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+  #app { padding: 0 !important; max-width: 100% !important; }
+}

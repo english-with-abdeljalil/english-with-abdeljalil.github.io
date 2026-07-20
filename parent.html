@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent View — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Parent View">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<style>
+* {margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body {font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:radial-gradient(60% 40% at 20% 0%,rgba(124,58,237,.3),transparent 60%),
+    radial-gradient(50% 35% at 90% 15%,rgba(219,39,119,.18),transparent 60%),
+    linear-gradient(180deg,#1a0b2e,#2d1b4e,#1a0b2e);
+  color:#e2d8ff; min-height:100dvh; display:flex; justify-content:center;}
+#app {width:100%;max-width:520px;padding:0 16px 60px;}
+
+.back {display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#c4b5fd;font-weight:700;font-size:13px;padding:14px 2px 4px;}
+.eq-title {font-family:'Bricolage Grotesque','Segoe UI',sans-serif;font-size:22px;font-weight:800;margin:2px 2px 0;}
+.eq-sub {font-size:12.5px;color:#a78bfa;font-weight:700;margin:0 2px 14px;}
+
+h2 {font-family:'Bricolage Grotesque','Segoe UI',sans-serif;font-size:15px;font-weight:800;margin:18px 2px 8px;color:#fbbf24;}
+
+/* Progress overview */
+.p-overview {background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.12);
+  border-radius:18px;padding:18px 16px;margin-bottom:12px;text-align:center;}
+.p-name {font-family:'Bricolage Grotesque','Segoe UI',sans-serif;font-size:26px;font-weight:800;color:#f0e9ff;}
+.p-level {font-size:12px;font-weight:700;color:#a78bfa;margin:2px 0 10px;}
+.p-bar-track {width:100%;height:12px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;}
+.p-bar-fill {height:100%;background:linear-gradient(90deg,#7c3aed,#fbbf24);border-radius:99px;
+  transition:width .6s ease;width:0%;}
+.p-bar-label {font-size:12px;font-weight:700;color:#c4b5fd;margin-top:4px;}
+
+.p-steps {display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 4px;}
+.p-step {text-align:center;padding:10px 4px;border-radius:14px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);}
+.p-step .icon {font-size:26px;}
+.p-step .label {font-size:10.5px;font-weight:700;color:#a78bfa;margin-top:3px;}
+.p-step .status {font-size:13px;font-weight:800;color:#fbbf24;margin-top:2px;}
+.p-step.done {border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08);}
+.p-step.done .status {color:#86efac;}
+
+/* Skill bars */
+.skill-group {margin:10px 0;}
+.skill {display:flex;align-items:center;gap:10px;margin:6px 0;}
+.skill .skl {font-size:12px;font-weight:700;width:80px;flex-shrink:0;color:#c4b5fd;}
+.skill .track {flex:1;height:10px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+.skill .fill {height:100%;border-radius:99px;background:linear-gradient(90deg,#7c3aed,#fbbf24);transition:width .6s;}
+.skill .pct {font-size:11px;font-weight:800;width:36px;text-align:right;color:#fbbf24;}
+
+/* Timeline */
+.timeline {border-left:2px solid rgba(255,255,255,.15);padding-left:16px;margin:6px 0 12px;}
+.t-item {margin:10px 0;font-size:13px;font-weight:600;line-height:1.5;}
+.t-item .date {font-size:10.5px;color:#6b7280;font-weight:700;margin-bottom:1px;}
+.t-item .detail {color:#e2d8ff;}
+.t-item .icon-em {margin-right:6px;}
+
+/* Goals */
+.goal-box {background:rgba(251,191,36,.08);border:1.5px solid rgba(251,191,36,.25);
+  border-radius:14px;padding:14px;margin:6px 0;}
+.goal-title {font-size:14px;font-weight:800;color:#fde68a;margin-bottom:6px;}
+.goal-item {font-size:13px;font-weight:600;color:#c4b5fd;line-height:1.7;}
+.goal-item .check {color:#86efac;margin-right:6px;}
+
+/* Info cards */
+.info-box {font-size:12.5px;color:#a78bfa;font-weight:600;line-height:1.7;
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:12px 14px;margin:6px 0;}
+.info-box a {color:#fbbf24;font-weight:700;}
+
+/* No student state */
+.empty-state {text-align:center;padding:40px 10px;}
+.empty-state .big {font-size:56px;margin-bottom:10px;}
+.empty-state .msg {font-size:15px;font-weight:700;color:#a78bfa;line-height:1.6;}
+
+footer {text-align:center;font-size:12px;color:#6b7280;margin-top:24px;line-height:1.7;}
+</style>
+</head>
+<body>
+<div id="app">
+  <a class="back" href="./home.html">← Back to Quest</a>
+  <div class="eq-title">👨‍👩‍👧 Parent View</div>
+  <div class="eq-sub">A simple look at your child's English learning progress — no dragons, no XP.</div>
+
+  <!-- EMPTY STATE (shown when no student data) -->
+  <div id="empty-state" class="empty-state">
+    <div class="big">📚</div>
+    <div class="msg">No student data found yet.<br>Have your child log in and play first,<br>then come back here.</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" style="display:none;">
+    <div class="p-overview" id="overview">
+      <div class="p-name" id="s-name">—</div>
+      <div class="p-level" id="s-level">Beginner · Unit 1</div>
+      <div class="p-bar-track"><div class="p-bar-fill" id="bar-fill"></div></div>
+      <div class="p-bar-label" id="bar-label">Unit 1: 0% complete</div>
+      <div class="p-steps" id="step-cards"></div>
+    </div>
+
+    <h2>📖 Skills Overview</h2>
+    <div class="skill-group" id="skill-group"></div>
+
+    <h2>📅 Recent Activity</h2>
+    <div class="timeline" id="timeline">
+      <div style="font-size:13px;font-weight:600;color:#6b7280;">No recent activity logged.</div>
+    </div>
+
+    <h2>🎯 Goals & Recommendations</h2>
+    <div class="goal-box" id="goals"></div>
+
+    <div class="info-box">
+      <b>💡 What is English Quest?</b><br>
+      English Quest is a gamified English program for your child's school (Outlook Common Core, Morocco).
+      It covers reading, writing, grammar, vocabulary, and speaking through interactive lessons and challenges.
+      <br><br>
+      <b>📞 Questions?</b> Contact the teacher, <b>Mr. Fakrani</b>, using the <a href="./tutoring.html">teacher contact form</a>.
+    </div>
+  </div>
+
+  <footer>English Quest · Parent View · Made by Mr. Fakrani 🇲🇦</footer>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ---------- HELPERS ---------- */
+  function readLS(key) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch(e) { return null; } }
+  const dungeonData = readLS('u1_dungeon') || {};
+  const learnDone = localStorage.getItem('eq_learn1_done') === 'true';
+  const avatarData = readLS('eq_avatar') || {};
+
+  /* ---------- LEVEL TRANSLATION ---------- */
+  function getLevel(xp) {
+    if (!xp || xp <= 0) return 'Just getting started';
+    if (xp < 100) return 'Beginner';
+    if (xp < 250) return 'Developing';
+    if (xp < 400) return 'Proficient';
+    return 'Advanced';
+  }
+
+  /* ---------- LESSON TRACKING ---------- */
+  const LESSON_NAMES = [
+    { id:'functions', name:'Functions (Greetings & Introductions)' },
+    { id:'verbbe', name:'Verb Be' },
+    { id:'plurals', name:'Plurals' },
+    { id:'vocab', name:'Vocabulary' },
+    { id:'listening', name:'Listening' },
+    { id:'reading', name:'Reading' },
+    { id:'writing', name:'Writing' }
+  ];
+  function getLessonCount() {
+    const lessons = dungeonData.lessons || {};
+    return Object.values(lessons).filter(Boolean).length;
+  }
+
+  /* ---------- PRACTICE SCORES ---------- */
+  function getPracticeData() {
+    return readLS('eq_practice') || {};
+  }
+  function averageScore() {
+    const p = getPracticeData();
+    const vals = Object.values(p).filter(v => typeof v === 'number');
+    return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
+  }
+
+  /* ---------- ACTIVITY LOG ---------- */
+  function getActivityLog() {
+    return readLS('eq_activity_log') || [];
+  }
+
+  /* ---------- RENDER DASHBOARD ---------- */
+  function renderParentView() {
+    const name = dungeonData.name || null;
+    if (!name) {
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+
+    const xp = dungeonData.totalXP || 0;
+    const lessons = getLessonCount();
+    const practiceAvg = averageScore();
+    const finalBeaten = !!dungeonData.finalBeaten;
+    const stars = dungeonData.stars || {};
+    const floors = Object.keys(stars).length;
+
+    // Name & Level
+    document.getElementById('s-name').textContent = name;
+    document.getElementById('s-level').textContent = getLevel(xp) + ' · Unit 1';
+
+    // Progress bar
+    let stepsComplete = 0;
+    if (learnDone) stepsComplete++;
+    if (practiceAvg > 0) stepsComplete++;
+    if (finalBeaten) stepsComplete++;
+    const pct = Math.round((stepsComplete / 3) * 100);
+    document.getElementById('bar-fill').style.width = pct + '%';
+    document.getElementById('bar-label').textContent = 'Unit 1: ' + pct + '% complete';
+
+    // Step cards
+    const steps = [
+      { icon: '📖', label: 'Lessons Read', done: learnDone },
+      { icon: '✏️', label: 'Practice Done', done: practiceAvg > 0 },
+      { icon: '🏰', label: 'Unit Completed', done: finalBeaten }
+    ];
+    document.getElementById('step-cards').innerHTML = steps.map(s =>
+      '<div class="p-step' + (s.done ? ' done' : '') + '">' +
+      '<div class="icon">' + s.icon + '</div>' +
+      '<div class="label">' + s.label + '</div>' +
+      '<div class="status">' + (s.done ? '✅' : '⏳') + '</div></div>'
+    ).join('');
+
+    // Skills Overview
+    const reading = readLS('eq_practice') ? averageScore() : 0;
+    const grammar = (dungeonData.lessons && (dungeonData.lessons.verbbe || dungeonData.lessons.plurals)) ? Math.min(100, practiceAvg + 10) : 0;
+    const vocab = (dungeonData.lessons && dungeonData.lessons.vocab) ? Math.min(100, practiceAvg + 5) : 0;
+    const skills = [
+      { label: 'Reading', pct: reading },
+      { label: 'Grammar', pct: grammar },
+      { label: 'Vocabulary', pct: vocab }
+    ];
+    document.getElementById('skill-group').innerHTML = skills.map(s =>
+      '<div class="skill"><span class="skl">' + s.label + '</span>' +
+      '<div class="track"><div class="fill" style="width:' + s.pct + '%"></div></div>' +
+      '<span class="pct">' + s.pct + '%</span></div>'
+    ).join('');
+
+    // Activity Timeline
+    const log = getActivityLog();
+    const timelineEl = document.getElementById('timeline');
+    if (log.length) {
+      timelineEl.innerHTML = log.slice(-8).reverse().map(entry => {
+        const date = new Date(entry.date);
+        const dateStr = date.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+        let icon = '📌';
+        if (entry.type === 'learn') icon = '📖';
+        else if (entry.type === 'practice') icon = '✏️';
+        else if (entry.type === 'dungeon') icon = '🏰';
+        else if (entry.type === 'boss') icon = '🐉';
+        return '<div class="t-item"><div class="date">' + dateStr + '</div>' +
+          '<div class="detail"><span class="icon-em">' + icon + '</span>' + entry.detail + '</div></div>';
+      }).join('');
+    } else {
+      timelineEl.innerHTML = '<div style="font-size:13px;font-weight:600;color:#6b7280;">No recent activity logged.</div>';
+    }
+
+    // Goals & Recommendations
+    const goalsEl = document.getElementById('goals');
+    const recs = [];
+    if (!learnDone) recs.push('📖 Encourage your child to complete the **Read the Lesson** section.');
+    if (practiceAvg === 0) recs.push('✏️ Practice exercises help build confidence. Try a few together.');
+    if (practiceAvg > 0 && practiceAvg < 60) recs.push('💪 Practice scores are improving. More repetition will help!');
+    if (!finalBeaten && learnDone && practiceAvg > 0) recs.push('🏰 Your child is ready to try the **Dungeon Adventure**. Encourage them!');
+    if (finalBeaten) recs.push('🎉 Unit 1 is complete! Celebrate this achievement!');
+    if (lessons < 3) recs.push('🌱 Reading the lessons aloud together can boost comprehension.');
+    recs.push('📞 Questions or concerns? Reach Mr. Fakrani via the <a href="./tutoring.html" style="color:#fbbf24;font-weight:700;">teacher contact form</a>.');
+    goalsEl.innerHTML = '<div class="goal-title">📋 Suggestions for you</div>' +
+      recs.map(r => '<div class="goal-item"><span class="check">→</span>' + r + '</div>').join('');
+  }
+
+  /* ---------- INIT ---------- */
+  renderParentView();
+})();
+</script>
+</body>
+</html>

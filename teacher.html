@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Teacher Dashboard">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script><script src="./eq-music.js"></script><style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:#0d0b18; color:#e2d8ff; min-height:100dvh; }
+#app { max-width:720px; margin:0 auto; padding:0 14px 60px; }
+
+/* PIN gate */
+#gate { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100dvh; gap:20px; padding:24px; }
+.g-lock { font-size:64px; }
+.g-title { font-family:'Bricolage Grotesque',sans-serif; font-size:26px; font-weight:800; }
+.g-sub { font-size:14px; color:#a78bfa; font-weight:600; text-align:center; line-height:1.55; }
+.g-input { width:180px; text-align:center; font-family:inherit; font-size:32px; font-weight:800; letter-spacing:8px;
+  color:#1a0b2e; background:#f5f3ff; border:3px solid #7c3aed; border-radius:16px; padding:14px; }
+.g-input:focus { outline:none; border-color:#fbbf24; }
+.g-err { font-size:13px; font-weight:800; color:#f87171; display:none; }
+.g-btn { background:linear-gradient(90deg,#7c3aed,#db2777); color:#fff; font-size:17px; font-weight:800;
+  padding:14px 40px; border-radius:14px; border:none; cursor:pointer; font-family:inherit;
+  box-shadow:0 5px 0 #4a044e; transition:transform .08s; }
+.g-btn:active { transform:translateY(4px); box-shadow:0 1px 0 #4a044e; }
+.g-body { display:none; }
+
+/* Header */
+.header { display:flex; align-items:center; gap:10px; padding:14px 0 6px; position:sticky; top:0; z-index:50; background:#0d0b18; }
+.h-icon { width:38px;height:38px;border-radius:10px;box-shadow:0 0 12px rgba(251,191,36,.3); }
+.h-title { font-family:'Bricolage Grotesque',sans-serif; font-size:18px; font-weight:800;
+  background:linear-gradient(90deg,#fbbf24,#f87171); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.h-sub { font-size:10.5px; color:#a78bfa; font-weight:700; }
+.h-right { margin-left:auto; display:flex; gap:8px; }
+.h-btn { background:rgba(255,255,255,.1); border:1.5px solid rgba(255,255,255,.2); color:#fff; font-family:inherit;
+  font-size:13px; font-weight:700; padding:8px 12px; border-radius:999px; cursor:pointer; transition:transform .08s; }
+.h-btn:active { transform:scale(.96); }
+.h-btn.prim { background:linear-gradient(90deg,#f59e0b,#fbbf24); color:#451a03; border:none; }
+
+/* Stats bar */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:10px 0 14px; }
+.stat { background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.12); border-radius:14px; padding:10px 6px; text-align:center; }
+.sv { font-family:'Bricolage Grotesque',sans-serif; font-size:22px; font-weight:800; color:#fbbf24; }
+.sk { font-size:10.5px; font-weight:700; color:#a78bfa; margin-top:2px; }
+
+/* Charts */
+.chart-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.chart-card { background:rgba(255,255,255,.05); border:1.5px solid rgba(255,255,255,.1); border-radius:16px; padding:12px; text-align:center; }
+.chart-card canvas { width:100%; height:auto; max-height:120px; }
+.chart-card .cl { font-size:11px; font-weight:800; color:#c4b5fd; margin-top:4px; }
+
+/* Search */
+.search-row { display:flex; gap:8px; margin-bottom:12px; }
+.search-in { flex:1; background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.15); border-radius:12px;
+  color:#fff; font-family:inherit; font-size:14px; font-weight:600; padding:10px 14px; }
+.search-in::placeholder { color:#6b7280; }
+.search-in:focus { outline:none; border-color:#7c3aed; }
+.tag { font-size:11px; font-weight:800; padding:4px 10px; border-radius:999px; white-space:nowrap; }
+.tag.at-risk { background:rgba(239,68,68,.2); color:#fca5a5; border:1px solid rgba(239,68,68,.4); }
+.tag.stuck { background:rgba(251,191,36,.15); color:#fde68a; border:1px solid rgba(251,191,36,.3); }
+.tag.good { background:rgba(34,197,94,.15); color:#86efac; border:1px solid rgba(34,197,94,.3); }
+.tag.beaten { background:rgba(168,85,247,.15); color:#d8b4fe; border:1px solid rgba(168,85,247,.3); }
+
+/* Student list */
+.section-title { font-family:'Bricolage Grotesque',sans-serif; font-size:15px; font-weight:800; margin:16px 0 8px; color:#fbbf24; }
+.student { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.05); border:1.5px solid rgba(255,255,255,.08);
+  border-radius:14px; padding:11px 12px; margin-bottom:6px; cursor:pointer; transition:background .1s; }
+.student:active { background:rgba(255,255,255,.10); }
+.student .av { width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0; }
+.student .info { flex:1; min-width:0; }
+.student .name { font-size:14px; font-weight:800; }
+.student .meta { font-size:11px; color:#a78bfa; font-weight:600; }
+.student .xp { font-size:13px; font-weight:800; color:#fbbf24; flex-shrink:0; }
+.student .badge-row { display:flex; gap:4px; }
+
+/* Detail panel */
+#detail { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.85);
+  align-items:flex-end; justify-content:center; }
+#detail.show { display:flex; animation:fadeIn .2s ease; }
+.d-card { background:linear-gradient(180deg,#1e0e3a,#0d0b18); border:2px solid rgba(255,255,255,.15);
+  border-radius:24px 24px 0 0; width:100%; max-width:720px; max-height:85vh; overflow-y:auto;
+  padding:20px 16px 30px; animation:slideUp .25s ease; }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+@keyframes slideUp { from{transform:translateY(30px);opacity:0;} to{transform:none;opacity:1;} }
+.d-head { display:flex;align-items:center;gap:12px;margin-bottom:10px; }
+.d-av { width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;font-size:26px; }
+.d-name { font-family:'Bricolage Grotesque',sans-serif; font-size:20px; font-weight:800; }
+.d-close { margin-left:auto; background:rgba(255,255,255,.1); border:none; color:#fff;
+  width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer; }
+.d-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0; }
+.d-grid .d-item { background:rgba(255,255,255,.05); border-radius:12px; padding:10px; text-align:center; }
+.d-label { font-size:10.5px; font-weight:700; color:#a78bfa; }
+.d-val { font-size:17px; font-weight:800; color:#fbbf24; }
+
+/* Import modal */
+#import-modal { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.85);
+  align-items:center; justify-content:center; padding:20px; }
+#import-modal.show { display:flex; }
+.im-card { background:linear-gradient(180deg,#2d1b4e,#1a0b2e); border:2px solid rgba(255,255,255,.15);
+  border-radius:22px; padding:20px; width:100%; max-width:440px; }
+.im-title { font-family:'Bricolage Grotesque',sans-serif; font-size:18px; font-weight:800; margin-bottom:4px; }
+.im-sub { font-size:12px; color:#a78bfa; font-weight:600; margin-bottom:14px; }
+.im-textarea { width:100%; min-height:100px; font-family:inherit; font-size:13px; font-weight:600;
+  color:#1a0b2e; background:#f5f3ff; border:2px solid rgba(255,255,255,.25); border-radius:12px;
+  padding:10px; resize:vertical; }
+.im-textarea:focus { outline:none; border-color:#7c3aed; }
+.im-err { font-size:12.5px; font-weight:800; color:#f87171; display:none; margin-top:6px; }
+.im-actions { display:flex; gap:8px; margin-top:12px; }
+.im-btn { flex:1; padding:11px; border-radius:12px; border:none; font-family:inherit; font-weight:800;
+  font-size:14px; cursor:pointer; color:#fff; }
+.im-btn.prim { background:linear-gradient(90deg,#7c3aed,#db2777); }
+.im-btn.ghost { background:rgba(255,255,255,.1); }
+
+/* Empty state */
+.empty { text-align:center; color:#6b7280; font-size:14px; font-weight:600; padding:40px 10px; line-height:1.7; }
+.empty .big { font-size:48px; margin-bottom:10px; }
+
+footer { text-align:center; font-size:12px; color:#6b7280; margin-top:24px; line-height:1.7; }
+</style>
+</head>
+<body>
+
+<!-- ========= PIN GATE ========= -->
+<div id="gate">
+  <div class="g-lock">🔐</div>
+  <div class="g-title">English Quest</div>
+  <div class="g-sub">Teacher Dashboard<br>Enter your class PIN to view student progress</div>
+  <input class="g-input" id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="⋅ ⋅ ⋅ ⋅">
+  <div class="g-err" id="pin-err">Incorrect PIN. Try again.</div>
+  <button class="g-btn" id="unlock-btn">🔓 UNLOCK</button>
+  <div style="margin-top:16px;font-size:12px;color:#6b7280;text-align:center;">Default PIN: <b style="color:#a78bfa">1234</b><br>Change it in the dashboard settings.</div>
+</div>
+
+<!-- ========= DASHBOARD ========= -->
+<div class="g-body" id="dashboard">
+<div id="app">
+
+  <div class="header">
+    <img class="h-icon" src="./icon-192.png" alt="">
+    <div><div class="h-title">TEACHER DASHBOARD</div><div class="h-sub">Mr. Fakrani's Class</div></div>
+    <div class="h-right">
+      <button class="h-btn" id="import-btn" title="Import student data">📥 Import</button>
+      <button class="h-btn" id="export-btn" title="Export class CSV">📊 CSV</button>
+      <button class="h-btn prim" id="sample-btn">+ Sample</button>
+    </div>
+  </div>
+
+  <div class="stats-row" id="stats-row">
+    <div class="stat"><div class="sv" id="s-students">0</div><div class="sk">Students</div></div>
+    <div class="stat"><div class="sv" id="s-active">0</div><div class="sk">Active</div></div>
+    <div class="stat"><div class="sv" id="s-atrisk">0</div><div class="sk">At Risk</div></div>
+    <div class="stat"><div class="sv" id="s-avgxp">0</div><div class="sk">Avg XP</div></div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-card"><canvas id="completion-chart" height="120"></canvas><div class="cl">Lesson Completion</div></div>
+    <div class="chart-card"><canvas id="risk-chart" height="120"></canvas><div class="cl">Class Status</div></div>
+  </div>
+
+  <div class="search-row">
+    <input class="search-in" id="search" type="text" placeholder="🔍 Search by name or lesson..." autocomplete="off">
+    <select class="search-in" id="filter" style="max-width:100px;padding:10px 8px;flex-shrink:0">
+      <option value="all">All</option><option value="atrisk">⚠️ At Risk</option><option value="stuck">🔒 Stuck</option>
+      <option value="done">✅ Unit Done</option>
+    </select>
+  </div>
+
+  <div class="section-title">👥 Student Roster</div>
+  <div id="student-list"></div>
+
+  <footer>English Quest · Teacher Dashboard · Made by Mr. Fakrani<br>Data stays on this device. Export CSV for record-keeping.</footer>
+</div>
+</div>
+
+<!-- ========= STUDENT DETAIL ========= -->
+<div id="detail"><div class="d-card" id="d-card">
+  <div class="d-head">
+    <div class="d-av" id="d-av">🧑</div>
+    <div><div class="d-name" id="d-name">—</div><div class="h-sub" id="d-rank">—</div></div>
+    <button class="d-close" id="d-close">✕</button>
+  </div>
+  <div class="d-grid">
+    <div class="d-item"><div class="d-label">⭐ XP</div><div class="d-val" id="d-xp">0</div></div>
+    <div class="d-item"><div class="d-label">🏅 Badges</div><div class="d-val" id="d-badges">0</div></div>
+    <div class="d-item"><div class="d-label">📖 Lessons</div><div class="d-val" id="d-lessons">0/7</div></div>
+    <div class="d-item"><div class="d-label">🏰 Floors</div><div class="d-val" id="d-floors">0/6</div></div>
+  </div>
+  <div class="section-title" style="margin-top:6px">📖 Lesson Details</div>
+  <div id="d-lesson-detail" style="font-size:13px;font-weight:600;line-height:1.8;"></div>
+  <div class="section-title" style="margin-top:8px">⚠️ Flags</div>
+  <div id="d-flags" style="font-size:13px;"></div>
+</div></div>
+
+<!-- ========= IMPORT MODAL ========= -->
+<div id="import-modal"><div class="im-card">
+  <div class="im-title">📥 Import Student Data</div>
+  <div class="im-sub">Paste a student's export code (from Settings → Export) or a class snapshot. Each student is identified by codename.</div>
+  <textarea class="im-textarea" id="import-area" placeholder='{"students":[{"name":"Hero","xp":150,"lessons":{...}},...]}'></textarea>
+  <div class="im-err" id="import-err">Invalid data format. Expected a JSON object with a "students" array.</div>
+  <div class="im-actions">
+    <button class="im-btn ghost" id="im-cancel">Cancel</button>
+    <button class="im-btn prim" id="im-confirm">✓ Import</button>
+  </div>
+</div></div>
+
+<script>
+(function() {
+  'use strict';
+  const PIN_KEY = 'eq_teacher_pin';
+  const CLASS_DATA_KEY = 'eq_teacher_class';
+  function getPin() { try { return localStorage.getItem(PIN_KEY) || '1234'; } catch(e) { return '1234'; } }
+  function setPin(p) { try { localStorage.setItem(PIN_KEY, p); } catch(e) {} }
+
+  /* ---------- CLASS DATA ---------- */
+  let classData = [];
+  function loadClass() {
+    try { const d = localStorage.getItem(CLASS_DATA_KEY); classData = d ? JSON.parse(d) : []; } catch(e) { classData = []; }
+  }
+  function saveClass() {
+    try { localStorage.setItem(CLASS_DATA_KEY, JSON.stringify(classData)); } catch(e) {}
+  }
+  function pushStudent(s) {
+    // update or insert
+    const i = classData.findIndex(x => x.name === s.name);
+    if (i >= 0) { classData[i] = { ...classData[i], ...s }; }
+    else { classData.push(s); }
+    saveClass();
+  }
+
+  /* ---------- SAMPLE DATA ---------- */
+  function loadSample() {
+    const NOW = Date.now();
+    classData = [
+      { name:'DragonHeart', xp:420, lessonCount:7, floorCount:6, finalBeaten:true, goldenBeaten:true, lastActive:NOW,
+        av:'🐉', lessons:{functions:true,verbbe:true,plurals:true,vocab:true,listening:true,reading:true,writing:true},
+        badges:[], fails:{} },
+      { name:'StarWizard', xp:360, lessonCount:7, floorCount:6, finalBeaten:true, goldenBeaten:false, lastActive:NOW - 86400000,
+        av:'🧙', lessons:{functions:true,verbbe:true,plurals:true,vocab:true,listening:true,reading:true,writing:true},
+        badges:[], fails:{} },
+      { name:'QuestKnight', xp:290, lessonCount:6, floorCount:4, finalBeaten:false, goldenBeaten:false, lastActive:NOW - 43200000,
+        av:'⚔️', lessons:{functions:true,verbbe:true,plurals:true,vocab:true,listening:true,reading:false,writing:false},
+        badges:[], fails:{'6':2} },
+      { name:'BraveFox', xp:210, lessonCount:4, floorCount:2, finalBeaten:false, goldenBeaten:false, lastActive:NOW - 172800000,
+        av:'🦊', lessons:{functions:true,verbbe:true,plurals:true,vocab:false,listening:false,reading:false,writing:false},
+        badges:[], fails:{'3':1,'4':2} },
+      { name:'SwiftOwl', xp:150, lessonCount:3, floorCount:1, finalBeaten:false, goldenBeaten:false, lastActive:NOW - 604800000,
+        av:'🦉', lessons:{functions:true,verbbe:true,plurals:false,vocab:false,listening:false,reading:false,writing:false},
+        badges:[], fails:{'2':2} },
+      { name:'SilentCat', xp:80, lessonCount:1, floorCount:0, finalBeaten:false, goldenBeaten:false, lastActive:NOW - 1209600000,
+        av:'🐱', lessons:{functions:true,verbbe:false,plurals:false,vocab:false,listening:false,reading:false,writing:false},
+        badges:[], fails:{} },
+      { name:'NightOwl', xp:0, lessonCount:0, floorCount:0, finalBeaten:false, goldenBeaten:false, lastActive:NOW - 2592000000,
+        av:'🦉', lessons:{}, badges:[], fails:{} }
+    ];
+    saveClass();
+    renderAll();
+  }
+
+  /* ---------- RISK ASSESSMENT ---------- */
+  function daysSince(ts) { return Math.floor((Date.now() - ts) / 86400000); }
+  function assessRisk(s) {
+    const flags = [];
+    const days = daysSince(s.lastActive || 0);
+    if (days >= 7) flags.push({type:'at-risk', label:'⚠️ ' + days + 'd inactive'});
+    if (s.fails && Object.values(s.fails).some(f => f >= 3)) flags.push({type:'stuck', label:'🔒 Stuck on a floor'});
+    if (!s.lessonCount && days > 0) flags.push({type:'at-risk', label:'📖 No lessons started'});
+    return flags;
+  }
+  function hasRisk(s) { return assessRisk(s).length > 0; }
+  function isStuck(s) { return assessRisk(s).some(f => f.type === 'stuck'); }
+
+  /* ---------- RENDER ---------- */
+  function renderAll() {
+    loadClass();
+    renderStats();
+    renderCharts();
+    renderList();
+  }
+
+  function renderStats() {
+    const total = classData.length;
+    const active = classData.filter(s => daysSince(s.lastActive || 0) < 7).length;
+    const atRisk = classData.filter(hasRisk).length;
+    const avgXP = total ? Math.round(classData.reduce((a,s) => a + (s.xp||0), 0) / total) : 0;
+    document.getElementById('s-students').textContent = total;
+    document.getElementById('s-active').textContent = active;
+    document.getElementById('s-atrisk').textContent = atRisk;
+    document.getElementById('s-avgxp').textContent = avgXP;
+  }
+
+  function renderCharts() {
+    if (!classData.length) return;
+    renderCompletionChart();
+    renderRiskChart();
+  }
+
+  function renderCompletionChart() {
+    const c = document.getElementById('completion-chart');
+    const ctx = c.getContext('2d');
+    const w = c.parentElement.clientWidth - 24;
+    c.width = w * 2; c.height = 240;
+    c.style.width = w + 'px'; c.style.height = '120px';
+    ctx.scale(2, 2);
+    const h = 120, pad = 16;
+    ctx.clearRect(0, 0, w, h);
+    const bands = [{label:'0–2',color:'#ef4444'},{label:'3–5',color:'#f59e0b'},{label:'6–7',color:'#22c55e'}];
+    const counts = [0,0,0];
+    classData.forEach(s => {
+      const l = s.lessonCount || 0;
+      if (l <= 2) counts[0]++; else if (l <= 5) counts[1]++; else counts[2]++;
+    });
+    const total = classData.length || 1;
+    const barW = (w - pad * 2 - 20) / 3;
+    bands.forEach((b, i) => {
+      const pct = counts[i] / total;
+      const bh = pct * (h - 30);
+      const x = pad + i * (barW + 6);
+      const y = h - 12 - bh;
+      ctx.fillStyle = b.color;
+      ctx.beginPath();
+      // fallback for browsers without roundRect
+      if (ctx.roundRect) { ctx.roundRect(x, y, barW - 4, bh, 4); }
+      else { ctx.rect(x, y, barW - 4, bh); }
+      ctx.fill();
+      ctx.fillStyle = '#c4b5fd'; ctx.font = '500 9px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(counts[i] + ' (' + Math.round(pct * 100) + '%)', x + (barW - 4) / 2, h - 2);
+      ctx.fillStyle = '#6b7280'; ctx.fillText(b.label, x + (barW - 4) / 2, h - 14);
+    });
+  }
+
+  function renderRiskChart() {
+    const c = document.getElementById('risk-chart');
+    const ctx = c.getContext('2d');
+    const w = c.parentElement.clientWidth - 24;
+    c.width = w * 2; c.height = 240;
+    c.style.width = w + 'px'; c.style.height = '120px';
+    ctx.scale(2, 2);
+    const h = 120;
+    ctx.clearRect(0, 0, w, h);
+    const total = classData.length || 1;
+    const good = classData.filter(s => !hasRisk(s)).length;
+    const stuck = classData.filter(isStuck).length;
+    const inactive = classData.filter(s => hasRisk(s) && !isStuck(s)).length;
+    const slices = [
+      {v: good, color:'#22c55e', label:'OK'}, {v: stuck, color:'#f59e0b', label:'Stuck'}, {v: inactive, color:'#ef4444', label:'Inactive'}
+    ];
+    const r = Math.min(w, h) * 0.38;
+    const cx = w / 2, cy = h / 2;
+    let angle = -Math.PI / 2;
+    slices.forEach(slice => {
+      if (slice.v === 0) return;
+      const a = (slice.v / total) * Math.PI * 2;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, angle, angle + a); ctx.closePath();
+      ctx.fillStyle = slice.color; ctx.fill();
+      const mid = angle + a / 2;
+      const lx = cx + Math.cos(mid) * (r * 0.65);
+      const ly = cy + Math.sin(mid) * (r * 0.65);
+      ctx.fillStyle = '#fff'; ctx.font = '600 10px system-ui'; ctx.textAlign = 'center';
+      if (slice.v > 0) ctx.fillText(slice.v + ' ' + slice.label, lx, ly + 3);
+      angle += a;
+    });
+  }
+
+  function renderList() {
+    const q = (document.getElementById('search').value || '').toLowerCase().trim();
+    const f = document.getElementById('filter').value;
+    const list = document.getElementById('student-list');
+    let items = classData.filter(s => {
+      if (f === 'atrisk' && !hasRisk(s)) return false;
+      if (f === 'stuck' && !isStuck(s)) return false;
+      if (f === 'done' && !s.finalBeaten) return false;
+      if (q && !s.name.toLowerCase().includes(q)) return false;
+      return true;
+    });
+    if (!items.length) {
+      list.innerHTML = '<div class="empty"><div class="big">🔍</div>No students match your search.<br>Try a different filter or add students via Import.</div>';
+      return;
+    }
+    items.sort((a, b) => (b.xp || 0) - (a.xp || 0));
+    list.innerHTML = items.map((s, idx) => {
+      const flags = assessRisk(s);
+      const flagHTML = flags.map(f => '<span class="tag ' + f.type + '">' + f.label + '</span>').join(' ');
+      const badge = s.finalBeaten ? '<span class="tag beaten">🏆 Unit 1</span>' : '';
+      return '<div class="student" data-idx="' + idx + '">' +
+        '<div class="av">' + (s.av || '🧑') + '</div>' +
+        '<div class="info"><div class="name">' + s.name + ' ' + badge + '</div>' +
+        '<div class="meta">📖 ' + (s.lessonCount||0) + '/7 lessons · 🏰 ' + (s.floorCount||0) + '/6 floors</div></div>' +
+        '<div style="text-align:right;flex-shrink:0"><div class="xp">⭐' + (s.xp||0) + '</div>' +
+        '<div class="badge-row" style="margin-top:3px">' + flagHTML + '</div></div></div>';
+    }).join('');
+    list.querySelectorAll('.student').forEach(el => {
+      el.addEventListener('click', () => {
+        const idx = parseInt(el.dataset.idx, 10);
+        if (idx >= 0) showDetail(items[idx]);
+      });
+    });
+  }
+
+  /* ---------- DETAIL PANEL ---------- */
+  function showDetail(s) {
+    document.getElementById('d-av').textContent = s.av || '🧑';
+    document.getElementById('d-name').textContent = s.name;
+    const rank = s.finalBeaten ? '🏆 Unit 1 Complete' : '⚔️ Adventurer';
+    document.getElementById('d-rank').textContent = rank;
+    document.getElementById('d-xp').textContent = s.xp || 0;
+    const badgeCount = (s.finalBeaten ? 1 : 0) + (s.goldenBeaten ? 1 : 0) + (s.lessonCount >= 7 ? 1 : 0) + (s.xp >= 100 ? 1 : 0);
+    document.getElementById('d-badges').textContent = badgeCount;
+    document.getElementById('d-lessons').textContent = (s.lessonCount || 0) + '/7';
+    document.getElementById('d-floors').textContent = (s.floorCount || 0) + '/6';
+
+    // lesson detail
+    const LESSON_NAMES = ['Functions','Verb Be','Plurals','Vocabulary','Listening','Reading','Writing'];
+    const KEYS = ['functions','verbbe','plurals','vocab','listening','reading','writing'];
+    const ll = document.getElementById('d-lesson-detail');
+    ll.innerHTML = KEYS.map(k => {
+      const done = s.lessons && s.lessons[k];
+      return '<span style="display:inline-block;margin-right:10px;">' + (done ? '✅' : '⬜') + ' ' + LESSON_NAMES[KEYS.indexOf(k)] + '</span>';
+    }).join('<br>') + '<br>🏰 Floors cleared: ' + (s.floorCount || 0) + '/6' +
+      (s.finalBeaten ? '<br>🐉 Fire Dragon: ✅' : '<br>🐉 Fire Dragon: ❌') +
+      (s.goldenBeaten ? ' · 🐲 Golden Dragon: 👑' : '');
+
+    // flags
+    const flags = assessRisk(s);
+    const fEl = document.getElementById('d-flags');
+    if (flags.length) {
+      fEl.innerHTML = flags.map(f => '• ' + f.label).join('<br>') +
+        '<br>💡 <i>Consider reaching out to ' + s.name + ' or their parents.</i>';
+    } else {
+      fEl.innerHTML = '✅ No flags — ' + s.name + ' is on track!';
+    }
+    document.getElementById('detail').classList.add('show');
+  }
+  document.getElementById('d-close').onclick = () => document.getElementById('detail').classList.remove('show');
+  document.getElementById('detail').addEventListener('click', e => {
+    if (e.target === e.currentTarget) document.getElementById('detail').classList.remove('show');
+  });
+
+  /* ---------- SEARCH / FILTER ---------- */
+  document.getElementById('search').addEventListener('input', renderList);
+  document.getElementById('filter').addEventListener('change', renderList);
+
+  /* ---------- CSV EXPORT ---------- */
+  function exportCSV() {
+    if (!classData.length) { alert('No student data to export. Add students first!'); return; }
+    const headers = ['Codename','XP','Lessons (0-7)','Floors Cleared (0-6)','Fire Dragon','Golden Dragon','Status','Last Active (days ago)'];
+    const rows = classData.map(s => [
+      s.name, s.xp || 0, s.lessonCount || 0, s.floorCount || 0,
+      s.finalBeaten ? 'Yes' : 'No', s.goldenBeaten ? 'Yes' : 'No',
+      hasRisk(s) ? 'At Risk' : 'OK',
+      s.lastActive ? daysSince(s.lastActive) : '—'
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'english-quest-class-' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  document.getElementById('export-btn').addEventListener('click', exportCSV);
+
+  /* ---------- IMPORT ---------- */
+  document.getElementById('import-btn').onclick = () => document.getElementById('import-modal').classList.add('show');
+  document.getElementById('im-cancel').onclick = () => { document.getElementById('import-modal').classList.remove('show'); document.getElementById('import-err').style.display = 'none'; };
+  document.getElementById('im-confirm').onclick = () => {
+    const raw = document.getElementById('import-area').value.trim();
+    const errEl = document.getElementById('import-err');
+    errEl.style.display = 'none';
+    if (!raw) { errEl.textContent = 'Paste some data first!'; errEl.style.display = 'block'; return; }
+    try {
+      const d = JSON.parse(raw);
+      const students = d.students || (d.name ? [d] : null);
+      if (!students || !Array.isArray(students) || !students.length) throw new Error('No students array');
+      students.forEach(s => {
+        if (s.name) pushStudent(s);
+      });
+      document.getElementById('import-modal').classList.remove('show');
+      document.getElementById('import-area').value = '';
+      renderAll();
+    } catch(e) {
+      errEl.textContent = 'Invalid data format. Expected a JSON object with a "students" array.';
+      errEl.style.display = 'block';
+    }
+  };
+
+  /* ---------- PIN ---------- */
+  document.getElementById('unlock-btn').onclick = checkPin;
+  document.getElementById('pin').addEventListener('keydown', e => { if (e.key === 'Enter') checkPin(); });
+  function checkPin() {
+    const entered = document.getElementById('pin').value.trim();
+    const err = document.getElementById('pin-err');
+    if (entered === getPin()) {
+      err.style.display = 'none';
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadClass();
+      if (!classData.length) loadSample();
+      else renderAll();
+    } else {
+      err.style.display = 'block';
+      document.getElementById('pin').value = '';
+      document.getElementById('pin').focus();
+    }
+  }
+
+  /* ---------- SAMPLE DATA BUTTON ---------- */
+  document.getElementById('sample-btn').addEventListener('click', () => {
+    if (confirm('Add sample data? This will keep any existing students too.')) {
+      const prev = classData.slice();
+      classData = prev;
+      // add sample students that aren't already there
+      const names = classData.map(s => s.name);
+      const SAMPLES = [
+        { name:'DragonHeart', xp:420, lessonCount:7, floorCount:6, finalBeaten:true, goldenBeaten:true, lastActive:Date.now(), av:'🐉', lessons:{functions:true,verbbe:true,plurals:true,vocab:true,listening:true,reading:true,writing:true}, fails:{} },
+        { name:'SwiftOwl', xp:150, lessonCount:3, floorCount:1, finalBeaten:false, goldenBeaten:false, lastActive:Date.now() - 604800000, av:'🦉', lessons:{functions:true,verbbe:true,plurals:false,vocab:false,listening:false,reading:false,writing:false}, fails:{'2':2} }
+      ];
+      SAMPLES.forEach(s => { if (!names.includes(s.name)) { classData.push(s); names.push(s.name); } });
+      saveClass();
+      renderAll();
+    }
+  });
+
+  /* ---------- KEYBOARD SHORTCUTS ---------- */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.getElementById('detail').classList.remove('show');
+      document.getElementById('import-modal').classList.remove('show');
+    }
+  });
+
+  /* ---------- AUTO-LOAD FROM STUDENT EXPORTS ---------- */
+  // Try to load from student localStorage share key
+  function autoDetectStudents() {
+    const prefixes = ['u1_dungeon', 'eq_learn', 'eq_learn1_done', 'eq_practice'];
+    let found = 0;
+    try {
+      const data = localStorage.getItem('u1_dungeon');
+      if (data) {
+        const p = JSON.parse(data);
+        if (p.name && !classData.some(s => s.name === p.name)) {
+          const LESSON_IDS = ["functions","verbbe","plurals","vocab","listening","reading","writing"];
+          const lessonDone = localStorage.getItem('eq_learn1_done') === 'true';
+          const lessons = {};
+          if (p.lessons) Object.assign(lessons, p.lessons);
+          classData.push({
+            name: p.name,
+            xp: p.totalXP || 0,
+            lessonCount: Object.keys(lessons).length,
+            floorCount: p.stars ? Object.keys(p.stars).length : 0,
+            finalBeaten: !!p.finalBeaten,
+            goldenBeaten: !!p.goldenBeaten,
+            lastActive: Date.now(),
+            av: '🧑',
+            lessons: lessons,
+            fails: p.fails || {}
+          });
+          saveClass();
+          found++;
+        }
+      }
+    } catch(e) {}
+    return found;
+  }
+
+  /* init — gate always shows first */
+  document.getElementById('pin').focus();
+})();
+</script>
+</body>
+</html>

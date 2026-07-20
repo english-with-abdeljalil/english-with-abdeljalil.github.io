@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Settings">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<script src="./eq-music.js"></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script><script data-goatcounter="https://jalil.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(60% 40% at 20% 0%, rgba(124,58,237,.35), transparent 60%),
+      radial-gradient(50% 35% at 90% 15%, rgba(219,39,119,.22), transparent 60%),
+      linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color:#f0e9ff; min-height:100dvh; display:flex; justify-content:center;
+  }
+  #app { width:100%; max-width:520px; padding:0 16px 60px; }
+  .back { display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:#c4b5fd; font-weight:700; font-size:13px; padding:14px 2px 4px; }
+  .eq-title { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:24px; font-weight:800; margin:4px 2px 2px; }
+  .sub { font-size:12.5px; color:#a78bfa; font-weight:700; margin:2px 2px 14px; }
+
+  h2 { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:15px; font-weight:800; margin:20px 2px 9px; color:#fbbf24; }
+  .group { border-radius:18px; overflow:hidden; border:1.5px solid rgba(255,255,255,.14); }
+  .row { display:flex; align-items:center; gap:12px; padding:14px 15px; background:rgba(255,255,255,.05); border-top:1px solid rgba(255,255,255,.07); }
+  .row:first-child { border-top:none; }
+  .row .ri { font-size:22px; }
+  .row .rt { flex:1; }
+  .row .rt b { font-size:14.5px; font-weight:800; }
+  .row .rt small { display:block; font-size:11.5px; color:#a99fc8; font-weight:600; margin-top:2px; line-height:1.4; }
+
+  .switch { position:relative; width:52px; height:30px; border-radius:99px; background:rgba(255,255,255,.18);
+    border:none; cursor:pointer; flex-shrink:0; transition:background .15s; }
+  .switch::after { content:''; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%;
+    background:#fff; transition:left .15s; box-shadow:0 2px 4px rgba(0,0,0,.35); }
+  .switch.on { background:linear-gradient(90deg,#fbbf24,#f59e0b); }
+  .switch.on::after { left:25px; }
+
+  .segbtns { display:flex; gap:6px; flex-shrink:0; }
+  .seg { padding:8px 13px; border-radius:11px; border:1.5px solid rgba(255,255,255,.2); background:rgba(0,0,0,.25);
+    color:#e9deff; font-weight:800; font-size:12.5px; cursor:pointer; font-family:inherit; }
+  .seg.active { border-color:#fbbf24; background:rgba(251,191,36,.18); color:#fbbf24; }
+
+  .dangerbtn { display:block; width:100%; text-align:center; cursor:pointer; font-family:inherit; font-size:14px; font-weight:800;
+    color:#fecaca; border:1.5px solid rgba(248,113,113,.4); border-radius:14px; padding:13px; margin-top:10px; background:rgba(248,113,113,.10); }
+  .dangerbtn:active { transform:scale(.99); }
+
+  .info { font-size:12px; color:#b9addd; line-height:1.6; background:rgba(255,255,255,.05);
+    border:1.5px solid rgba(255,255,255,.12); border-radius:16px; padding:14px; }
+  .info a { color:#fbbf24; font-weight:700; }
+  footer { text-align:center; font-size:12px; color:#6b7280; margin-top:24px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div id="app">
+  <a class="back" href="./home.html">‹ Home</a>
+  <div class="eq-title">⚙️ Settings</div>
+  <div class="sub">Set up your sound, look and comfort. Saved on this phone.</div>
+
+  <h2>Sound</h2>
+  <div class="group">
+    <div class="row"><span class="ri">🔊</span>
+      <span class="rt"><b>Sound effects</b><small>Taps, correct/wrong and victory sounds.</small></span>
+      <button class="switch" data-key="eq_sfx" data-def="on"></button></div>
+    <div class="row"><span class="ri">🎵</span>
+      <span class="rt"><b>Background music</b><small>Gentle music in the home, classroom and dungeon.</small></span>
+      <button class="switch" data-key="eq_music" data-def="on"></button></div>
+  </div>
+
+  <h2>Comfort</h2>
+  <div class="group">
+    <div class="row"><span class="ri">🌙</span>
+      <span class="rt"><b>Calm mode</b><small>Turns off all sound, music and animations at once. The read-aloud voice still works.</small></span>
+      <button class="switch" id="calm-switch"></button></div>
+    <div class="row"><span class="ri">🎨</span>
+      <span class="rt"><b>Appearance</b><small>The game looks best in dark. Light is easier in bright rooms.</small></span>
+      <div class="segbtns" id="theme-seg">
+        <button class="seg" data-theme="dark">Dark</button>
+        <button class="seg" data-theme="light">Light</button>
+      </div></div>
+  </div>
+
+  <h2>Language of the app</h2>
+  <div class="group">
+    <div class="row"><span class="ri">🌍</span>
+      <span class="rt"><b>Menu language</b><small>Lessons stay in English — this changes buttons & help.</small></span>
+      <div class="segbtns" id="lang-seg">
+        <button class="seg" data-lang="en">EN</button>
+        <button class="seg" data-lang="fr">FR</button>
+        <button class="seg" data-lang="ar">ع</button>
+      </div></div>
+  </div>
+
+  <h2>📤 Export &amp; Import</h2>
+  <div class="group">
+    <div class="row"><span class="ri">📥</span>
+      <span class="rt"><b>Import my progress</b><small>Restore from a backup file (.json).</small></span>
+      <button class="dangerbtn" id="import-progress-btn" style="margin:0;padding:9px 16px;font-size:12px;width:auto;flex-shrink:0;border-radius:12px;">Import</button></div>
+    <div class="row"><span class="ri">📤</span>
+      <span class="rt"><b>Export my progress</b><small>Download a JSON backup to save or share with your teacher.</small></span>
+      <button class="dangerbtn" id="export-progress-btn" style="margin:0;padding:9px 16px;font-size:12px;width:auto;flex-shrink:0;border-radius:12px;">Export</button></div>
+  </div>
+  <div id="import-result" style="display:none;margin-top:-6px;margin-bottom:10px;font-size:13px;font-weight:700;padding:10px 14px;border-radius:12px;"></div>
+
+  <h2 id="help">Help &amp; account</h2>
+  <div class="info">
+    <b>Forgot your class number?</b> Ask your teacher, Mr. Fakrani — he can give you a new one.<br><br>
+    <b>Reach the teacher:</b> use <a href="./tutoring.html">Train with the Teacher</a> to send a message (a parent should help for younger students).<br><br>
+    <b>Your privacy:</b> English Quest keeps only what it needs — a codename and your progress, saved on this phone. No email, no photo, no real name is shown to other students.<br><br>
+    <b>👨‍🏫 Teacher tools:</b> <a href="./teacher.html">Teacher Dashboard</a> — view class progress, import student data, export CSV reports. (PIN required.)
+  </div>
+  <button class="dangerbtn" id="reset-btn">🗑️ Reset my progress on this phone</button>
+
+  <footer>English Quest · Made by your teacher, Mr. Fakrani 🇲🇦</footer>
+</div>
+
+<nav class="eq-nav" aria-label="Main navigation">
+  <div class="eq-nav-inner">
+    <a class="eq-nav-item" href="./home.html"><span class="ni-icon">🏠</span>Home</a>
+    <a class="eq-nav-item" href="./index.html"><span class="ni-icon">🏫</span>Class</a>
+    <a class="eq-nav-item" href="./speaking.html"><span class="ni-icon">🎙️</span>Speak</a>
+    <a class="eq-nav-item" href="./profile.html"><span class="ni-icon">🧑‍🚀</span>Profile</a>
+  </div>
+</nav>
+
+<script>
+  /* ---- generic on/off switches (localStorage 'on'/'off') ---- */
+  document.querySelectorAll('.switch[data-key]').forEach(sw=>{
+    const key=sw.dataset.key, def=sw.dataset.def||'on';
+    const val = localStorage.getItem(key) || def;
+    sw.classList.toggle('on', val==='on');
+    sw.addEventListener('click',()=>{
+      const now = sw.classList.toggle('on');
+      localStorage.setItem(key, now?'on':'off');
+      // Live-update music when toggled in settings
+      if (key === 'eq_music' && window.EQMusic) {
+        if (now) window.EQMusic.start();
+        else window.EQMusic.stop();
+      }
+    });
+  });
+
+  /* ---- calm mode: shares the eq_calm key used app-wide by eq-calm.js ---- */
+  const calmSw = document.getElementById('calm-switch');
+  function calmState(){ return localStorage.getItem('eq_calm')==='on'; }
+  function paintCalm(){ calmSw.classList.toggle('on', calmState()); }
+  paintCalm();
+  calmSw.addEventListener('click',()=>{
+    const now = !calmState();
+    localStorage.setItem('eq_calm', now?'on':'off');
+    document.body.classList.toggle('eq-calm', now);
+    paintCalm();
+  });
+  /* keep in sync if the floating calm button is used */
+  setInterval(paintCalm, 1000);
+
+  /* ---- appearance (saved; applied live on this page) ---- */
+  const themeSeg = document.getElementById('theme-seg');
+  function paintTheme(){
+    const t = localStorage.getItem('eq_theme') || 'dark';
+    themeSeg.querySelectorAll('.seg').forEach(s=> s.classList.toggle('active', s.dataset.theme===t));
+    document.documentElement.style.filter = (t==='light') ? 'invert(1) hue-rotate(180deg)' : '';
+  }
+  themeSeg.querySelectorAll('.seg').forEach(s=> s.addEventListener('click',()=>{
+    localStorage.setItem('eq_theme', s.dataset.theme); paintTheme();
+  }));
+  paintTheme();
+
+  /* ---- menu language ---- */
+  const langSeg = document.getElementById('lang-seg');
+  function paintLang(){
+    const l = localStorage.getItem('eq_lang') || 'en';
+    langSeg.querySelectorAll('.seg').forEach(s=> s.classList.toggle('active', s.dataset.lang===l));
+  }
+  langSeg.querySelectorAll('.seg').forEach(s=> s.addEventListener('click',()=>{
+    localStorage.setItem('eq_lang', s.dataset.lang); paintLang();
+  }));
+  paintLang();
+
+  /* ---- export/import progress ---- */
+  document.getElementById('export-progress-btn').addEventListener('click', function() {
+    const exportData = {};
+    // Collect all English Quest localStorage keys
+    const PREFIXES = ['u1_', 'eq_', 'level_'];
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (PREFIXES.some(p => key.startsWith(p))) {
+          exportData[key] = localStorage.getItem(key);
+        }
+      }
+      // Add metadata
+      let name = '';
+      try {
+        const d = JSON.parse(exportData['u1_dungeon'] || '{}');
+        name = d.name || 'Student';
+      } catch(e) { name = 'Student'; }
+      exportData['_exportedAt'] = new Date().toISOString();
+      exportData['_studentName'] = name;
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'english-quest-progress-' + name + '-' + new Date().toISOString().slice(0,10) + '.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch(e) { alert('Failed to export: ' + e.message); }
+  });
+
+  document.getElementById('import-progress-btn').addEventListener('click', function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const resultEl = document.getElementById('import-result');
+        try {
+          const data = JSON.parse(ev.target.result);
+          let count = 0;
+          for (const key in data) {
+            if (key.startsWith('_')) continue; // skip metadata
+            localStorage.setItem(key, data[key]);
+            count++;
+          }
+          resultEl.style.display = 'block';
+          resultEl.style.color = '#86efac';
+          resultEl.style.background = 'rgba(34,197,94,.15)';
+          resultEl.style.border = '1.5px solid rgba(34,197,94,.3)';
+          resultEl.textContent = '✅ Imported ' + count + ' items successfully! Refreshing page...';
+          setTimeout(() => location.reload(), 1500);
+        } catch(e) {
+          resultEl.style.display = 'block';
+          resultEl.style.color = '#fca5a5';
+          resultEl.style.background = 'rgba(239,68,68,.15)';
+          resultEl.style.border = '1.5px solid rgba(239,68,68,.3)';
+          resultEl.textContent = '❌ Failed to import: ' + e.message;
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  });
+  document.getElementById('reset-btn').addEventListener('click',()=>{
+    if(!confirm('Reset your progress on this phone? Your XP, badges and unit progress will be cleared. This cannot be undone.')) return;
+    ['u1_dungeon','eq_learn1_done','eq_hub_seen','eq_avatar'].forEach(k=>localStorage.removeItem(k));
+    alert('Your progress has been reset. Good luck on your next quest!');
+    location.href='./home.html';
+  });
+</script>
+</body>
+</html>

@@ -1,1 +1,37 @@
-{"name":"English Quest — AI Coach","short_name":"EQ AI Coach","description":"AI-powered speaking and writing practice for English Quest.","start_url":".","display":"standalone","background_color":"#1a0b2e","theme_color":"#1a0b2e","lang":"en","scope":".","icons":[{"src":"icon-192.png","sizes":"192x192","type":"image/png"},{"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
+{
+  "name": "English Quest — Outlook Common Core",
+  "short_name": "English Quest",
+  "description": "Learn English Unit by Unit: interactive lessons, dungeon battles, and smart practice. Outloook, Common Core, Morocco.",
+  "start_url": "./home.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a0b2e",
+  "theme_color": "#1a0b2e",
+  "categories": ["education", "games"],
+  "lang": "en",
+  "dir": "ltr",
+  "iarc_rating_id": "",
+  "screenshots": [],
+  "shortcuts": [
+    { "name": "Classroom", "short_name": "Class", "url": "./index.html" },
+    { "name": "Speaking Coach", "short_name": "Speak", "url": "./speaking.html" },
+    { "name": "Teacher Dashboard", "short_name": "Teacher", "url": "./teacher.html" },
+    { "name": "Level Check", "short_name": "Level", "url": "./level-check.html" },
+    { "name": "My Profile", "short_name": "Profile", "url": "./profile.html" }
+  ],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="My Profile">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+<script src="./eq-avatar.js"></script>
+<script src="./eq-music.js"></script>
+<script data-goatcounter="https://jalil.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(60% 40% at 20% 0%, rgba(124,58,237,.35), transparent 60%),
+      radial-gradient(50% 35% at 90% 15%, rgba(219,39,119,.22), transparent 60%),
+      linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color:#f0e9ff; min-height:100dvh; display:flex; justify-content:center;
+  }
+  #app { width:100%; max-width:520px; padding:0 16px 60px; }
+  .back { display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:#c4b5fd; font-weight:700; font-size:13px; padding:14px 2px 4px; }
+
+  .eq-title { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:24px; font-weight:800; margin:4px 2px 2px; }
+
+  .pcard { text-align:center; border-radius:24px; padding:22px 16px 18px; margin:12px 0 14px;
+    background:linear-gradient(160deg, rgba(99,102,241,.20), rgba(168,85,247,.14)); border:2px solid rgba(129,140,248,.4); }
+  .avatar-big { width:120px; height:120px; margin:0 auto; border-radius:50%; background:rgba(255,255,255,.10);
+    display:flex; align-items:center; justify-content:center; box-shadow:0 0 30px rgba(129,140,248,.35); }
+  .avatar-big svg { width:104px; height:104px; }
+  .codename { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:23px; font-weight:800; margin-top:12px; }
+  .rank { font-size:13px; color:#c4b5fd; font-weight:700; margin-top:3px; }
+
+  .stat-row { display:flex; gap:10px; margin:14px 0; }
+  .stat { flex:1; text-align:center; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.14); border-radius:16px; padding:12px 6px; }
+  .stat .v { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:24px; font-weight:800; color:#fbbf24; }
+  .stat .k { font-size:11px; font-weight:700; color:#c4b5fd; margin-top:2px; }
+
+  h2 { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:16px; font-weight:800; margin:20px 2px 10px; }
+
+  /* avatar editor */
+  .editor { background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.14); border-radius:18px; padding:14px; }
+  .erow { display:flex; align-items:center; gap:10px; margin:9px 0; }
+  .erow .el { font-size:13px; font-weight:800; min-width:76px; }
+  .estep { flex:1; display:flex; justify-content:center; gap:8px; }
+  .ebtn { width:40px; height:40px; border-radius:12px; border:1.5px solid rgba(255,255,255,.2); background:rgba(0,0,0,.25);
+    color:#fff; font-size:19px; font-weight:800; cursor:pointer; }
+  .ebtn:active { transform:scale(.94); }
+  .swatch { display:inline-block; width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,.5); vertical-align:middle; }
+  .ecur { min-width:44px; text-align:center; font-weight:800; font-size:13px; color:#c4b5fd; }
+
+  .badges { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .badge { display:flex; align-items:center; gap:11px; border-radius:16px; padding:12px; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.14); }
+  .badge.earned { border-color:rgba(251,191,36,.5); background:linear-gradient(160deg, rgba(251,191,36,.14), rgba(255,255,255,.04)); }
+  .badge .bi { font-size:28px; filter:grayscale(1) opacity(.4); }
+  .badge.earned .bi { filter:none; }
+  .badge .bt { font-size:12.5px; font-weight:800; line-height:1.25; }
+  .badge .bd { font-size:10.5px; color:#a99fc8; font-weight:600; margin-top:1px; }
+
+  .lb { border-radius:18px; overflow:hidden; border:1.5px solid rgba(255,255,255,.14); }
+  .lb-row { display:flex; align-items:center; gap:11px; padding:11px 13px; background:rgba(255,255,255,.04); border-top:1px solid rgba(255,255,255,.07); }
+  .lb-row:first-child { border-top:none; }
+  .lb-row.me { background:linear-gradient(160deg, rgba(251,191,36,.16), rgba(255,255,255,.03)); }
+  .lb-rank { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:15px; min-width:26px; color:#c4b5fd; }
+  .lb-face { width:34px; height:34px; display:flex; align-items:center; justify-content:center; }
+  .lb-name { font-size:13.5px; font-weight:800; flex:1; }
+  .lb-xp { font-size:13px; font-weight:800; color:#fbbf24; }
+
+  .note { font-size:11.5px; color:#9d8fc4; line-height:1.55; margin:10px 4px 0; }
+  footer { text-align:center; font-size:12px; color:#6b7280; margin-top:24px; line-height:1.7; }
+  /* stars handled by eq-theme.css */
+</style>
+</head>
+<body>
+<div id="app">
+  <a class="back" href="./home.html">‹ Home</a>
+  <div class="eq-title">My Profile</div>
+
+  <div class="pcard">
+    <div class="avatar-big" id="avatar-big"></div>
+    <div class="codename" id="codename">Guest</div>
+    <div class="rank" id="rank">Adventurer · Unit 1</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat"><div class="v" id="s-xp">0</div><div class="k">⭐ XP</div></div>
+    <div class="stat"><div class="v" id="s-badges">0</div><div class="k">🏅 Badges</div></div>
+    <div class="stat"><div class="v" id="s-steps">0/3</div><div class="k">🏁 Steps</div></div>
+  </div>
+
+  <h2>🎨 Customise your face</h2>
+  <div class="editor" id="editor">
+    <div class="erow"><span class="el">Skin</span>
+      <div class="estep"><button class="ebtn" data-part="s" data-d="-1">‹</button>
+      <span class="ecur"><span class="swatch" id="cur-s"></span></span>
+      <button class="ebtn" data-part="s" data-d="1">›</button></div></div>
+    <div class="erow"><span class="el">Eyes</span>
+      <div class="estep"><button class="ebtn" data-part="e" data-d="-1">‹</button>
+      <span class="ecur" id="cur-e">1</span><button class="ebtn" data-part="e" data-d="1">›</button></div></div>
+    <div class="erow"><span class="el">Hair</span>
+      <div class="estep"><button class="ebtn" data-part="h" data-d="-1">‹</button>
+      <span class="ecur" id="cur-h">1</span><button class="ebtn" data-part="h" data-d="1">›</button></div></div>
+    <div class="erow"><span class="el">Accessory</span>
+      <div class="estep"><button class="ebtn" data-part="a" data-d="-1">‹</button>
+      <span class="ecur" id="cur-a">None</span><button class="ebtn" data-part="a" data-d="1">›</button></div></div>
+    <div class="note">Faces are built from preset parts only — a safe, friendly avatar. Saved on this phone.</div>
+  </div>
+
+  <h2>🏅 Badges</h2>
+  <div class="badges" id="badges"></div>
+
+  <h2>🏆 Class leaderboard</h2>
+  <div class="lb" id="lb"></div>
+  <div class="note">Codenames and avatars only — no real names or photos are ever shown here. Sample classmates keep it fun while your class fills up.</div>
+
+  <footer>English Quest · Made by your teacher, Mr. Fakrani 🇲🇦</footer>
+</div>
+
+<nav class="eq-nav" aria-label="Main navigation">
+  <div class="eq-nav-inner">
+    <a class="eq-nav-item" href="./home.html"><span class="ni-icon">🏠</span>Home</a>
+    <a class="eq-nav-item" href="./index.html"><span class="ni-icon">🏫</span>Class</a>
+    <a class="eq-nav-item" href="./speaking.html"><span class="ni-icon">🎙️</span>Speak</a>
+    <a class="eq-nav-item active" href="./profile.html"><span class="ni-icon">🧑‍🚀</span>Profile</a>
+  </div>
+</nav>
+
+<script>
+  function dungeonData(){ try { return JSON.parse(localStorage.getItem('u1_dungeon')||'{}'); } catch(e){ return {}; } }
+  const p = dungeonData();
+  const xp = p.totalXP || 0;
+  const name = p.name || 'Guest';
+
+  const LESSON_IDS = ["functions","verbbe","plurals","vocab","listening","reading","writing"];
+  const lessonDone = localStorage.getItem('eq_learn1_done') === 'true';
+  const practiceDone = LESSON_IDS.every(id => p.lessons && p.lessons[id]);
+  const dragonDone = !!p.finalBeaten;
+  const steps = [lessonDone, practiceDone, dragonDone].filter(Boolean).length;
+
+  document.getElementById('codename').textContent = name;
+  document.getElementById('s-xp').textContent = xp;
+  document.getElementById('s-steps').textContent = steps + '/3';
+
+  /* ---------- avatar editor ---------- */
+  const DEF = { s:1, e:0, h:1, a:0 };
+  let cfg = (window.EQAvatar && EQAvatar.get()) || Object.assign({}, DEF);
+  const ACC_NAMES = ['None','Glasses','Cap','Star'];
+  const MAX = { s: (EQAvatar.SKINS.length), e: EQAvatar.PARTS.eyes, h: EQAvatar.PARTS.hair, a: EQAvatar.PARTS.acc };
+  function renderAvatar(){
+    document.getElementById('avatar-big').innerHTML = EQAvatar.svg(cfg, 104);
+    document.getElementById('cur-s').style.background = EQAvatar.SKINS[cfg.s];
+    document.getElementById('cur-e').textContent = (cfg.e+1);
+    document.getElementById('cur-h').textContent = cfg.h===0 ? 'None' : cfg.h;
+    document.getElementById('cur-a').textContent = ACC_NAMES[cfg.a] || 'None';
+  }
+  document.querySelectorAll('.ebtn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const part=b.dataset.part, d=parseInt(b.dataset.d,10);
+      cfg[part] = (cfg[part] + d + MAX[part]) % MAX[part];
+      EQAvatar.set(cfg); renderAvatar();
+    });
+  });
+  renderAvatar();
+
+  /* ---------- badges ---------- */
+  const BADGES = [
+    { i:'📖', t:'First Lesson', d:'Finish Learn the Lesson', earned: lessonDone },
+    { i:'✏️', t:'Practice Pro', d:'Complete all practice', earned: practiceDone },
+    { i:'🐉', t:'Dragon Slayer', d:'Beat the Fire Dragon', earned: dragonDone },
+    { i:'⭐', t:'Rising Star', d:'Earn 100 XP', earned: xp>=100 },
+    { i:'🌟', t:'XP Champion', d:'Earn 300 XP', earned: xp>=300 },
+    { i:'🏆', t:'Unit 1 Hero', d:'Finish all of Unit 1', earned: steps===3 },
+  ];
+  const be = document.getElementById('badges');
+  BADGES.forEach(b=>{
+    const el=document.createElement('div'); el.className='badge'+(b.earned?' earned':'');
+    el.innerHTML='<span class="bi">'+b.i+'</span><span><span class="bt">'+b.t+'</span><br><span class="bd">'+b.d+'</span></span>';
+    be.appendChild(el);
+  });
+  const earnedCount = BADGES.filter(b=>b.earned).length;
+  document.getElementById('s-badges').textContent = earnedCount;
+
+  /* ---------- leaderboard (sample classmates, codenames only) ---------- */
+  const SAMPLE = [
+    { n:'DragonHeart', xp:420, av:{s:2,e:1,h:4,a:3} },
+    { n:'StarWizard',  xp:360, av:{s:0,e:2,h:2,a:1} },
+    { n:'QuestKnight', xp:290, av:{s:3,e:0,h:1,a:2} },
+    { n:'BraveFox',    xp:210, av:{s:1,e:3,h:3,a:0} },
+    { n:'SwiftOwl',    xp:150, av:{s:4,e:1,h:0,a:3} },
+  ];
+  const me = { n:name, xp:xp, av:cfg, me:true };
+  const rows = SAMPLE.concat([me]).sort((a,b)=> b.xp - a.xp);
+  const lb = document.getElementById('lb');
+  rows.forEach((r,i)=>{
+    const div=document.createElement('div'); div.className='lb-row'+(r.me?' me':'');
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+    div.innerHTML='<span class="lb-rank">'+medal+'</span>'+
+      '<span class="lb-face">'+EQAvatar.svg(r.av,32)+'</span>'+
+      '<span class="lb-name">'+r.n+(r.me?' (you)':'')+'</span>'+
+      '<span class="lb-xp">'+r.xp+' XP</span>';
+    lb.appendChild(div);
+    if(r.me){ document.getElementById('rank').textContent = 'Rank #'+(i+1)+' in your class · Unit 1'; }
+  });
+
+  /* stars */
+  for (let i=0;i<14;i++){ const s=document.createElement('span'); s.className='eq-star'; s.textContent='✦';
+    s.style.left=Math.random()*100+'vw'; s.style.top=Math.random()*100+'vh'; s.style.animationDelay=(Math.random()*3)+'s';
+    document.body.appendChild(s); }
+</script>
+</body>
+</html>

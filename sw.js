@@ -1,1 +1,81 @@
-if(!self.define){let e,i={};const n=(n,s)=>(n=new URL(n+".js",s).href,i[n]||new Promise(i=>{if("document"in self){const e=document.createElement("script");e.src=n,e.onload=i,document.head.appendChild(e)}else e=n,importScripts(n),i()}).then(()=>{let e=i[n];if(!e)throw new Error(`Module ${n} didn’t register its module`);return e}));self.define=(s,r)=>{const o=e||("document"in self?document.currentScript.src:"")||location.href;if(i[o])return;let t={};const c=e=>n(e,o),f={module:{uri:o},exports:t,require:c};i[o]=Promise.all(s.map(e=>f[e]||c(e))).then(e=>(r(...e),t))}}define(["./workbox-9c191d2f"],function(e){"use strict";self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"registerSW.js",revision:"1872c500de691dce40960bb85481de07"},{url:"index.html",revision:"b0a1ca08fcc70fa159303bd283ec48a8"},{url:"assets/index-oUmOyIkR.js",revision:null},{url:"assets/index-BizB_YPK.css",revision:null},{url:"icon-192.png",revision:"6805dd8cf0cad7370e0df4bf16df0fd2"},{url:"icon-512.png",revision:"b841f874599f4836690f6719ea27ceeb"},{url:"manifest.webmanifest",revision:"b23f7be80447e70a1999bcf486445fb6"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))});
+/* =====================================================================
+   English Quest Service Worker v1 — offline PWA support
+   Cache-first for app assets, network-first for fonts & analytics.
+   ===================================================================== */
+const CACHE_NAME = 'eq-v1';
+const PRECACHE_URLS = [
+  './home.html',
+  './index.html',
+  './unit1-learn.html',
+  './unit1-practice.html',
+  './unit1-dungeon.html',
+  './unit1-lesson.html',
+  './unit1-boss-battle.html',
+  './teacher.html',
+  './speaking.html',
+  './profile.html',
+  './settings.html',
+  './level-check.html',
+  './community.html',
+  './tutoring.html',
+  './eq-voice.js',
+  './eq-calm.js',
+  './eq-avatar.js',
+  './icon-192.png',
+  './icon-512.png',
+  './manifest.webmanifest'
+];
+
+/* ========== INSTALL ========== */
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(PRECACHE_URLS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+/* ========== ACTIVATE ========== */
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+/* ========== FETCH ========== */
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  // Google Fonts / GoatCounter — network-first with cache fallback
+  if (url.hostname.includes('googleapis') || url.hostname.includes('gstatic') || url.hostname.includes('goatcounter') || url.hostname.includes('gc.zgo')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // All other requests — cache-first
+  event.respondWith(
+    caches.match(event.request)
+      .then(cached => {
+        const fetchPromise = fetch(event.request)
+          .then(response => {
+            if (response && response.ok) {
+              const copy = response.clone();
+              caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+            }
+            return response;
+          })
+          .catch(() => cached);
+        return cached || fetchPromise;
+      })
+  );
+});
