@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="2">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Coach — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="AI Coach">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<script src="./eq-music.js"></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+  }
+</script>
+<style>
+* {margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body {font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:radial-gradient(60% 40% at 20% 0%,rgba(124,58,237,.35),transparent 60%),
+    radial-gradient(50% 35% at 90% 15%,rgba(219,39,119,.22),transparent 60%),
+    linear-gradient(180deg,#1a0b2e 0%,#2d1b4e 60%,#1a0b2e 100%);
+  color:#f0e9ff; min-height:100dvh; display:flex; justify-content:center;}
+#app {width:100%;max-width:560px;padding:0 16px 70px;}
+.back {display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#c4b5fd;font-weight:700;font-size:13px;padding:14px 2px 4px;}
+.eq-title {font-family:'Bricolage Grotesque','Segoe UI',sans-serif;font-size:25px;font-weight:800;margin:4px 2px 2px;}
+.eq-sub {font-size:12.5px;color:#a78bfa;font-weight:700;margin:2px 2px 14px;}
+
+.tabs {display:flex;gap:8px;margin:8px 0 16px;}
+.tab {flex:1;font-family:inherit;font-weight:800;font-size:14px;padding:12px;border-radius:14px;cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#c4b5fd;transition:all .1s;}
+.tab.active {background:linear-gradient(90deg,#7c3aed,#db2777);color:#fff;border-color:transparent;box-shadow:0 4px 0 #4a044e;}
+
+.panel {display:none;} .panel.active {display:block;}
+
+.card {background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.13);border-radius:18px;padding:16px;margin:12px 0;}
+.label {font-size:12px;font-weight:800;color:#fbbf24;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+.prompt-text {font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;line-height:1.4;color:#fde68a;}
+.small {font-size:12px;color:#a78bfa;font-weight:600;}
+
+.btn {display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;font-weight:800;font-size:16px;
+  padding:14px 26px;border-radius:999px;border:none;cursor:pointer;transition:transform .08s;color:#fff;width:100%;}
+.btn:active {transform:scale(.97);}
+.btn.rec {background:linear-gradient(90deg,#ef4444,#db2777);box-shadow:0 5px 0 #7f1d1d;}
+.btn.stop {background:linear-gradient(90deg,#f59e0b,#d97706);box-shadow:0 5px 0 #7c2d12;}
+.btn.go {background:linear-gradient(90deg,#059669,#10b981);box-shadow:0 5px 0 #064e3b;}
+.btn.ghost {background:rgba(255,255,255,.08);box-shadow:0 4px 0 rgba(0,0,0,.3);}
+.btn[disabled] {opacity:.5;pointer-events:none;}
+.btn-row {display:flex;gap:10px;margin-top:8px;}
+.btn-row .btn {width:auto;flex:1;}
+
+textarea {width:100%;min-height:150px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);
+  border-radius:14px;color:#fff;font-family:inherit;font-size:15px;font-weight:500;line-height:1.5;padding:12px 14px;resize:vertical;}
+textarea:focus {outline:none;border-color:#7c3aed;}
+.count {text-align:right;font-size:11px;color:#a78bfa;font-weight:700;margin-top:4px;}
+input.line {width:100%;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);border-radius:12px;
+  color:#fff;font-family:inherit;font-size:14px;font-weight:600;padding:10px 14px;margin-top:6px;}
+input.line:focus {outline:none;border-color:#7c3aed;}
+
+.rec-live {display:none;align-items:center;justify-content:center;gap:10px;margin:12px 0;font-size:14px;font-weight:800;color:#fca5a5;}
+.rec-live.show {display:flex;}
+.rec-dot {width:12px;height:12px;border-radius:50%;background:#ef4444;animation:pulse 1s ease infinite;}
+@keyframes pulse {0%,100%{opacity:1;} 50%{opacity:.3;}}
+
+.loading {display:none;text-align:center;padding:24px 10px;} .loading.show {display:block;}
+.spinner {width:38px;height:38px;border:4px solid rgba(255,255,255,.15);border-top-color:#a855f7;border-radius:50%;
+  margin:0 auto 12px;animation:spin 1s linear infinite;}
+@keyframes spin {to{transform:rotate(360deg);}}
+.loading-text {font-size:13px;font-weight:700;color:#c4b5fd;}
+
+.fb {display:none;} .fb.show {display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn {from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:none;}}
+.cefr {display:inline-flex;align-items:center;gap:8px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+  font-size:15px;background:linear-gradient(90deg,#7c3aed,#db2777);color:#fff;border-radius:999px;padding:6px 16px;}
+.fb h3 {font-family:'Bricolage Grotesque',sans-serif;font-size:14px;font-weight:800;color:#fbbf24;margin:16px 0 6px;
+  text-transform:uppercase;letter-spacing:.4px;}
+.fb p {font-size:14px;line-height:1.55;color:#ede9fe;}
+.transcript {font-style:italic;color:#c4b5fd;font-size:14px;line-height:1.5;
+  border-left:3px solid #7c3aed;padding-left:12px;margin:6px 0;}
+.chips {display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;}
+.gchip {font-size:13px;font-weight:700;background:rgba(34,197,94,.16);color:#86efac;border-radius:8px;padding:5px 10px;}
+.issue {background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 13px;margin:7px 0;}
+.issue .cat {font-size:10.5px;font-weight:900;letter-spacing:.5px;text-transform:uppercase;color:#fca5a5;}
+.issue .ex {font-size:14px;font-weight:700;margin:3px 0;}
+.issue .ex del {color:#fca5a5;} .issue .ex ins {color:#86efac;text-decoration:none;}
+.issue .why {font-size:12.5px;color:#c4b5fd;line-height:1.5;margin-top:3px;}
+.corrected {background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:12px;padding:12px;font-size:14px;line-height:1.55;color:#d1fae5;}
+.followup {background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.28);border-radius:12px;padding:12px;font-size:14px;font-weight:700;color:#fde68a;}
+ol.steps {margin:4px 0 0 18px;} ol.steps li {font-size:13.5px;line-height:1.6;color:#ede9fe;margin:3px 0;}
+details {margin-top:12px;} summary {cursor:pointer;font-size:12.5px;font-weight:700;color:#a78bfa;}
+details p {font-size:12.5px;color:#c4b5fd;margin-top:6px;line-height:1.55;}
+.err-box {display:none;background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3);border-radius:12px;padding:12px;margin:10px 0;font-size:13px;font-weight:600;color:#fca5a5;}
+.err-box.show {display:block;}
+</style>
+</head>
+<body>
+<div id="app">
+  <a class="back" href="./home.html">← Back to Quest</a>
+  <div class="eq-title">🤖 AI Coach</div>
+  <div class="eq-sub">Real AI feedback on your speaking & writing · CEFR A1–C2</div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-speaking">🎙️ Speaking</button>
+    <button class="tab" id="tab-writing">✍️ Writing</button>
+  </div>
+
+  <!-- ===================== SPEAKING PANEL ===================== -->
+  <div class="panel active" id="panel-speaking">
+    <div class="card">
+      <div class="label">Speaking prompt</div>
+      <div class="prompt-text" id="sp-prompt">Loading…</div>
+      <div class="btn-row">
+        <button class="btn ghost" id="sp-new" style="flex:.6;">🔀 New</button>
+        <button class="btn ghost" id="sp-hear" style="flex:.6;">🔊 Hear it</button>
+      </div>
+    </div>
+
+    <button class="btn rec" id="sp-record">🎤 Start Recording</button>
+    <div class="rec-live" id="sp-live"><span class="rec-dot"></span> Recording… tap Stop when done</div>
+
+    <div class="loading" id="sp-loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Listening and thinking… this takes a few seconds.</div>
+    </div>
+    <div class="err-box" id="sp-err"></div>
+
+    <div class="fb" id="sp-fb">
+      <div class="card">
+        <span class="cefr" id="sp-cefr">B1</span>
+        <h3>What I heard</h3>
+        <div class="transcript" id="sp-transcript"></div>
+        <h3>Coach's comment</h3>
+        <p id="sp-comment"></p>
+        <div id="sp-strengths-wrap"><h3>What you did well</h3><div class="chips" id="sp-strengths"></div></div>
+        <div id="sp-issues-wrap"><h3>Things to work on</h3><div id="sp-issues"></div></div>
+        <h3>A stronger version</h3>
+        <div class="corrected" id="sp-model"></div>
+        <h3>Keep going 💬</h3>
+        <div class="followup" id="sp-followup"></div>
+        <details><summary>How this was assessed</summary><p id="sp-breakdown"></p></details>
+      </div>
+      <button class="btn go" id="sp-again">🎤 Try Another</button>
+    </div>
+  </div>
+
+  <!-- ===================== WRITING PANEL ===================== -->
+  <div class="panel" id="panel-writing">
+    <div class="card">
+      <div class="label">Writing prompt (optional — you can change it)</div>
+      <input class="line" id="wr-prompt" type="text" value="Write about something you did last weekend.">
+      <div class="label" style="margin-top:14px;">Your answer</div>
+      <textarea id="wr-text" placeholder="Write your answer in English here…"></textarea>
+      <div class="count"><span id="wr-count">0</span> / 4000</div>
+    </div>
+    <button class="btn go" id="wr-submit">✨ Get AI Feedback</button>
+
+    <div class="loading" id="wr-loading">
+      <div class="spinner"></div>
+      <div class="loading-text">Reading your writing carefully… a few seconds.</div>
+    </div>
+    <div class="err-box" id="wr-err"></div>
+
+    <div class="fb" id="wr-fb">
+      <div class="card">
+        <span class="cefr" id="wr-cefr">B1</span>
+        <h3>Coach's comment</h3>
+        <p id="wr-comment"></p>
+        <div id="wr-strengths-wrap"><h3>What you did well</h3><div class="chips" id="wr-strengths"></div></div>
+        <div id="wr-errors-wrap"><h3>Corrections</h3><div id="wr-errors"></div></div>
+        <h3>Your corrected text</h3>
+        <div class="corrected" id="wr-corrected"></div>
+        <h3>Next steps</h3>
+        <ol class="steps" id="wr-steps"></ol>
+        <details><summary>How this was assessed</summary><p id="wr-breakdown"></p></details>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  'use strict';
+
+  /* The free Cloudflare Worker "brain" that runs the AI. */
+  var API = 'https://english-quest-ai.english-quest-fakrani.workers.dev';
+
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function show(el,on){ if(el) el.classList[on?'add':'remove']('show'); }
+  function setCefr(el,l){ el.textContent = 'CEFR: ' + (l || '—'); }
+
+  /* ---------- Tabs ---------- */
+  function switchTab(which){
+    var isSpk = which === 'speaking';
+    $('tab-speaking').classList.toggle('active', isSpk);
+    $('tab-writing').classList.toggle('active', !isSpk);
+    $('panel-speaking').classList.toggle('active', isSpk);
+    $('panel-writing').classList.toggle('active', !isSpk);
+  }
+  $('tab-speaking').addEventListener('click', function(){ switchTab('speaking'); });
+  $('tab-writing').addEventListener('click', function(){ switchTab('writing'); });
+
+  /* ---------- Shared feedback renderers ---------- */
+  function renderStrengths(container, wrap, arr){
+    if(!arr || !arr.length){ wrap.style.display='none'; return; }
+    wrap.style.display='block';
+    container.innerHTML = arr.map(function(s){ return '<span class="gchip">✓ '+esc(s)+'</span>'; }).join('');
+  }
+  function friendlyError(msg){
+    return msg || "Something went wrong reaching the AI. Please check your internet and try again.";
+  }
+
+  /* ================= SPEAKING ================= */
+  var PROMPTS = [
+    "Introduce yourself: your name, your age, and where you are from.",
+    "Describe your best friend. What do they look like and what are they like?",
+    "Talk about your daily routine on a school day.",
+    "What is your favourite subject at school, and why?",
+    "Describe your family. How many people are there and who are they?",
+    "Talk about what you like to do in your free time.",
+    "Describe your town or city. What can people do there?",
+    "What did you do last weekend? Tell the story.",
+    "Talk about a dream job you would like in the future and why.",
+    "Describe your favourite meal and how it is made."
+  ];
+  var spPrompt = '';
+  function newPrompt(){
+    spPrompt = PROMPTS[Math.floor(Math.random()*PROMPTS.length)];
+    $('sp-prompt').textContent = spPrompt;
+    show($('sp-fb'), false);
+    show($('sp-err'), false);
+  }
+  $('sp-new').addEventListener('click', newPrompt);
+  $('sp-hear').addEventListener('click', function(){
+    try { window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(spPrompt); u.lang='en-GB'; u.rate=0.9;
+      window.speechSynthesis.speak(u);
+    } catch(e){}
+  });
+
+  /* --- Audio recording + WAV encoding (Gemini needs WAV) --- */
+  var mediaRecorder=null, chunks=[], micStream=null, recording=false;
+
+  function encodeWav(audioBuffer, targetRate){
+    var srcRate = audioBuffer.sampleRate;
+    var ch0 = audioBuffer.getChannelData(0);
+    // Downmix any extra channels into channel 0.
+    if (audioBuffer.numberOfChannels > 1){
+      var tmp = new Float32Array(ch0.length);
+      for (var c=0;c<audioBuffer.numberOfChannels;c++){
+        var d = audioBuffer.getChannelData(c);
+        for (var i=0;i<d.length;i++) tmp[i]+=d[i]/audioBuffer.numberOfChannels;
+      }
+      ch0 = tmp;
+    }
+    // Resample (simple linear) to targetRate mono.
+    var ratio = srcRate/targetRate;
+    var outLen = Math.floor(ch0.length/ratio);
+    var out = new Float32Array(outLen);
+    for (var j=0;j<outLen;j++){
+      var pos = j*ratio, i0 = Math.floor(pos), i1 = Math.min(i0+1, ch0.length-1);
+      var frac = pos-i0;
+      out[j] = ch0[i0]*(1-frac) + ch0[i1]*frac;
+    }
+    // 16-bit PCM WAV.
+    var buf = new ArrayBuffer(44 + out.length*2);
+    var view = new DataView(buf);
+    function ws(off,str){ for(var k=0;k<str.length;k++) view.setUint8(off+k, str.charCodeAt(k)); }
+    ws(0,'RIFF'); view.setUint32(4, 36+out.length*2, true); ws(8,'WAVE');
+    ws(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,1,true);
+    view.setUint32(24,targetRate,true); view.setUint32(28,targetRate*2,true); view.setUint16(32,2,true); view.setUint16(34,16,true);
+    ws(36,'data'); view.setUint32(40, out.length*2, true);
+    var off=44;
+    for (var m=0;m<out.length;m++){ var s=Math.max(-1,Math.min(1,out[m])); view.setInt16(off, s<0?s*0x8000:s*0x7FFF, true); off+=2; }
+    return new Blob([view], {type:'audio/wav'});
+  }
+
+  async function startRecording(){
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({audio:true});
+    } catch(e){
+      $('sp-err').textContent = "I couldn't reach your microphone. Please allow mic access in your browser and try again.";
+      show($('sp-err'), true); return;
+    }
+    chunks = [];
+    var mime = '';
+    if (window.MediaRecorder){
+      if (MediaRecorder.isTypeSupported('audio/webm')) mime='audio/webm';
+      else if (MediaRecorder.isTypeSupported('audio/mp4')) mime='audio/mp4';
+    }
+    mediaRecorder = mime ? new MediaRecorder(micStream,{mimeType:mime}) : new MediaRecorder(micStream);
+    mediaRecorder.ondataavailable = function(e){ if(e.data && e.data.size) chunks.push(e.data); };
+    mediaRecorder.onstop = onRecStop;
+    mediaRecorder.start();
+    recording = true;
+    show($('sp-live'), true);
+    show($('sp-err'), false);
+    show($('sp-fb'), false);
+    var b=$('sp-record'); b.textContent='⏹ Stop Recording'; b.classList.remove('rec'); b.classList.add('stop');
+  }
+
+  function stopRecording(){
+    if (mediaRecorder && recording){ recording=false; mediaRecorder.stop();
+      if (micStream) micStream.getTracks().forEach(function(t){ t.stop(); }); }
+    show($('sp-live'), false);
+    var b=$('sp-record'); b.textContent='🎤 Start Recording'; b.classList.remove('stop'); b.classList.add('rec');
+  }
+
+  async function onRecStop(){
+    show($('sp-loading'), true);
+    try {
+      var raw = new Blob(chunks, {type: (chunks[0] && chunks[0].type) || 'audio/webm'});
+      var arr = await raw.arrayBuffer();
+      var AC = window.AudioContext || window.webkitAudioContext;
+      var ac = new AC();
+      var audioBuf = await ac.decodeAudioData(arr);
+      ac.close();
+      if (audioBuf.duration < 0.4){
+        show($('sp-loading'), false);
+        $('sp-err').textContent = "That was very short — tap record and speak a full sentence or two.";
+        show($('sp-err'), true); return;
+      }
+      var wav = encodeWav(audioBuf, 16000);
+      var form = new FormData();
+      form.append('audio', wav, 'recording.wav');
+      form.append('promptText', spPrompt);
+      form.append('targetLevel', 'A2');
+      var resp = await fetch(API + '/speaking/assess', { method:'POST', body:form });
+      var data = await resp.json();
+      show($('sp-loading'), false);
+      handleSpeakingResult(data);
+    } catch(e){
+      show($('sp-loading'), false);
+      $('sp-err').textContent = friendlyError("I couldn't process that recording. Please try again in a quiet spot.");
+      show($('sp-err'), true);
+    }
+  }
+
+  function handleSpeakingResult(data){
+    if (!data || data.status==='error'){
+      $('sp-err').textContent = friendlyError(data && data.message); show($('sp-err'), true); return;
+    }
+    if (data.status==='blocked'){
+      $('sp-err').textContent = data.message; show($('sp-err'), true); return;
+    }
+    var f = data.feedback;
+    setCefr($('sp-cefr'), f.cefrEstimate);
+    $('sp-transcript').textContent = '“' + (f.transcript||'') + '”';
+    $('sp-comment').textContent = f.overallComment||'';
+    renderStrengths($('sp-strengths'), $('sp-strengths-wrap'), f.strengths);
+    var iw = $('sp-issues-wrap');
+    if (!f.issues || !f.issues.length){ iw.style.display='none'; }
+    else { iw.style.display='block';
+      $('sp-issues').innerHTML = f.issues.map(function(it){
+        return '<div class="issue"><div class="cat">'+esc(it.category)+'</div>'+
+          '<div class="ex">“'+esc(it.excerpt)+'” → <ins>'+esc(it.suggestion)+'</ins></div>'+
+          '<div class="why">'+esc(it.explanation)+'</div></div>';
+      }).join('');
+    }
+    $('sp-model').textContent = f.correctedModelAnswer||'';
+    $('sp-followup').textContent = f.followUpQuestion||'';
+    $('sp-breakdown').textContent = f.assessmentBreakdown||'';
+    show($('sp-fb'), true);
+    if (window.EQXP && EQXP.add) { try { EQXP.add(15, 'AI Speaking'); } catch(e){} }
+  }
+
+  $('sp-record').addEventListener('click', function(){ recording ? stopRecording() : startRecording(); });
+  $('sp-again').addEventListener('click', function(){ show($('sp-fb'), false); newPrompt(); window.scrollTo({top:0,behavior:'smooth'}); });
+  newPrompt();
+
+  /* ================= WRITING ================= */
+  var wrText = $('wr-text');
+  wrText.addEventListener('input', function(){ $('wr-count').textContent = wrText.value.length; });
+
+  $('wr-submit').addEventListener('click', async function(){
+    var text = wrText.value.trim();
+    show($('wr-err'), false); show($('wr-fb'), false);
+    if (text.length < 5){ $('wr-err').textContent = "Please write a bit more first (at least a sentence)."; show($('wr-err'), true); return; }
+    if (text.length > 4000){ $('wr-err').textContent = "That's a little too long — please keep it under 4000 characters."; show($('wr-err'), true); return; }
+    show($('wr-loading'), true);
+    try {
+      var resp = await fetch(API + '/writing/feedback', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ text:text, prompt:$('wr-prompt').value.trim() || undefined, targetLevel:'A2' })
+      });
+      var data = await resp.json();
+      show($('wr-loading'), false);
+      handleWritingResult(data);
+    } catch(e){
+      show($('wr-loading'), false);
+      $('wr-err').textContent = friendlyError(); show($('wr-err'), true);
+    }
+  });
+
+  function handleWritingResult(data){
+    if (!data || data.status==='error'){ $('wr-err').textContent = friendlyError(data && data.message); show($('wr-err'), true); return; }
+    if (data.status==='blocked'){ $('wr-err').textContent = data.message; show($('wr-err'), true); return; }
+    var f = data.feedback;
+    setCefr($('wr-cefr'), f.cefrEstimate);
+    $('wr-comment').textContent = f.overallComment||'';
+    renderStrengths($('wr-strengths'), $('wr-strengths-wrap'), f.strengths);
+    var ew = $('wr-errors-wrap');
+    if (!f.errors || !f.errors.length){ ew.style.display='none'; }
+    else { ew.style.display='block';
+      $('wr-errors').innerHTML = f.errors.map(function(er){
+        return '<div class="issue"><div class="cat">'+esc(er.category)+'</div>'+
+          '<div class="ex"><del>'+esc(er.original)+'</del> → <ins>'+esc(er.correction)+'</ins></div>'+
+          '<div class="why">'+esc(er.explanation)+'</div></div>';
+      }).join('');
+    }
+    $('wr-corrected').textContent = f.correctedText||'';
+    $('wr-steps').innerHTML = (f.nextSteps||[]).map(function(s){ return '<li>'+esc(s)+'</li>'; }).join('');
+    $('wr-breakdown').textContent = f.assessmentBreakdown||'';
+    show($('wr-fb'), true);
+    if (window.EQXP && EQXP.add) { try { EQXP.add(15, 'AI Writing'); } catch(e){} }
+  }
+
+})();
+</script>
+</body>
+</html>

@@ -26,6 +26,10 @@
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
+    /* Auto-reload when a new service worker takes over (kills stale cache) */
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
   }
 </script>
 <script data-goatcounter="https://jalil.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
@@ -95,6 +99,7 @@
   .sidequest { --tile-bg:linear-gradient(160deg,#06b6d4,#0e7490); --tile-border:rgba(34,211,238,.3); }
   .settings { --tile-bg:linear-gradient(160deg,#64748b,#475569); --tile-border:rgba(148,163,184,.3); }
   .help { --tile-bg:linear-gradient(160deg,#ec4899,#be185d); --tile-border:rgba(244,114,182,.3); }
+  .aicoach { --tile-bg:linear-gradient(160deg,#8b5cf6,#ec4899); --tile-border:rgba(236,72,153,.4); }
 
   .t-icon { font-size:36px; line-height:1; filter:drop-shadow(0 2px 8px rgba(0,0,0,.25));
     position:relative; z-index:1; }
@@ -139,6 +144,15 @@
       <div class="t-icon">🎯</div>
       <div class="t-name">Level Check</div>
       <div class="t-desc">Free CEFR test · A1–C2</div>
+    </a>
+
+    <a class="tile aicoach wide" href="./ai-coach.html">
+      <div class="t-icon">🤖</div>
+      <div>
+        <div class="t-name">AI Coach</div>
+        <div class="t-desc">Speak or write — get instant AI feedback on your English, with CEFR level & corrections.</div>
+      </div>
+      <div class="t-badge">NEW</div>
     </a>
 
     <a class="tile profile" href="./profile.html">
