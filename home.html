@@ -18,6 +18,8 @@
 <script src="./eq-calm.js" defer></script>
 <script src="./eq-avatar.js"></script>
 <script src="./eq-music.js"></script>
+<script src="./eq-streak.js"></script>
+<script src="./eq-xp-log.js"></script>
 <script defer>
   /* Register service worker for offline PWA support */
   if ('serviceWorker' in navigator) {
@@ -122,6 +124,7 @@
   </header>
 
   <div id="hud"></div>
+  <div id="eq-streak-container"></div>
 
   <div class="greeting" id="greeting">Welcome, adventurer! <small>Choose where your quest takes you today.</small></div>
 
@@ -143,10 +146,10 @@
       <div class="t-name">My Profile</div>
       <div class="t-desc">Avatar, XP & badges</div>
     </a>
-    <a class="tile community" href="./community.html">
-      <div class="t-icon">🎉</div>
-      <div class="t-name">Community</div>
-      <div class="t-desc">Class wins & achievements</div>
+    <a class="tile community" href="./progress.html">
+      <div class="t-icon">📊</div>
+      <div class="t-name">Progress</div>
+      <div class="t-desc">XP chart & streaks</div>
     </a>
 
     <a class="tile train wide" href="./tutoring.html">
@@ -210,6 +213,12 @@
   chips.push(face + '<span>' + (p.name || 'Guest') + '</span>');
   chips.push('<span class="gold-inner">⭐ ' + (p.totalXP || 0) + ' XP</span>');
   hud.innerHTML = chips.map((c,i)=> '<span class="chip'+(i===1?' gold':'')+'">'+c+'</span>').join('');
+
+  /* Streak badge */
+  if (window.EQStreak) {
+    const streakContainer = document.getElementById('eq-streak-container');
+    if (streakContainer) EQStreak.renderBadge(streakContainer);
+  }
 
   /* time-based greeting by name */
   const hr = new Date().getHours();

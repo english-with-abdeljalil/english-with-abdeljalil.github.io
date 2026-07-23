@@ -80,8 +80,17 @@
       <span class="rt"><b>Sound effects</b><small>Taps, correct/wrong and victory sounds.</small></span>
       <button class="switch" data-key="eq_sfx" data-def="on"></button></div>
     <div class="row"><span class="ri">🎵</span>
-      <span class="rt"><b>Background music</b><small>Gentle music in the home, classroom and dungeon.</small></span>
+      <span class="rt"><b>Background music</b><small>Lo-fi beats, chill study & night owl tracks.</small></span>
       <button class="switch" data-key="eq_music" data-def="on"></button></div>
+    <div class="row" id="music-controls" style="display:none"><span class="ri">🎛️</span>
+      <span class="rt"><b>Track</b><small id="eq-track-name">Chill Study</small></span>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="seg" id="music-prev">◀</button>
+        <button class="seg" id="music-next">▶</button>
+      </div></div>
+    <div class="row" id="music-volume" style="display:none"><span class="ri">🔊</span>
+      <span class="rt"><b>Volume</b></span>
+      <input type="range" id="music-vol" min="0" max="1" step="0.05" value="0.35" style="width:100px;accent-color:#fbbf24"></div>
   </div>
 
   <h2>Comfort</h2>
@@ -156,6 +165,37 @@
       }
     });
   });
+
+  /* ---- music track/volume controls ---- */
+  (function() {
+    const musicOn = localStorage.getItem('eq_music') !== 'off';
+    const controls = document.getElementById('music-controls');
+    const volRow = document.getElementById('music-volume');
+    const nameEl = document.getElementById('eq-track-name');
+    const volSlider = document.getElementById('music-vol');
+    if (musicOn) { controls.style.display = ''; volRow.style.display = ''; }
+
+    function updateTrackName() {
+      if (window.EQMusic && nameEl) nameEl.textContent = EQMusic.getTrack().name;
+    }
+    updateTrackName();
+
+    document.getElementById('music-prev').addEventListener('click', () => {
+      if (window.EQMusic) { EQMusic.prevTrack(); updateTrackName(); }
+    });
+    document.getElementById('music-next').addEventListener('click', () => {
+      if (window.EQMusic) { EQMusic.nextTrack(); updateTrackName(); }
+    });
+    volSlider.addEventListener('input', () => {
+      if (window.EQMusic) EQMusic.setVolume(parseFloat(volSlider.value));
+    });
+    // Also show/hide controls when music is toggled
+    document.querySelector('.switch[data-key="eq_music"]').addEventListener('click', function() {
+      const on = this.classList.contains('on');
+      controls.style.display = on ? '' : 'none';
+      volRow.style.display = on ? '' : 'none';
+    });
+  })();
 
   /* ---- calm mode: shares the eq_calm key used app-wide by eq-calm.js ---- */
   const calmSw = document.getElementById('calm-switch');

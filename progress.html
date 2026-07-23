@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" data-appv="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Progress — English Quest</title>
+<meta name="theme-color" content="#1a0b2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="English Quest">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./eq-theme.css">
+<script src="./eq-calm.js" defer></script>
+<script src="./eq-streak.js"></script>
+<script src="./eq-music.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script defer>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+<script data-goatcounter="https://jalil.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(60% 40% at 20% 0%, rgba(124,58,237,.35), transparent 60%),
+      radial-gradient(50% 35% at 90% 15%, rgba(219,39,119,.22), transparent 60%),
+      linear-gradient(180deg, #1a0b2e 0%, #2d1b4e 60%, #1a0b2e 100%);
+    color: #f0e9ff; min-height: 100dvh; display:flex; justify-content:center;
+  }
+  #app { width:100%; max-width:520px; padding:0 16px 60px; }
+
+  .back { display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:#c4b5fd; font-weight:700; font-size:13px; padding:14px 2px 4px; }
+  .eq-title { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:24px; font-weight:800; margin:4px 2px 2px;
+    background: linear-gradient(90deg, #fbbf24, #f87171); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sub { font-size:12.5px; color:#a78bfa; font-weight:700; margin:2px 2px 14px; }
+
+  h2 { font-family:'Bricolage Grotesque','Segoe UI',sans-serif; font-size:15px; font-weight:800; margin:18px 2px 9px; color:#fbbf24; }
+
+  /* Level card */
+  .level-card { background:linear-gradient(135deg, rgba(124,58,237,.3), rgba(219,39,119,.2));
+    border:1.5px solid rgba(255,255,255,.14); border-radius:18px; padding:18px; margin-bottom:12px; }
+  .level-row { display:flex; align-items:center; gap:12px; }
+  .level-ring { width:64px; height:64px; border-radius:50%; border:4px solid #fbbf24; display:flex;
+    align-items:center; justify-content:center; font-family:'Bricolage Grotesque',sans-serif;
+    font-size:26px; font-weight:800; color:#fbbf24; flex-shrink:0;
+    background:rgba(251,191,36,.08); }
+  .level-info { flex:1; }
+  .level-name { font-family:'Bricolage Grotesque',sans-serif; font-size:18px; font-weight:800; }
+  .level-sub { font-size:12px; color:#a78bfa; font-weight:700; margin-top:2px; }
+  .xp-bar-wrap { margin-top:10px; height:8px; border-radius:99px; background:rgba(255,255,255,.1); overflow:hidden; }
+  .xp-bar { height:100%; border-radius:99px; background:linear-gradient(90deg, #fbbf24, #f59e0b); transition: width .6s ease; }
+
+  /* Stats grid */
+  .stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px; }
+  .stat { background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1);
+    border-radius:14px; padding:12px 10px; text-align:center; }
+  .stat-num { font-family:'Bricolage Grotesque',sans-serif; font-size:22px; font-weight:800; color:#fbbf24; }
+  .stat-label { font-size:10.5px; font-weight:700; color:#a78bfa; margin-top:3px; }
+
+  /* Chart */
+  .chart-wrap { background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1);
+    border-radius:18px; padding:16px; margin-bottom:12px; }
+  .chart-wrap canvas { max-height:180px; }
+
+  /* Milestones */
+  .milestone { display:flex; align-items:center; gap:10px; padding:10px 12px;
+    background:rgba(255,255,255,.04); border-radius:12px; margin-bottom:6px;
+    border:1px solid rgba(255,255,255,.08); }
+  .milestone.reached { border-color:rgba(251,191,36,.4); background:rgba(251,191,36,.08); }
+  .ms-icon { font-size:22px; }
+  .ms-text { flex:1; }
+  .ms-text b { font-size:13px; font-weight:800; }
+  .ms-text small { display:block; font-size:11px; color:#a78bfa; font-weight:700; margin-top:1px; }
+  .ms-check { font-size:16px; color:#22c55e; }
+
+  .empty { text-align:center; padding:40px 0; color:#a78bfa; }
+  .empty .big { font-size:48px; margin-bottom:10px; }
+  .empty p { font-size:14px; font-weight:700; }
+
+  footer { text-align:center; font-size:12px; color:#6b7280; margin-top:24px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div id="app">
+  <a class="back" href="./home.html">‹ Home</a>
+  <div class="eq-title">📊 My Progress</div>
+  <div class="sub">See how far you've come on your English Quest!</div>
+
+  <div id="level-card" class="level-card"></div>
+  <div class="stats" id="stats"></div>
+  <div class="chart-wrap"><h2>⭐ XP This Week</h2><canvas id="xpChart"></canvas></div>
+  <h2>🔥 Streak Milestones</h2>
+  <div id="milestones"></div>
+
+  <footer>English Quest · Made by your teacher, Mr. Fakrani 🇲🇦</footer>
+</div>
+
+<nav class="eq-nav" aria-label="Main navigation">
+  <div class="eq-nav-inner">
+    <a class="eq-nav-item" href="./home.html"><span class="ni-icon">🏠</span>Home</a>
+    <a class="eq-nav-item" href="./index.html"><span class="ni-icon">🏫</span>Class</a>
+    <a class="eq-nav-item" href="./speaking.html"><span class="ni-icon">🎙️</span>Speak</a>
+    <a class="eq-nav-item active" href="./profile.html"><span class="ni-icon">🧑‍🚀</span>Profile</a>
+  </div>
+</nav>
+
+<script>
+  // ── Helpers ──────────────────────────────────────────────────
+  function dungeonData() {
+    try { return JSON.parse(localStorage.getItem('u1_dungeon') || '{}'); } catch(e) { return {}; }
+  }
+  const p = dungeonData();
+  const xp = p.totalXP || 0;
+
+  // ── Level & Rank ─────────────────────────────────────────────
+  const RANKS = [
+    { max: 100, name: 'Novice', color: '#a78bfa' },
+    { max: 300, name: 'Apprentice', color: '#0ea5e9' },
+    { max: 600, name: 'Explorer', color: '#22c55e' },
+    { max: 1000, name: 'Scholar', color: '#fbbf24' },
+    { max: 2000, name: 'Master', color: '#f87171' },
+    { max: Infinity, name: 'Legend', color: '#a855f7' },
+  ];
+  const level = Math.floor(xp / 100) + 1;
+  const rank = RANKS.find(r => xp < r.max) || RANKS[RANKS.length - 1];
+  const xpInLevel = xp % 100;
+  const levelProgress = xpInLevel; // 0-99 → 0-99%
+
+  document.getElementById('level-card').innerHTML = `
+    <div class="level-row">
+      <div class="level-ring">${level}</div>
+      <div class="level-info">
+        <div class="level-name" style="color:${rank.color}">${rank.name}</div>
+        <div class="level-sub">Level ${level} · ${xp} total XP</div>
+      </div>
+    </div>
+    <div class="xp-bar-wrap"><div class="xp-bar" style="width:${levelProgress}%"></div></div>
+    <div style="font-size:11px;color:#a78bfa;margin-top:5px;font-weight:700">${xpInLevel}/100 XP to level ${level + 1}</div>
+  `;
+
+  // ── Stats ────────────────────────────────────────────────────
+  const lessonsDone = (p.lessons ? Object.keys(p.lessons).filter(k => p.lessons[k]).length : 0);
+  const dungeonBeaten = p.finalBeaten ? 1 : 0;
+  const floorsCleared = p.floors ? Object.keys(p.floors).filter(k => p.floors[k]).length : 0;
+  const streakState = window.EQStreak ? EQStreak.getState() : { streak: 0 };
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><div class="stat-num">${lessonsDone}</div><div class="stat-label">Lessons</div></div>
+    <div class="stat"><div class="stat-num">${floorsCleared}</div><div class="stat-label">Floors</div></div>
+    <div class="stat"><div class="stat-num">${streakState.streak}</div><div class="stat-label">🔥 Streak</div></div>
+  `;
+
+  // ── XP Chart (last 7 days) ───────────────────────────────────
+  const xpKey = 'eq_xp_history';
+  let xpHistory = [];
+  try { xpHistory = JSON.parse(localStorage.getItem(xpKey) || '[]'); } catch {}
+
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const today = new Date();
+  const labels = [];
+  const data = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    labels.push(days[d.getDay()]);
+    const entry = xpHistory.find(e => e.date === key);
+    data.push(entry ? entry.xp : 0);
+  }
+
+  const canvas = document.getElementById('xpChart');
+  if (window.Chart) {
+    new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'XP',
+          data: data,
+          backgroundColor: 'rgba(251,191,36,0.7)',
+          borderRadius: 6,
+          borderSkipped: false,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#a78bfa', font: { weight: 'bold', size: 11 } } },
+          x: { grid: { display: false }, ticks: { color: '#a78bfa', font: { weight: 'bold', size: 11 } } },
+        },
+      },
+    });
+  }
+
+  // ── Streak Milestones ────────────────────────────────────────
+  const MILESTONES = EQStreak ? EQStreak.MILESTONES : {};
+  const claimedBonuses = streakState.claimedBonuses || [];
+  const msContainer = document.getElementById('milestones');
+  msContainer.innerHTML = Object.keys(MILESTONES).map(days => {
+    const m = MILESTONES[days];
+    const reached = streakState.streak >= parseInt(days);
+    return `<div class="milestone ${reached ? 'reached' : ''}">
+      <span class="ms-icon">${reached ? '🏆' : '🔒'}</span>
+      <span class="ms-text"><b>${m.label}</b><small>+${m.bonus} XP reward</small></span>
+      ${reached ? '<span class="ms-check">✓</span>' : ''}
+    </div>`;
+  }).join('');
+
+  // Stars
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('span');
+    s.className = 'eq-star'; s.textContent = '✦';
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.top = Math.random() * 100 + 'vh';
+    s.style.animationDelay = (Math.random() * 3) + 's';
+    document.body.appendChild(s);
+  }
+</script>
+</body>
+</html>
