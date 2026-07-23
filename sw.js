@@ -2,7 +2,7 @@
    English Quest Service Worker v1 — offline PWA support
    Cache-first for app assets, network-first for fonts & analytics.
    ===================================================================== */
-const CACHE_NAME = 'eq-v1';
+const CACHE_NAME = 'eq-v2';
 const PRECACHE_URLS = [
   './home.html',
   './index.html',
@@ -21,6 +21,9 @@ const PRECACHE_URLS = [
   './eq-voice.js',
   './eq-calm.js',
   './eq-avatar.js',
+  './eq-streak.js',
+  './eq-xp-log.js',
+  './progress.html',
   './icon-192.png',
   './icon-512.png',
   './manifest.webmanifest'
