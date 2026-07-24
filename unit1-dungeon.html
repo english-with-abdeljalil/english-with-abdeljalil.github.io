@@ -428,30 +428,144 @@
   @keyframes petBounce { 0% { transform: scale(0) rotate(-15deg); opacity: 0; }
     55% { transform: scale(1.2) rotate(5deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
   @keyframes popIn { 0% { transform: scale(.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+  /* ===== DUNGEON EDITION — focused exploration UI ===== */
+  :root {
+    --ink: #090d0b;
+    --stone: #17201b;
+    --parchment: #f1e8cf;
+    --ember: #e15a2b;
+    --gold: #e8b84f;
+  }
+  body, body.golden-mode {
+    background: var(--ink);
+    color: var(--parchment);
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .42;
+    background: repeating-linear-gradient(90deg, transparent 0 79px, rgba(241,232,207,.025) 80px 81px),
+      repeating-linear-gradient(0deg, transparent 0 59px, rgba(241,232,207,.02) 60px 61px);
+  }
+  #app { max-width: 920px; padding: 18px 20px; }
+  .game-title, #map-title, .end-title, #room-title { letter-spacing: -.02em; }
+  .btn-primary, .btn-gold, #order-submit, #typed-submit, #next-btn {
+    background: var(--ember); color: var(--parchment); border: 1px solid rgba(241,232,207,.28);
+    box-shadow: 0 7px 0 #742b18; border-radius: 8px;
+  }
+  .btn-primary:active, .btn-gold:active { transform: translateY(4px); box-shadow: 0 3px 0 #742b18; }
+  .btn-ghost { color: var(--parchment); border-color: rgba(241,232,207,.28); }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  /* Intro */
+  #title-screen { max-width: 760px; width: 100%; margin: auto; align-items: center; }
+  .dungeon-seal { width: 112px; height: 112px; display: grid; place-items: center; border-radius: 50%;
+    border: 2px solid var(--gold); background: var(--stone); font-size: 64px; box-shadow: 0 0 0 9px rgba(232,184,79,.08); }
+  .game-title { background: none; color: var(--parchment); font-size: clamp(34px,7vw,64px); }
+  .unit-label { color: var(--gold); text-transform: uppercase; letter-spacing: .16em; }
+  .rules { width: 100%; background: var(--stone); border: 1px solid rgba(241,232,207,.15); border-radius: 8px;
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; line-height: 1.45; }
+  .rule-step { padding: 10px; border-left: 2px solid var(--ember); }
+  .rule-step b { color: var(--gold); display: block; margin-bottom: 4px; }
+
+  /* Dungeon route */
+  #map-screen { gap: 16px; }
+  #map-header { text-align: left; padding-right: 100px; }
+  #map-title { color: var(--parchment); background: none; font-size: clamp(28px,5vw,48px); }
+  #map-sub, #map-xp { color: var(--gold); }
+  #map-floors { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+  .floor-connector { display: none; }
+  .floor-node { min-height: 92px; background: var(--stone); border: 1px solid rgba(241,232,207,.14); border-radius: 8px;
+    position: relative; overflow: hidden; }
+  .floor-node::after { content: 'ENTER'; position: absolute; right: 12px; bottom: 8px; color: var(--gold); font-size: 9px; letter-spacing: .14em; opacity: 0; }
+  .floor-node.unlocked::after, .floor-node.cleared::after, .floor-node.quick::after { opacity: .8; }
+  .floor-node:hover:not(.locked) { transform: translateY(-2px); border-color: var(--gold); }
+  .floor-node.unlocked { border-color: var(--ember); box-shadow: inset 4px 0 var(--ember); }
+  .floor-node.cleared { border-color: var(--gold); box-shadow: inset 4px 0 var(--gold); }
+  .floor-node.final { grid-column: 1/-1; background: #21130f; border-color: var(--ember); }
+  .floor-node.quick { border-color: rgba(241,232,207,.28); background: #101713; box-shadow: none; }
+  .fn-lesson { color: rgba(241,232,207,.65); }
+  .fn-status, #map-xp { color: var(--gold); }
+
+  /* Exploration chamber */
+  #room-screen { gap: 14px; padding-top: 34px; }
+  #map-screen, #battle-screen { padding-top: 32px; }
+  .room-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .eyebrow { color: var(--gold); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .16em; }
+  #room-title { font-family: 'Bricolage Grotesque',system-ui,sans-serif; font-size: clamp(28px,5vw,46px); line-height: 1; }
+  .room-scene { flex: 1; min-height: 300px; display: grid; grid-template-columns: 1fr 1.45fr 1fr; gap: 12px;
+    align-items: stretch; padding: 16px; border: 1px solid rgba(241,232,207,.16); border-radius: 10px; background: #111814; }
+  .hotspot { color: var(--parchment); background: var(--stone); border: 1px solid rgba(241,232,207,.18); border-radius: 8px;
+    padding: 18px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+  .hotspot:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .hotspot-icon { font-size: clamp(38px,8vw,72px); filter: drop-shadow(0 12px 14px rgba(0,0,0,.45)); }
+  .hotspot strong { font-size: 18px; display: block; }
+  .hotspot small { color: rgba(241,232,207,.65); line-height: 1.5; }
+  .hotspot.guardian { background: #21130f; border-color: var(--ember); text-align: center; align-items: center; }
+  .room-message { min-height: 66px; padding: 12px 14px; border-left: 3px solid var(--gold); background: var(--stone); line-height: 1.5; }
+  #room-actions { display: flex; gap: 10px; }
+  #room-actions button { flex: 1; }
+
+  /* Help */
+  #help-toggle { position: fixed; top: 10px; left: 58px; z-index: 60; background: var(--stone); color: var(--parchment);
+    border: 1px solid rgba(241,232,207,.25); height: 40px; padding: 0 13px; border-radius: 20px; font-weight: 800; }
+  #language-help .modal-card { background: var(--stone); border-color: var(--gold); text-align: left; }
+  .help-line { padding: 10px 0; border-bottom: 1px solid rgba(241,232,207,.14); line-height: 1.5; }
+
+  /* Battle */
+  #battle-screen { max-width: 760px; width: 100%; margin: auto; }
+  #boss-area { background: #111814; border: 1px solid rgba(241,232,207,.13); border-radius: 8px; padding: 10px 14px; }
+  #question-box, .answer-btn, #feedback-panel { border-radius: 8px; }
+  #question-box { background: var(--stone); border-color: rgba(241,232,207,.15); }
+  .answer-btn { background: #111814; border: 1px solid rgba(241,232,207,.2); }
+  .answer-btn:hover:not(:disabled) { border-color: var(--gold); }
+  #category-chip { background: transparent; border-color: var(--gold); color: var(--gold); }
+  #timer-bar, #hp-bar, body.golden-mode #hp-bar { background: var(--ember); }
+  #feedback-tip { color: var(--parchment); }
+  .modal-card { background: var(--stone); border-radius: 10px; }
+
+  @media (max-width: 640px) {
+    #app { padding: 12px; }
+    .rules { grid-template-columns: 1fr; }
+    #map-floors { grid-template-columns: 1fr; }
+    .floor-node.final { grid-column: auto; }
+    .room-scene { grid-template-columns: 1fr 1fr; min-height: 0; }
+    .hotspot.guardian { grid-column: 1/-1; grid-row: 1; }
+    .hotspot { min-height: 150px; padding: 14px; }
+    #map-header { padding-right: 80px; }
+  }
+  @media (max-height: 620px) and (min-width: 641px) {
+    #app { padding-top: 10px; }
+    .room-scene { min-height: 230px; }
+    #boss-wrap { height: 72px; }
+    #boss-sprite { font-size: 54px; }
+    .answer-btn { padding: 9px 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  }
 </style>
 </head>
 <body>
-<button id="sound-toggle" onclick="toggleSound()">🔊</button>
-<button id="music-toggle" onclick="toggleMusic()">🎵</button>
-<button id="home-btn" onclick="goHome()">🏠</button>
+<button id="sound-toggle" onclick="toggleSound()" aria-label="Toggle sound">🔊</button>
+<button id="music-toggle" onclick="toggleMusic()" aria-label="Toggle music">🎵</button>
+<button id="home-btn" onclick="goHome()" aria-label="Return to English Quest home">🏠</button>
+<button id="help-toggle" onclick="toggleLanguageHelp(true)" aria-label="Open Arabic and French help">Help</button>
 <div id="app">
 
   <!-- ===== TITLE ===== -->
   <div id="title-screen" class="screen active">
-    <div class="boss-preview">🌍</div>
+    <div class="dungeon-seal" aria-hidden="true">🏰</div>
     <div>
-      <div class="game-title">ENGLISH QUEST</div>
-      <div class="unit-label">Outlook · Common Core</div>
+      <div class="unit-label">English Quest · Unit 1</div>
+      <div class="game-title">THE FIRST DUNGEON</div>
+      <div class="unit-label">Myself &amp; Others</div>
     </div>
     <div class="rules">
-      🌍 Explore the map — one adventure for each unit!<br>
-      📖 LEARN: your guide teaches every lesson (he speaks — turn on sound! 🔊)<br>
-      ✏️ Quick exercises check what you understood.<br>
-      🏰 Then enter the DUNGEON: fight a boss for every lesson!<br>
-      🐉 Beat the FIRE DRAGON — the unit test — and become a legend.<br>
-      💾 Your progress is saved on this phone.
+      <div class="rule-step"><b>1 · Explore</b>Enter each chamber and inspect its clue.</div>
+      <div class="rule-step"><b>2 · Battle</b>Use English answers to strike the guardian.</div>
+      <div class="rule-step"><b>3 · Conquer</b>Clear six rooms and face the Fire Dragon.</div>
     </div>
-    <button class="btn-primary" onclick="enterDungeon()">🗺️ START YOUR QUEST</button>
+    <button class="btn-primary" id="quest-entry-btn" onclick="enterDungeon()">ENTER THE DUNGEON</button>
   </div>
 
   <!-- ===== NAME SCREEN ===== -->
@@ -533,6 +647,36 @@
     </div>
   </div>
 
+  <!-- ===== CHAMBER EXPLORATION ===== -->
+  <div id="room-screen" class="screen">
+    <div class="room-topbar">
+      <div>
+        <div class="eyebrow" id="room-floor-label">Floor 1</div>
+        <div id="room-title">The Greeting Hall</div>
+      </div>
+      <button class="btn-ghost" style="width:auto" onclick="showMap()">Dungeon map</button>
+    </div>
+    <div class="room-scene" aria-label="Interactive dungeon chamber">
+      <button class="hotspot" onclick="inspectClue()" id="clue-hotspot">
+        <span class="hotspot-icon" aria-hidden="true">📜</span>
+        <span><strong>Ancient clue</strong><small>Read a rule before the battle.</small></span>
+      </button>
+      <button class="hotspot guardian" onclick="confrontGuardian()" id="guardian-hotspot">
+        <span class="hotspot-icon" id="room-guardian" aria-hidden="true">👺</span>
+        <span><strong id="room-guardian-name">Greeting Goblin</strong><small>Confront the guardian</small></span>
+      </button>
+      <button class="hotspot" onclick="listenRoomClue()" id="voice-hotspot">
+        <span class="hotspot-icon" aria-hidden="true">🔊</span>
+        <span><strong>Listen</strong><small>Hear the clue in English.</small></span>
+      </button>
+    </div>
+    <div class="room-message" id="room-message" role="status" aria-live="polite">Choose something to inspect.</div>
+    <div id="room-actions">
+      <button class="btn-ghost" onclick="showMap()">Back to map</button>
+      <button class="btn-primary" onclick="confrontGuardian()">Start battle</button>
+    </div>
+  </div>
+
   <!-- ===== BATTLE ===== -->
   <div id="battle-screen" class="screen">
     <div id="hud">
@@ -588,7 +732,7 @@
       ⭐ XP earned: <span id="fc-xp"></span><br>
       ❤️ Hearts left: <span id="fc-lives"></span>
     </div>
-    <button class="btn-primary" onclick="showMap()">🗺️ BACK TO THE MAP</button>
+    <button class="btn-primary" id="floor-next-btn" onclick="showMap()">CONTINUE</button>
   </div>
 
   <!-- ===== FINAL VICTORY ===== -->
@@ -638,6 +782,17 @@
     <button class="btn-primary" onclick="retryFloor()">⚔️ TRY THIS FLOOR AGAIN</button>
     <button class="btn-training" id="training-btn" onclick="startTraining()">🎓 TRAINING MODE — practise without timer or hearts</button>
     <button class="btn-ghost" onclick="showMap()" style="margin-top:8px">🗺️ Back to the map</button>
+  </div>
+
+  <!-- ===== LANGUAGE HELP ===== -->
+  <div id="language-help" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="modal-card">
+      <div class="eyebrow">Quick guide</div>
+      <div class="modal-title" id="help-title">Need help?</div>
+      <div class="help-line"><b>Arabic</b><br><span dir="rtl">استكشف الغرفة، اقرأ الدليل، ثم ابدأ المعركة. اختر الجواب الصحيح لتهاجم الحارس.</span></div>
+      <div class="help-line"><b>Français</b><br>Explore la salle, lis l&apos;indice, puis commence le combat. Choisis la bonne réponse pour attaquer le gardien.</div>
+      <button class="btn-primary" style="margin-top:16px" onclick="toggleLanguageHelp(false)">Continue in English</button>
+    </div>
   </div>
 
   <!-- ===== PET POP ===== -->
@@ -1299,9 +1454,8 @@ function heroName() {
 }
 /* Hub deep links: ⚔️ Play → #dungeon (floor map) · ✏️ Practice → #practice (lesson quests) */
 function hubEntry() {
-  if (window.location.hash === '#dungeon') return showMap;
   if (window.location.hash === '#practice') return showUnit;
-  return showWorld;
+  return showMap;
 }
 function enterDungeon() {
   if (heroName()) hubEntry()();
@@ -1324,6 +1478,7 @@ function editName() {
   setTimeout(() => document.getElementById('name-input').focus(), 200);
 }
 document.addEventListener('keydown', e => {
+  if (e.nativeEvent?.isComposing || e.isComposing || e.keyCode === 229) return;
   if (e.key === 'Enter' && document.getElementById('name-screen').classList.contains('active')) saveName();
 });
 function finalUnlocked() {
@@ -1581,9 +1736,53 @@ function closeTutorial() {
   if (battleActive && !training) startTimer(questionSeconds(queue[0]));
 }
 
+const ROOM_STORIES = [
+  { title: 'The Greeting Hall', story: 'A goblin blocks the old city gate. Speak clearly and show that you know how to meet new people.', clue: 'Say “Hello! I am …” to introduce yourself. Say “This is my friend …” to introduce another person.' },
+  { title: 'The Broken Grammar Crypt', story: 'Words float above the tombs. The zombie has mixed up am, is and are.', clue: 'Use AM with I. Use IS with he, she and it. Use ARE with you, we and they.' },
+  { title: 'The Serpent Archive', story: 'One book becomes many. The serpent protects every plural hidden in the archive.', clue: 'Most plurals take -s. Words ending in s, ch, sh or x usually take -es. Some words are irregular.' },
+  { title: 'The Court of Manners', story: 'The vampire will only open the door for a hero who greets people politely.', clue: 'Mr is for men. Mrs is for a married woman. Miss is for a single woman. Ms can be used for any woman.' },
+  { title: 'The Whispering Forest', story: 'The path is hidden inside a short reading. Find facts in the text to pass the guardian.', clue: 'Read the question first. Then look for the same key words in the text before choosing your answer.' },
+  { title: 'The Ghostwriter Tower', story: 'A letter has been torn into pieces. Put every part in its proper place.', clue: 'A friendly letter uses: address, date, greeting, body, closing and signature — in that order.' }
+];
+let roomClueRead = false;
+
 function startFloor(i) {
   currentFloor = i;
-  beginFloorBattle(i);   // lessons now live in the Unit screen; the dungeon is pure play
+  roomClueRead = false;
+  const f = FLOORS[i];
+  const room = ROOM_STORIES[i];
+  document.getElementById('room-floor-label').textContent = 'Floor ' + f.id + ' · ' + f.name;
+  document.getElementById('room-title').textContent = room.title;
+  document.getElementById('room-guardian').textContent = f.emoji;
+  document.getElementById('room-guardian-name').textContent = f.boss;
+  document.getElementById('room-message').textContent = room.story;
+  document.getElementById('clue-hotspot').classList.remove('discovered');
+  startMusic('floor' + f.id);
+  show('room-screen');
+  setTimeout(() => document.getElementById('clue-hotspot').focus(), 100);
+}
+function inspectClue() {
+  const room = ROOM_STORIES[currentFloor];
+  roomClueRead = true;
+  document.getElementById('clue-hotspot').classList.add('discovered');
+  document.getElementById('room-message').textContent = 'Clue: ' + room.clue;
+  sfx('correct');
+  speakText(room.clue);
+}
+function listenRoomClue() {
+  const room = ROOM_STORIES[currentFloor];
+  document.getElementById('room-message').textContent = 'Listen carefully: ' + room.clue;
+  speakText(room.clue);
+}
+function confrontGuardian() {
+  stopSpeaking();
+  beginFloorBattle(currentFloor);
+}
+function toggleLanguageHelp(open) {
+  const modal = document.getElementById('language-help');
+  modal.classList.toggle('show', open);
+  if (open) setTimeout(() => modal.querySelector('button').focus(), 50);
+  else document.getElementById('help-toggle').focus();
 }
 function beginFloorBattle(i) {
   mode = 'floor';
@@ -1887,6 +2086,7 @@ function submitTyped() {
   else handleWrong(item, '❌ Not quite!');
 }
 document.addEventListener('keydown', e => {
+  if (e.nativeEvent?.isComposing || e.isComposing || e.keyCode === 229) return;
   if (e.key === 'Enter' && mode === 'golden' && battleActive && !locked
       && document.getElementById('typed-area').classList.contains('show')) {
     submitTyped();
@@ -1994,6 +2194,9 @@ function floorVictory() {
     document.getElementById('fc-floor-name').textContent = '🎓 Training complete, ' + (heroName() || 'hero') + '! Now fight the real ' + f.boss + '!';
     document.getElementById('fc-xp').textContent = '0 (training gives no XP)';
     document.getElementById('fc-lives').textContent = '∞';
+    const nextBtn = document.getElementById('floor-next-btn');
+    nextBtn.textContent = 'FIGHT THE REAL GUARDIAN';
+    nextBtn.onclick = () => beginFloorBattle(currentFloor);
     show('floor-clear-screen');
     return;
   }
@@ -2001,9 +2204,17 @@ function floorVictory() {
   recordFloorClear(f.id, stars, xp);
   document.getElementById('fc-emoji').textContent = f.emoji;
   document.getElementById('fc-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-  document.getElementById('fc-floor-name').textContent = '🏰 ' + (heroName() || 'Hero') + ' cleared Floor ' + f.id + ': ' + f.name + '!';
+  document.getElementById('fc-floor-name').textContent = (heroName() || 'Hero') + ' cleared Floor ' + f.id + ': ' + f.name + '!';
   document.getElementById('fc-xp').textContent = xp;
   document.getElementById('fc-lives').textContent = lives + ' / ' + CONFIG.lives;
+  const nextBtn = document.getElementById('floor-next-btn');
+  if (currentFloor < FLOORS.length - 1) {
+    nextBtn.textContent = 'EXPLORE FLOOR ' + FLOORS[currentFloor + 1].id;
+    nextBtn.onclick = () => startFloor(currentFloor + 1);
+  } else {
+    nextBtn.textContent = 'RETURN TO THE FIRE DRAGON GATE';
+    nextBtn.onclick = showMap;
+  }
   show('floor-clear-screen');
 }
 function quickVictory() {
@@ -2016,9 +2227,12 @@ function quickVictory() {
   saveProgress(p);
   document.getElementById('fc-emoji').textContent = '⚡';
   document.getElementById('fc-stars').textContent = '';
-  document.getElementById('fc-floor-name').textContent = '⚡ Quick Practice complete, ' + (heroName() || 'hero') + '!';
+  document.getElementById('fc-floor-name').textContent = 'Quick Practice complete, ' + (heroName() || 'hero') + '!';
   document.getElementById('fc-xp').textContent = xp;
   document.getElementById('fc-lives').textContent = lives + ' / ' + CONFIG.lives;
+  const nextBtn = document.getElementById('floor-next-btn');
+  nextBtn.textContent = 'BACK TO THE DUNGEON MAP';
+  nextBtn.onclick = showMap;
   show('floor-clear-screen');
 }
 
@@ -2169,6 +2383,7 @@ document.getElementById('sound-toggle').textContent = soundOn ? '🔊' : '🔇';
 document.getElementById('sound-toggle').className = soundOn ? '' : 'off';
 document.getElementById('music-toggle').className = musicOn ? '' : 'off';
 document.getElementById('home-btn').className = 'show';   // the hub is always reachable
+if (heroName()) document.getElementById('quest-entry-btn').textContent = 'CONTINUE AS ' + heroName().toUpperCase();
 /* Fast lane from the hub: returning players skip the title screen */
 if (window.location.hash === '#dungeon' && heroName()) showMap();
 else if (window.location.hash === '#practice' && heroName()) showUnit();
